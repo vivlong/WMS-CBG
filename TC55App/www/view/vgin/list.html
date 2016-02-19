@@ -1,0 +1,58 @@
+﻿<ion-view title="VGIN-List">
+    <ion-header-bar class="bar-positive" align-title="center">
+        <button class="button button-icon icon ion-navicon" ng-click="returnMain()"></button>
+        <div class="h1 title">Picking</div>
+    </ion-header-bar>
+    <ion-pane style="margin-top:44px; height:70px; overflow:visible;">
+        <div>
+            <div class="row row-center" id="div-list-rcbp">
+                <div class="col col-33" style="text-align:center;">
+                    <label>Customer</label>
+                </div>
+                <div class="col col-67">
+                    <ui-select ng-model="Rcbp1.selected"
+                                theme="bootstrap"
+                                reset-search-input="true"
+                                on-select="ShowImgi1(Rcbp1.selected.BusinessPartyCode)">
+                        <ui-select-match allow-clear="true" placeholder="Enter to search..." style="overflow:hidden;">{{$select.selected.BusinessPartyCode}}</ui-select-match>
+                        <ui-select-choices repeat="Rcbp1 in Rcbp1s track by $index"
+                                           refresh="refreshRcbp1($select.search)"
+                                           refresh-delay="0"
+                                           position="down">
+                            <div ng-bind="Rcbp1.BusinessPartyName"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row row-center" id="div-list-gin">
+                <div class="col col-33" style="text-align:center;">
+                    <label>GIN No</label>
+                </div>
+                <div class="col col-67">
+                    <ui-select theme="bootstrap"
+                                ng-model="GinNo.selected"
+                                reset-search-input="true"
+                                on-select="GoToDetail(GinNo.selected)">
+                        <ui-select-match allow-clear="true" placeholder="Enter to search..." style="overflow:hidden;">{{$select.selected.GoodsIssueNoteNo}}</ui-select-match>
+                        <ui-select-choices repeat="GinNo in GinNos track by $index"
+                                            refresh="refreshGinNos($select.search)"
+                                            refresh-delay="0">
+                            <div ng-bind-html="GinNo.GoodsIssueNoteNo | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <hr style="margin-top:-0.3em;">
+        </div>
+    </ion-pane>
+    <ion-content style="margin-top:100px;">
+        <ion-list id="div-vgin-list" tabindex="-1">
+            <ion-item ng-repeat="Imgi1 in Imgi1s" id="Imgi1-{{ Imgi1.Index }}" class="item-remove-animate item-icon-right" ng-click="GoToDetail(Imgi1)">
+                <p style="font-size:0.8em;">Customer&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgi1.CustomerCode" style="font-size:1.2em;"></span></p>
+                <p style="font-size:0.8em;">GIN&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgi1.GoodsIssueNoteNo" style="font-size:1.3em;"></span></p>
+                <p style="font-size:0.8em;">Issue Date&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="showDate(Imgi1.IssueDateTime)" style="font-size:1.1em;"></span></p>
+                <p style="font-size:0.8em;">Ref No&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgi1.RefNo" style="font-size:1.1em;"></span></p>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>
