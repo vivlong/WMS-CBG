@@ -1,20 +1,19 @@
-var app = angular.module('MobileAPP', [
+var app = angular.module('WMSAPP', [
     'ionic',
     'ngCordova.plugins.toast',
     'ngCordova.plugins.file',
-    'MobileAPP.controllers'
+    'WMSAPP.controllers'
 ]);
-    
+
 app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$ionicPopup', '$ionicHistory', '$ionicLoading', '$cordovaToast', '$cordovaFile',
     function ($ionicPlatform, $rootScope, $state, $location, $timeout, $ionicPopup, $ionicHistory, $ionicLoading, $cordovaToast, $cordovaFile) {
- 
-        $ionicPlatform.ready(function () {   
+        $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
             if(window.cordova && window.cordova.plugins.Keyboard) {
                 cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
                 //
-                var data = 'BaseUrl=' + strBaseUrl + '##WebServiceURL=' + strWebServiceURL + '##PL43Device=' + strPL43Device;
+                var data = 'BaseUrl=' + strBaseUrl + '##WebServiceURL=' + strWebServiceURL;
                 var path = cordova.file.externalRootDirectory;
                 var directory = "WmsApp";
                 var file = directory + "/Config.txt";
@@ -30,7 +29,7 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                                     strWebServiceURL = "http://" + strWebServiceURL;
                                 }
                             }, function (error) {
-                                $cordovaToast.showShortBottom(error);   
+                                $cordovaToast.showShortBottom(error);
                             });
                     }, function (error) {
                         // If an existing directory exists
@@ -38,18 +37,14 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                             .then(function (success) {
                                 $cordovaFile.readAsText(path, file)
                                     .then(function (success) {
-                                        var arConf = success.split("##");                                     
+                                        var arConf = success.split("##");
                                         var arBaseUrl = arConf[0].split("=");
                                         if(arBaseUrl[1].length>0){
                                             strBaseUrl = arBaseUrl[1];
                                         }
                                         var arWebServiceURL = arConf[1].split("=");
                                         if(arWebServiceURL[1].length>0){
-                                            strWebServiceURL = arWebServiceURL[1]; 
-                                        }
-                                        var arPL43Device = arConf[2].split("=");
-                                        if (arPL43Device[1].length > 0) {
-                                            strPL43Device = arPL43Device[1];
+                                            strWebServiceURL = arWebServiceURL[1];
                                         }
                                         //
                                         if (strBaseUrl.length > 0) {
@@ -59,7 +54,7 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                                             strWebServiceURL = "http://" + strWebServiceURL;
                                         }
                                     }, function (error) {
-                                        $cordovaToast.showShortBottom(error);  
+                                        $cordovaToast.showShortBottom(error);
                                     });
                             }, function (error) {
                                 // If file not exists
@@ -73,7 +68,7 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                                             strWebServiceURL = "http://" + strWebServiceURL;
                                         }
                                     }, function (error) {
-                                        $cordovaToast.showShortBottom(error);   
+                                        $cordovaToast.showShortBottom(error);
                                     });
                             });
                     });
@@ -90,7 +85,6 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                 StatusBar.styleDefault();
             }
         });
-    
         $ionicPlatform.registerBackButtonAction(function (e) {
             /*
             if ($cordovaKeyboard.isVisible()) {
@@ -103,7 +97,7 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                     ionic.Platform.exitApp();
                 } else {
                     $rootScope.backButtonPressedOnceToExit = true;
-                    $cordovaToast.showShortBottom('Press again to exit.');          
+                    $cordovaToast.showShortBottom('Press again to exit.');
                     setTimeout(function () {
                         $rootScope.backButtonPressedOnceToExit = false;
                     }, 2000);
@@ -128,16 +122,16 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                 }
             } else if ($state.includes('setting')) {
                 $state.go('login',{ 'CheckUpdate':'Y' }, { reload : true });
-            } else if ($state.includes('update')) {        
+            } else if ($state.includes('update')) {
                 $state.go('login',{ 'CheckUpdate':'N' }, { reload : true });
             } else if ($state.includes('list')) {
-                $state.go('main',{ 'blnForcedReturn':'Y' },{ reload:true }); 
+                $state.go('main',{ 'blnForcedReturn':'Y' },{ reload:true });
             } else if ($ionicHistory.backView()) {
                 $ionicHistory.goBack();
             } else {
                 // This is the last page: Show confirmation popup
                 $rootScope.backButtonPressedOnceToExit = true;
-                $cordovaToast.showShortBottom('Press again to exit.');   
+                $cordovaToast.showShortBottom('Press again to exit.');
                 setTimeout(function () {
                     $rootScope.backButtonPressedOnceToExit = false;
                 }, 2000);
@@ -147,79 +141,69 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
         }, 101);
     }]);
 
-app.config(['$stateProvider', '$urlRouterProvider',
-    function($stateProvider, $urlRouterProvider) {
-      $stateProvider
-
-         .state('loading', {
-            url: '/loading',
-		    cache:'false',
-            templateUrl: 'view/loading.html',
-            controller: 'LoadingCtrl'
-         })
-	 
-        .state('login', {
-            url: '/login/:CheckUpdate',
-            cache:'false',
-            templateUrl: 'view/login.html',
-            controller: 'LoginCtrl'
-        })
-    
-        .state('setting', {
-            url: '/setting',
-            cache:'false',
-            templateUrl: 'view/setting.html',
-            controller: 'SettingCtrl'
-        })
-    
-        .state('update', {
-            url: '/update/:Version',
-		    cache:'false',
-            templateUrl: 'view/update.html',
-            controller: 'UpdateCtrl'
-        })
-     
-        .state('main', {
-          url: "/main",
-          templateUrl: "view/main.html",
-          controller: 'MainCtrl'
-        })
-      
-        .state('taskList', {
-            url: '/task/list',
-            templateUrl: 'view/task/list.html',
-            controller: 'TaskListCtrl'
-        })
-        .state('grtList', {
-            url: '/grt/list',
-            templateUrl: 'view/grt/list.html',
-            controller: 'GrtListCtrl'
-        })
-        .state('grtDetail', {
-            url: '/grt/detail/:CustomerCode/:TrxNo/:GoodsReceiptNoteNo',
-            cache: 'false',
-            templateUrl: 'view/grt/detail.html',
-            controller: 'GrtDetailCtrl'
-        })
-        .state('vginList', {
-            url: '/vgin/list',
-            templateUrl: 'view/vgin/list.html',
-            controller: 'VginListCtrl'
-        })
-        .state('vginDetail', {
-            url: '/vgin/detail/:CustomerCode/:TrxNo/:GoodsIssueNoteNo',
-            cache: 'false',
-            templateUrl: 'view/vgin/detail.html',
-            controller: 'VginDetailCtrl'
-        })
-
+app.config(['$stateProvider', '$urlRouterProvider', '$ionicConfigProvider',
+    function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+        $ionicConfigProvider.backButton.previousTitleText(false);
+        $stateProvider
+            .state('loading', {
+                url: '/loading',
+                cache:'false',
+                templateUrl: 'view/loading.html',
+                controller: 'LoadingCtrl'
+            })
+            .state('login', {
+                url: '/login/:CheckUpdate',
+                cache:'false',
+                templateUrl: 'view/login.html',
+                controller: 'LoginCtrl'
+            })
+            .state('setting', {
+                url: '/setting',
+                cache:'false',
+                templateUrl: 'view/setting.html',
+                controller: 'SettingCtrl'
+            })
+            .state('update', {
+                url: '/update/:Version',
+                cache:'false',
+                templateUrl: 'view/update.html',
+                controller: 'UpdateCtrl'
+            })
+            .state('main', {
+                url: "/main",
+                templateUrl: "view/main.html",
+                controller: 'MainCtrl'
+            })
+            .state('taskList', {
+                url: '/task/list',
+                templateUrl: 'view/task/list.html',
+                controller: 'TaskListCtrl'
+            })
+            .state('grtList', {
+                url: '/grt/list',
+                templateUrl: 'view/grt/list.html',
+                controller: 'GrtListCtrl'
+            })
+            .state('grtDetail', {
+                url: '/grt/detail/:CustomerCode/:TrxNo/:GoodsReceiptNoteNo',
+                cache: 'false',
+                templateUrl: 'view/grt/detail.html',
+                controller: 'GrtDetailCtrl'
+            })
+            .state('vginList', {
+                url: '/vgin/list',
+                templateUrl: 'view/vgin/list.html',
+                controller: 'VginListCtrl'
+            })
+            .state('vginDetail', {
+                url: '/vgin/detail/:CustomerCode/:TrxNo/:GoodsIssueNoteNo',
+                cache: 'false',
+                templateUrl: 'view/vgin/detail.html',
+                controller: 'VginDetailCtrl'
+            })
         $urlRouterProvider.otherwise('/loading');
     }]);
 
 app.constant('$ionicLoadingConfig', {
     template: 'Loading...'
-});
-
-app.constant('ApiEndpoint', {
-    url: strWebServiceURL + "/" + strBaseUrl
 });
