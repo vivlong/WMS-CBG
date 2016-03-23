@@ -1,17 +1,3 @@
-var strPL43Device = "0"; // 0 - false ; 1 - true
-/* SysFreight Server */
-var strBaseUrl = "WebApi";
-var strWebServiceURL = "www.sysfreight.net:8081";
-
-/* Local Server
-var strBaseUrl = "WmsWS";
-var strWebServiceURL = "192.168.0.55";
-*/
-/* Local Test
-var strBaseUrl = "";
-var strWebServiceURL = "192.168.0.55:1656";
-*/
-var strSecretKey = "9CBA0A78-7D1D-49D3-BA71-C72E93F9E48F";
 
 var dbInfo = {
     dbName: "WmsDB",

@@ -1,27 +1,42 @@
 <ion-view title="Setting">
-	<ion-header-bar class="bar-positive">
-		<button class="button button-icon icon ion-navicon" ng-click="returnLogin()"></button>
-		<div class="h1 title" >Server-Side Configuration</div>
-	</ion-header-bar>
-	<ion-content>
-		<div class="list list-inset">
-			<label class="item item-input item-stacked-label">
-				<span class="input-label">Server URL</span>
-				<input type="text" placeholder="www.sysfreight.com" ng-model="Setting.WebServiceURL">
-			</label>
-			<label class="item item-input item-stacked-label">
-				<span class="input-label">Web Service Name</span>
-				<input type="text" placeholder="TmsWS" ng-model="Setting.BaseUrl">
-			</label>
-			<button class="button button-block button-positive" ng-click="saveSetting()">
-				Update
-			</button>
-			<button class="button button-block button-stable" ng-click="returnLogin()">
-				Cancel
-			</button>
-            <button class="button button-block button-assertive" ng-click="delSetting()">
-                Delete Config File
+    <ion-nav-buttons>
+        <button class="button button-icon icon ion-navicon" menu-toggle="left"></button>
+    </ion-nav-buttons>
+    <ion-nav-title align-title="center">
+        Setting
+    </ion-nav-title>
+    <ion-pane>
+        <div style="height: 43px;"></div>
+        <ion-list>
+            <ion-item class="item-divider item-gap">
+            </ion-item>
+            <ion-item>
+                Current Version
+                <span class="item-note" ng-bind="Setting.Version"></span>
+            </ion-item>
+        </ion-list>
+        <div class="list list-inset">
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">API URL</span>
+                <input type="text" placeholder="www.sysfreight.com:8081/WebApi" ng-model="Setting.WebApiURL">
+            </label>
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Web Site URL</span>
+                <input type="text" placeholder="www.sysfreight.net:8081/mobileapp" ng-model="Setting.WebSiteUrl">
+            </label>            
+        </div>
+    </ion-pane>
+    <ion-footer-bar class="bar-positive">
+        <div class="row" style="padding: 0px;">
+            <button class="col button" ng-click="save()">
+                <i class="icon ion-android-done"></i>&nbsp;&nbsp;Save
             </button>
-		</div>
-	</ion-content>
+            <button class="col button" ng-click="reset()">
+                <i class="icon ion-android-delete"></i>&nbsp;&nbsp;Reset
+            </button>
+            <button class="col button" ng-click="return()">
+                <i class="icon ion-arrow-return-right"></i>&nbsp;&nbsp;Cancel
+            </button>
+        </div>
+    </ion-footer-bar>
 </ion-view>

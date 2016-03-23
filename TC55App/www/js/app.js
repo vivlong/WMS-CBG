@@ -1,33 +1,37 @@
+'use strict';
 var app = angular.module('WMSAPP', [
     'ionic',
+    'jett.ionic.filter.bar',
+    'ionic-datepicker',
     'ngCordova.plugins.toast',
+    'ngCordova.plugins.dialogs',
+    'ngCordova.plugins.appVersion',
     'ngCordova.plugins.file',
+    'ngCordova.plugins.fileTransfer',
+    'ngCordova.plugins.fileOpener2',
+    'WMSAPP.config',
+    //'WMSAPP.factories',
+    'WMSAPP.services',
     'WMSAPP.controllers'
 ]);
-
-app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$ionicPopup', '$ionicHistory', '$ionicLoading', '$cordovaToast', '$cordovaFile',
-    function ($ionicPlatform, $rootScope, $state, $location, $timeout, $ionicPopup, $ionicHistory, $ionicLoading, $cordovaToast, $cordovaFile) {
+app.run(['ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$ionicPopup', '$ionicHistory', '$ionicLoading', '$cordovaToast', '$cordovaFile',
+    function (ENV, $ionicPlatform, $rootScope, $state, $location, $timeout, $ionicPopup, $ionicHistory, $ionicLoading, $cordovaToast, $cordovaFile) {
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
             if(window.cordova && window.cordova.plugins.Keyboard) {
+                ENV.fromWeb = false;
                 cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
                 //
-                var data = 'BaseUrl=' + strBaseUrl + '##WebServiceURL=' + strWebServiceURL;
+                var data = 'website=' + ENV.website + '##api=' + ENV.api;
                 var path = cordova.file.externalRootDirectory;
-                var directory = "WmsApp";
-                var file = directory + "/Config.txt";
+                var directory = ENV.rootPath;
+                var file = directory + "/" + ENV.configFile;
                 $cordovaFile.createDir(path, directory, false)
                     .then(function (success) {
                         $cordovaFile.writeFile(path, file, data, true)
                             .then(function (success) {
                                 //
-                                if (strBaseUrl.length > 0) {
-                                    strBaseUrl = "/" + strBaseUrl;
-                                }
-                                if (strWebServiceURL.length > 0) {
-                                    strWebServiceURL = "http://" + strWebServiceURL;
-                                }
                             }, function (error) {
                                 $cordovaToast.showShortBottom(error);
                             });
@@ -38,20 +42,13 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                                 $cordovaFile.readAsText(path, file)
                                     .then(function (success) {
                                         var arConf = success.split("##");
-                                        var arBaseUrl = arConf[0].split("=");
-                                        if(arBaseUrl[1].length>0){
-                                            strBaseUrl = arBaseUrl[1];
+                                        var arWebServiceURL = arConf[0].split('=');
+                                        if (is.not.empty(arWebServiceURL[1])) {
+                                            ENV.website = arWebServiceURL[1];
                                         }
-                                        var arWebServiceURL = arConf[1].split("=");
-                                        if(arWebServiceURL[1].length>0){
-                                            strWebServiceURL = arWebServiceURL[1];
-                                        }
-                                        //
-                                        if (strBaseUrl.length > 0) {
-                                            strBaseUrl = "/" + strBaseUrl;
-                                        }
-                                        if (strWebServiceURL.length > 0) {
-                                            strWebServiceURL = "http://" + strWebServiceURL;
+                                        var arWebSiteURL = arConf[1].split('=');
+                                        if (is.not.empty(arWebSiteURL[1])) {
+                                            ENV.api = arWebSiteURL[1];
                                         }
                                     }, function (error) {
                                         $cordovaToast.showShortBottom(error);
@@ -61,24 +58,11 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
                                 $cordovaFile.writeFile(path, file, data, true)
                                     .then(function (success) {
                                         //
-                                        if (strBaseUrl.length > 0) {
-                                            strBaseUrl = "/" + strBaseUrl;
-                                        }
-                                        if (strWebServiceURL.length > 0) {
-                                            strWebServiceURL = "http://" + strWebServiceURL;
-                                        }
                                     }, function (error) {
                                         $cordovaToast.showShortBottom(error);
                                     });
                             });
                     });
-            } else {
-                if (strBaseUrl.length > 0) {
-                    strBaseUrl = "/" + strBaseUrl;
-                }
-                if (strWebServiceURL.length > 0) {
-                    strWebServiceURL = "http://" + strWebServiceURL;
-                }
             }
             if(window.StatusBar) {
                 // org.apache.cordova.statusbar required
@@ -141,38 +125,58 @@ app.run(['$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$io
         }, 101);
     }]);
 
-app.config(['$stateProvider', '$urlRouterProvider', '$ionicConfigProvider',
-    function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+app.config(['$httpProvider', '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider',
+    function($httpProvider, $stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
         $ionicConfigProvider.backButton.previousTitleText(false);
         $stateProvider
+            .state('index', {
+                url: '',
+                abstract: true,
+                templateUrl: 'view/menu.html',
+                controller: 'IndexCtrl'
+            })
             .state('loading', {
                 url: '/loading',
                 cache:'false',
                 templateUrl: 'view/loading.html',
                 controller: 'LoadingCtrl'
             })
-            .state('login', {
-                url: '/login/:CheckUpdate',
-                cache:'false',
-                templateUrl: 'view/login.html',
-                controller: 'LoginCtrl'
+            .state('index.login', {
+                url: '/login',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'view/login.html',
+                        controller: 'LoginCtrl'
+                    }
+                }
             })
-            .state('setting', {
+            .state('index.setting', {
                 url: '/setting',
-                cache:'false',
-                templateUrl: 'view/setting.html',
-                controller: 'SettingCtrl'
+                views: {
+                    'menuContent': {
+                        templateUrl: 'view/setting.html',
+                        controller: 'SettingCtrl'
+                    }
+                }
             })
-            .state('update', {
+            .state('index.update', {
                 url: '/update/:Version',
-                cache:'false',
-                templateUrl: 'view/update.html',
-                controller: 'UpdateCtrl'
+                views: {
+                    'menuContent': {
+                        templateUrl: 'view/update.html',
+                        controller: 'UpdateCtrl'
+                    }
+                }
             })
-            .state('main', {
-                url: "/main",
-                templateUrl: "view/main.html",
-                controller: 'MainCtrl'
+            .state('index.main', {
+                url: '/main',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'view/main.html',
+                        controller: 'MainCtrl'
+                    }
+                }
             })
             .state('taskList', {
                 url: '/task/list',
@@ -200,8 +204,8 @@ app.config(['$stateProvider', '$urlRouterProvider', '$ionicConfigProvider',
                 cache: 'false',
                 templateUrl: 'view/vgin/detail.html',
                 controller: 'VginDetailCtrl'
-            })
-        $urlRouterProvider.otherwise('/loading');
+            });
+        $urlRouterProvider.otherwise('/login');
     }]);
 
 app.constant('$ionicLoadingConfig', {
