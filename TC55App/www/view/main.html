@@ -11,15 +11,18 @@
         <div style="text-align:center;">
             <div class="row row-center" style="margin-right: 0px;margin-left: 0px;">
                 <div style="width:0.5em;"></div>
-                <div class="col" style="background-color: rgba(134,199,69,1); height:11.5em;">
+                <div class="col" style="background-color: rgba(134,199,69,1); height:11em;">
                     <button class="button button-large button-full button-icon icon ion-home" style="color:#FFF;">
                         <p>Dashboard</p>
                     </button>
                 </div>
                 <div style="width:1em;"></div>
-                <div class="col" style="background-color: rgba(242,97,42,1); height:11.5em;">
-                    <button class="button button-icon button-large icon ion-calendar" style="height:100%;color:#FFF;" ng-click="func_GoToGrt()">
-                        <p>Goods Receipt Tally</p>
+                <div class="col" style="background-color: rgba(242,97,42,1); height:11em;">
+                    <button class="button button-icon button-large icon ion-calendar" style="height:100%;color:#FFF;" ng-click="func_GR()">
+                        <p style="line-height: 1.4em;">
+                            <span>Goods</span>
+                            <span>Receipt Tally</span>
+                        </p>
                     </button>
                 </div>
                 <div style="width:0.5em;"></div>
@@ -27,15 +30,18 @@
             <div style="height: 0.1em"></div>
             <div class="row row-center" style="margin-right: 0px;margin-left: 0px;">
                 <div style="width:0.5em;"></div>
-                <div class="col" style="background-color: rgba(164,54,165,1); height:11.5em;">
+                <div class="col" style="background-color: rgba(164,54,165,1); height:11em;">
                     <button class="button button-icon button-large icon ion-android-locate" style="height:100%;color:#FFF;" ng-click="func_Putaway()">
                         <p>Putaway</p>
                     </button>
                 </div>
                 <div style="width:1em;"></div>
-                <div class="col" style="background-color: rgba(0,141,222,1); height:11.5em;">
-                    <button class="button button-icon button-large icon ion-android-document" style="height:100%;color:#FFF;" ng-click="func_GoToVgin()">
-                        <p>Pick</p>
+                <div class="col" style="background-color: rgba(0,141,222,1); height:11em;">
+                    <button class="button button-icon button-large icon ion-android-document" style="height:100%;color:#FFF;" ng-click="func_GT()">
+                        <p style="line-height: 1.4em;">
+                            <span>Goods</span>
+                            <span>Transfer</span>
+                        </p>
                     </button>
                 </div>
                 <div style="width:0.5em;"></div>
@@ -43,14 +49,14 @@
             <div style="height: 0.1em"></div>
             <div class="row row-center" style="margin-right: 0px;margin-left: 0px;">
                 <div style="width:0.5em;"></div>
-                <div class="col" style="background-color: rgba(4,83,119,1); height:11.5em;">
-                    <button class="button button-icon button-large icon ion-arrow-graph-up-right" style="height:100%;color:#FFF;" ng-click="func_GoToVgrn()">
-                        <p>Verify GRN</p>
+                <div class="col" style="background-color: rgba(4,83,119,1); height:11em;">
+                    <button class="button button-icon button-large icon ion-arrow-graph-up-right" style="height:100%;color:#FFF;" ng-click="func_Picking()">
+                        <p>Picking</p>
                     </button>
                 </div>
                 <div style="width:1em;"></div>
-                <div class="col" style="background-color: rgba(253,175,23,1); height:11.5em;">
-                    <button class="button button-icon button-large icon ion-settings" style="height:100%;color:#FFF;" ng-click="func_GoToVgin()">
+                <div class="col" style="background-color: rgba(253,175,23,0.9); height:11em;">
+                    <button class="button button-icon button-large icon ion-settings" style="height:100%;color:#FFF;" ng-click="func_Vgin()">
                         <p>Verify GIN</p>
                     </button>
                 </div>

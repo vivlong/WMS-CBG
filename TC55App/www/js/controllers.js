@@ -13,10 +13,11 @@ var appControllers = angular.module( 'WMSAPP.controllers', [
     'WMSAPP.services'
 ] );
 
-appControllers.controller( 'IndexCtrl', [ 'ENV', '$scope', '$state', '$rootScope',
-    '$ionicLoading', '$ionicPopup', '$ionicSideMenuDelegate',
-    function( ENV, $scope, $state, $rootScope, $ionicLoading, $ionicPopup,
-        $ionicSideMenuDelegate ) {
+appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state',
+    '$ionicPopup', '$ionicSideMenuDelegate',
+    function( ENV, $rootScope, $scope, $state, $ionicPopup, $ionicSideMenuDelegate ) {
+        var alertPopup = null;
+        var alertPopupTitle = '';
         $scope.Status = {
             Login: false
         };
@@ -42,22 +43,25 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$scope', '$state', '$rootScope
                                     'Version': serverAppVersion
                                 } );
                             } else {
-                                var alertPopup = $ionicPopup.alert( {
-                                    title: "Already the Latest Version!",
+                                alertPopupTitle = 'Already the Latest Version!';
+                                alertPopup = $ionicPopup.alert( {
+                                    title: alertPopupTitle,
                                     okType: 'button-assertive'
                                 } );
                             }
                         } );
                     } )
                     .error( function( res ) {
-                        var alertPopup = $ionicPopup.alert( {
-                            title: "Connect Update Server Error!",
+                        alertPopupTitle = 'Connect Update Server Error!';
+                        alertPopup = $ionicPopup.alert( {
+                            title: alertPopupTitle,
                             okType: 'button-assertive'
                         } );
                     } );
             } else {
-                var alertPopup = $ionicPopup.alert( {
-                    title: "Web Platform Not Supported!",
+                alertPopupTitle = 'Web Platform Not Supported!';
+                alertPopup = $ionicPopup.alert( {
+                    title: alertPopupTitle,
                     okType: 'button-assertive'
                 } );
             }
@@ -75,21 +79,20 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$scope', '$state', '$rootScope
 appControllers.controller( 'SplashCtrl', [ '$state', '$timeout',
     function( $state, $timeout ) {
         $timeout( function() {
-            $state.go( 'index.login', {
-            }, {
+            $state.go( 'index.login', {}, {
                 reload: true
             } );
         }, 2500 );
     } ] );
 
-appControllers.controller( 'LoginCtrl', [ '$scope', '$http', '$state', '$stateParams', '$ionicPopup', '$timeout', '$ionicLoading', '$cordovaToast', '$cordovaAppVersion', 'ApiService',
-    function( $scope, $http, $state, $stateParams, $ionicPopup, $timeout, $ionicLoading, $cordovaToast, $cordovaAppVersion, ApiService ) {
+appControllers.controller( 'LoginCtrl', [ '$rootScope', '$scope', '$state', '$stateParams', '$ionicPopup', '$timeout', 'ApiService',
+    function( $rootScope, $scope, $state, $stateParams, $ionicPopup, $timeout, ApiService ) {
         $scope.logininfo = {};
         if ( undefined == $scope.logininfo.strUserName ) {
-            $scope.logininfo.strUserName = "";
+            $scope.logininfo.strUserName = '';
         }
         if ( undefined == $scope.logininfo.strPassword ) {
-            $scope.logininfo.strPassword = "";
+            $scope.logininfo.strPassword = '';
         }
         $( '#iUserName' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
@@ -101,62 +104,11 @@ appControllers.controller( 'LoginCtrl', [ '$scope', '$http', '$state', '$statePa
                 $scope.login();
             }
         } );
-        if ( $stateParams.CheckUpdate === 'Y' ) {
-            var url = strWebServiceURL + strBaseUrl + '/update.json';
-            $http.get( url )
-                .success( function( res ) {
-                    var serverAppVersion = res.version;
-                    $cordovaAppVersion.getVersionNumber().then( function( version ) {
-                        if ( version != serverAppVersion ) {
-                            $state.go( 'index.update', {
-                                'Version': serverAppVersion
-                            } );
-                        }
-                    } );
-                } )
-                .error( function( res ) {} );
-        }
-        $scope.checkUpdate = function() {
-            var url = strWebServiceURL + strBaseUrl + '/update.json';
-            $http.get( url )
-                .success( function( res ) {
-                    var serverAppVersion = res.version;
-                    $cordovaAppVersion.getVersionNumber().then( function( version ) {
-                        if ( version != serverAppVersion ) {
-                            $state.go( 'index.update', {
-                                'Version': serverAppVersion
-                            } );
-                        } else {
-                            var alertPopup = $ionicPopup.alert( {
-                                title: "Already the Latest Version!",
-                                okType: 'button-assertive'
-                            } );
-                            $timeout( function() {
-                                alertPopup.close();
-                            }, 2500 );
-                        }
-                    } );
-                } )
-                .error( function( res ) {
-                    var alertPopup = $ionicPopup.alert( {
-                        title: "Connect Update Server Error!",
-                        okType: 'button-assertive'
-                    } );
-                    $timeout( function() {
-                        alertPopup.close();
-                    }, 2500 );
-                } );
-        };
-        $scope.setConf = function() {
-            $state.go( 'setting', {}, {
-                reload: true
-            } );
-        };
         $scope.login = function() {
             if ( window.cordova && window.cordova.plugins.Keyboard ) {
                 cordova.plugins.Keyboard.close();
             }
-            if ( $scope.logininfo.strUserName == "" ) {
+            if ( $scope.logininfo.strUserName == '' ) {
                 var alertPopup = $ionicPopup.alert( {
                     title: 'Please Enter User Name.',
                     okType: 'button-assertive'
@@ -167,7 +119,7 @@ appControllers.controller( 'LoginCtrl', [ '$scope', '$http', '$state', '$statePa
                 return;
             }
             /*
-            if ($scope.logininfo.strPassword == "") {
+            if ($scope.logininfo.strPassword == '') {
                 var alertPopup = $ionicPopup.alert({
                     title: 'Please Enter Password.',
                     okType: 'button-assertive'
@@ -178,15 +130,11 @@ appControllers.controller( 'LoginCtrl', [ '$scope', '$http', '$state', '$statePa
                 return;
             }
             */
-            $ionicLoading.show();
-            var jsonData = {
-                "UserId": $scope.logininfo.strUserName,
-                "Password": hex_md5( $scope.logininfo.strPassword )
-            };
-            var strUri = "/api/wms/action/list/login";
-            ApiService.GetParam( strUri, jsonData, true ).then( function success( result ) {
+            var strUri = '/api/wms/login/check?UserId=' + $scope.logininfo.strUserName + '&Password=' + hex_md5( $scope.logininfo.strPassword );
+            ApiService.GetParam( strUri, true ).then( function success( result ) {
+                $rootScope.$broadcast( 'login' );
                 sessionStorage.clear();
-                sessionStorage.setItem( "UserId", $scope.logininfo.strUserName );
+                sessionStorage.setItem( 'UserId', $scope.logininfo.strUserName );
                 $state.go( 'index.main', {}, {
                     reload: true
                 } );
@@ -205,8 +153,7 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$scope', '$state', '$ionicHi
             if ( $ionicHistory.backView() ) {
                 $ionicHistory.goBack();
             } else {
-                $state.go( 'index.login', {
-                }, {
+                $state.go( 'index.login', {}, {
                     reload: true
                 } );
             }
@@ -228,16 +175,14 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$scope', '$state', '$ionicHi
                 var file = ENV.rootPath + '/' + ENV.configFile;
                 $cordovaFile.writeFile( path, file, data, true )
                     .then( function( success ) {
-                        $state.go( 'index.login', {
-                        }, {
+                        $state.go( 'index.login', {}, {
                             reload: true
                         } );
                     }, function( error ) {
                         $cordovaToast.showShortBottom( error );
                     } );
             } else {
-                $state.go( 'index.login', {
-                }, {
+                $state.go( 'index.login', {}, {
                     reload: true
                 } );
             }
@@ -265,8 +210,7 @@ appControllers.controller( 'UpdateCtrl', [ 'ENV', '$scope', '$state', '$statePar
             onError();
         };
         var onError = function() {
-            $state.go( 'index.login', {
-            }, {
+            $state.go( 'index.login', {}, {
                 reload: true
             } );
         };
@@ -275,25 +219,30 @@ appControllers.controller( 'UpdateCtrl', [ 'ENV', '$scope', '$state', '$statePar
         };
     } ] );
 
-appControllers.controller( 'MainCtrl', [ '$scope', '$http', '$state', '$stateParams', '$ionicPopup', '$timeout', 'ApiService',
-    function( $scope, $http, $state, $stateParams, $ionicPopup, $timeout, ApiService ) {
-        $scope.GoToTask = function() {
-            $state.go( 'taskList', {}, {
-                reload: true
-            } );
-        }
-        $scope.GoToGrt = function() {
-            $state.go( 'grtList', {}, {
+appControllers.controller( 'MainCtrl', [ '$scope', '$state',
+    function( $scope, $state ) {
+        $scope.func_GR = function() {
+            $state.go( 'grList', {}, {
                 reload: true
             } );
         };
-        $scope.GoToVgin = function() {
+        $scope.func_Putaway = function() {
+            $state.go( 'grList', {}, {
+                reload: true
+            } );
+        };
+        $scope.func_GT = function() {
+            $state.go( 'grList', {}, {
+                reload: true
+            } );
+        };
+        $scope.func_Vgin = function() {
             $state.go( 'vginList', {}, {
                 reload: true
             } );
         };
-        $scope.GoToSetting = function() {
-            $state.go( 'setting', {}, {
+        $scope.func_Picking = function() {
+            $state.go( 'grList', {}, {
                 reload: true
             } );
         };

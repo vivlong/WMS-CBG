@@ -178,31 +178,26 @@ app.config(['$httpProvider', '$stateProvider', '$urlRouterProvider', '$ionicConf
                     }
                 }
             })
-            .state('taskList', {
-                url: '/task/list',
-                templateUrl: 'view/task/list.html',
-                controller: 'TaskListCtrl'
+            .state('grList', {
+                url: '/gr/list',
+                templateUrl: 'view/GoodsReceipt/list.html',
+                controller: 'GrListCtrl'
             })
-            .state('grtList', {
-                url: '/grt/list',
-                templateUrl: 'view/grt/list.html',
-                controller: 'GrtListCtrl'
-            })
-            .state('grtDetail', {
-                url: '/grt/detail/:CustomerCode/:TrxNo/:GoodsReceiptNoteNo',
+            .state('grDetail', {
+                url: '/gr/detail/:CustomerCode/:TrxNo/:GoodsReceiptNoteNo',
                 cache: 'false',
-                templateUrl: 'view/grt/detail.html',
-                controller: 'GrtDetailCtrl'
+                templateUrl: 'view/GoodsReceipt/detail.html',
+                controller: 'GrDetailCtrl'
             })
             .state('vginList', {
                 url: '/vgin/list',
-                templateUrl: 'view/vgin/list.html',
+                templateUrl: 'view/VerifyGIN/list.html',
                 controller: 'VginListCtrl'
             })
             .state('vginDetail', {
                 url: '/vgin/detail/:CustomerCode/:TrxNo/:GoodsIssueNoteNo',
                 cache: 'false',
-                templateUrl: 'view/vgin/detail.html',
+                templateUrl: 'view/VerifyGIN/detail.html',
                 controller: 'VginDetailCtrl'
             });
         $urlRouterProvider.otherwise('/login');

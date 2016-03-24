@@ -1,6 +1,7 @@
-﻿<ion-view title="GRT-List">
+
+<ion-view title="GRT-List">
     <ion-header-bar class="bar-positive" align-title="center">
-        <button class="button button-icon icon ion-navicon" ng-click="returnMain()"></button>
+        <button class="button button-icon icon ion-android-arrow-back" ng-click="returnMain()"></button>
         <div class="h1 title">Goods Receipt Tally</div>
     </ion-header-bar>
     <ion-pane style="margin-top:44px; height:70px; overflow:visible;">
@@ -10,15 +11,9 @@
                     <label>Customer</label>
                 </div>
                 <div class="col col-67">
-                    <ui-select ng-model="Rcbp1.selected"
-                               theme="bootstrap"
-                               reset-search-input="true"
-                               on-select="ShowImgr1(Rcbp1.selected.BusinessPartyCode)">
-                        <ui-select-match allow-clear="true" placeholder="Enter to search..." style="overflow:hidden;">{{$select.selected.BusinessPartyCode}}</ui-select-match>
-                        <ui-select-choices repeat="Rcbp1 in Rcbp1s track by $index"
-                                           refresh="refreshRcbp1($select.search)"
-                                           refresh-delay="0"
-                                           position="down">
+                    <ui-select ng-model="Rcbp1.selected" theme="bootstrap" reset-search-input="true" on-select="ShowImgr1(Rcbp1.selected.BusinessPartyCode)">
+                        <ui-select-match allow-clear="true" placeholder="Enter to search..." style="overflow:hidden;">{{$select.selected.BusinessPartyName}}</ui-select-match>
+                        <ui-select-choices repeat="Rcbp1 in Rcbp1s track by $index" refresh="refreshRcbp1($select.search)" refresh-delay="0" position="down">
                             <div ng-bind="Rcbp1.BusinessPartyName"></div>
                         </ui-select-choices>
                     </ui-select>
@@ -29,22 +24,16 @@
                     <label>GRN No</label>
                 </div>
                 <div class="col col-67">
-                    <ui-select theme="bootstrap"
-                               ng-model="GrnNo.selected"
-                               reset-search-input="true"
-                               on-select="GoToDetail(GrnNo.selected)">
+                    <ui-select theme="bootstrap" ng-model="GrnNo.selected" reset-search-input="true" on-select="GoToDetail(GrnNo.selected)">
                         <ui-select-match allow-clear="true" placeholder="Enter to search..." style="overflow:hidden;">{{$select.selected.GoodsReceiptNoteNo}}</ui-select-match>
-                        <ui-select-choices repeat="GrnNo in GrnNos track by $index"
-                                           refresh="refreshGrnNos($select.search)"
-                                           refresh-delay="0"
-                                           position="down">
+                        <ui-select-choices repeat="GrnNo in GrnNos track by $index" refresh="refreshGrnNos($select.search)" refresh-delay="0" position="down">
                             <div ng-bind="GrnNo.GoodsReceiptNoteNo"></div>
                         </ui-select-choices>
                     </ui-select>
                 </div>
             </div>
-            <hr style="margin-top:-0.3em;"> 
-        </div>    
+            <hr style="margin-top:-0.3em;">
+        </div>
     </ion-pane>
     <ion-content style="margin-top:100px;">
         <ion-list id="div-grt-list" tabindex="-1">
