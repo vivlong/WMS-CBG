@@ -72,8 +72,7 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$scope', '$state', '$rootScope
     }
 ] );
 
-
-appControllers.controller( 'LoadingCtrl', [ '$state', '$timeout',
+appControllers.controller( 'SplashCtrl', [ '$state', '$timeout',
     function( $state, $timeout ) {
         $timeout( function() {
             $state.go( 'index.login', {
@@ -298,22 +297,4 @@ appControllers.controller( 'MainCtrl', [ '$scope', '$http', '$state', '$statePar
                 reload: true
             } );
         };
-    } ] );
-
-appControllers.controller( 'TaskListCtrl', [ '$scope', '$stateParams', '$state', '$http', '$timeout', '$ionicLoading', '$ionicPopup', 'ApiService',
-    function( $scope, $stateParams, $state, $http, $timeout, $ionicLoading, $ionicPopup, ApiService ) {
-        var returnMainFun = function() {
-            $state.go( 'main', {}, {
-                reload: true
-            } );
-        };
-        $scope.returnMain = returnMainFun;
-        var alertPopup = $ionicPopup.alert( {
-            title: 'No Tasks.',
-            okType: 'button-calm'
-        } );
-        $timeout( function() {
-            alertPopup.close();
-            returnMainFun();
-        }, 2500 );
     } ] );

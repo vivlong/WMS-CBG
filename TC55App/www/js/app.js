@@ -127,7 +127,7 @@ app.run(['ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeout
 
 app.config(['$httpProvider', '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider',
     function($httpProvider, $stateProvider, $urlRouterProvider, $ionicConfigProvider) {
-        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+        //$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
         $ionicConfigProvider.backButton.previousTitleText(false);
         $stateProvider
             .state('index', {
@@ -136,11 +136,11 @@ app.config(['$httpProvider', '$stateProvider', '$urlRouterProvider', '$ionicConf
                 templateUrl: 'view/menu.html',
                 controller: 'IndexCtrl'
             })
-            .state('loading', {
-                url: '/loading',
+            .state('splash', {
+                url: '/splash',
                 cache:'false',
-                templateUrl: 'view/loading.html',
-                controller: 'LoadingCtrl'
+                templateUrl: 'view/splash.html',
+                controller: 'SplashCtrl'
             })
             .state('index.login', {
                 url: '/login',
