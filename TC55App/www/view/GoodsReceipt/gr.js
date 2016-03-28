@@ -1,24 +1,14 @@
-appControllers.controller( 'GrListCtrl', [ '$scope', '$stateParams', '$state', '$ionicPopup', 'ApiService',
-    function( $scope, $stateParams, $state, $ionicPopup, ApiService ) {
+appControllers.controller( 'GrListCtrl', ['ENV', '$scope', '$stateParams', '$state', '$ionicPopup', 'ApiService',
+    function( ENV, $scope, $stateParams, $state, $ionicPopup, ApiService ) {
         var alertPopup = null;
         var alertPopupTitle = '';
         $scope.Rcbp1 = {};
         $scope.GrnNo = {};
         $scope.Imgr1s = {};
         $scope.refreshRcbp1 = function( BusinessPartyName ) {
-            var strUri = '/api/wms/rcbp1?' + BusinessPartyName;
+            var strUri = '/api/wms/rcbp1?BusinessPartyName=' + BusinessPartyName;
             ApiService.GetParam( strUri, true ).then( function success( result ) {
                 $scope.Rcbp1s = result.data.results;
-                if ( result.data.results.length == 0 ) {
-                    alertPopupTitle = 'No Customer Found.';
-                    alertPopup = $ionicPopup.alert( {
-                        title: alertPopupTitle,
-                        okType: 'button-calm'
-                    } );
-                    alertPopup.then( function( res ) {
-                        console.log( alertPopupTitle );
-                    } );
-                }
             } );
         };
         $scope.refreshGrnNos = function( Grn ) {
@@ -62,6 +52,53 @@ appControllers.controller( 'GrListCtrl', [ '$scope', '$stateParams', '$state', '
             }
         } ) );
         $( '#div-list-rcbp' ).focus();
+        var BhEngine = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: ENV.api + '/api/wms/rcbp1?BusinessPartyName=%QUERY&format=json',
+                wildcard: '%QUERY',
+                transform : function(result){
+                    return $.map(result.data.results, function (rcbp1) {
+                        return {
+                            value: rcbp1.BusinessPartyName
+                        };
+                    });
+                }
+            }
+        });
+        BhEngine.initialize();
+        $('#scrollable-dropdown-menu .typeahead').typeahead({
+                hint: false,
+                highlight: true,
+                minLength: 1
+            }, {
+                name: 'BusinessPartyNames',
+                limit: 10,
+                displayKey: 'value',
+                source: BhEngine.ttAdapter(),
+                templates: {
+                    empty: [
+                        '<div class="tt-empty-message">',
+                        'No Results Found',
+                        '</div>'
+                    ].join('\n'),
+                    suggestion: function(data){
+                        return '<p><strong>' + data.value + '</strong></p>';
+                    }
+                }
+        });
+        $('input').on([
+            'typeahead:initialized',
+            'typeahead:initialized:err',
+            'typeahead:selected',
+            'typeahead:autocompleted',
+            'typeahead:cursorchanged',
+            'typeahead:opened',
+            'typeahead:closed'
+        ].join(' '), function(d) {
+            console.log(this.value);
+        });
     } ] );
 
 appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state', '$http', '$timeout', '$ionicHistory', '$ionicLoading', '$ionicPopup', '$ionicModal', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
@@ -122,7 +159,7 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                     mapValue.TrxNo = $scope.grtDetailImgr2[ i ].TrxNo.toString();
                     mapValue.LineItemNo = $scope.grtDetailImgr2[ i ].LineItemNo.toString();
                     mapBarCodeScanQty.remove( numBarcode );
-                    mapBarCodeScanQty.put( numBarcode, mapValue );
+                    mapBarCodeScanQty.set( numBarcode, mapValue );
                     existsProductCode = true;
                     break;
                 }
@@ -144,7 +181,7 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                 } else {
                     mapValue.CurrentQty += 1;
                     mapBarCodeScanQty.remove( numBarcode );
-                    mapBarCodeScanQty.put( numBarcode, mapValue );
+                    mapBarCodeScanQty.set( numBarcode, mapValue );
                     $scope.grtDetail.Qty = mapValue.CurrentQty;
                     $( '#txt-grt-detail-barcode' ).select();
                     if ( dbWms ) {
@@ -182,7 +219,7 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                 mapValue.TrxNo = 0;
                 mapValue.LineItemNo = 0;
                 mapValue.CurrentQty = 0;
-                mapBarCodeScanQty.put( numBarcode, mapValue );
+                mapBarCodeScanQty.set( numBarcode, mapValue );
                 setBarCodeQty( numBarcode, mapValue );
             }, function error( result ) {
                 $scope.grtDetailImpr1 = {};
@@ -238,10 +275,10 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
             }
             SnArray.push( sn );
             mapSnScanQty.remove( $scope.grtDetail.strBarCode );
-            mapSnScanQty.put( $scope.grtDetail.strBarCode, SnArray );
+            mapSnScanQty.set( $scope.grtDetail.strBarCode, SnArray );
             mapValue.CurrentQty += 1;
             mapBarCodeScanQty.remove( $scope.grtDetail.strBarCode );
-            mapBarCodeScanQty.put( $scope.grtDetail.strBarCode, mapValue );
+            mapBarCodeScanQty.set( $scope.grtDetail.strBarCode, mapValue );
             $scope.grtDetail.Qty = mapValue.CurrentQty;
             if ( dbWms ) {
                 dbWms.transaction( function( tx ) {
@@ -266,12 +303,12 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                     } else {
                         SnArray = new Array();
                         SnArray.push( sn );
-                        mapSnScanQty.put( $scope.grtDetail.strBarCode, SnArray );
+                        mapSnScanQty.set( $scope.grtDetail.strBarCode, SnArray );
                     }
                 } else {
                     SnArray = new Array();
                     SnArray.push( sn );
-                    mapSnScanQty.put( $scope.grtDetail.strBarCode, SnArray );
+                    mapSnScanQty.set( $scope.grtDetail.strBarCode, SnArray );
                 }
                 setSnQty( sn, SnArray, mapBcValue );
             }

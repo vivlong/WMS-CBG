@@ -184,7 +184,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
             var intPackingQty = vginDetailImgi2Actual.PackingQty;
             var intWholeQty = vginDetailImgi2Actual.WholeQty;
             var intLooseQty = vginDetailImgi2Actual.LooseQty;
-            mapBarCodeScanQty.put( strBarCode, 0 );
+            mapBarCodeScanQty.set( strBarCode, 0 );
             if ( dbWms ) {
                 dbWms.transaction( function( tx ) {
                     tx.executeSql( "INSERT INTO Imgi2 (TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, DimensionFlag, ProductName, SerialNoFlag, BarCode, PackingQty, WholeQty, LooseQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?)", [ intTrxNo, intLineItemNo, strStoreNo, intProductTrxNo, strProductCode, strDimensionFlag, strProductName, strSerialNoFlag, strBarCode, intPackingQty, intWholeQty, intLooseQty ], null, dbError );
@@ -221,7 +221,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
         };
         GetImgi2ProductCode( $scope.vginDetail.strGIN );
         var insertImsn1 = function( Imsn1 ) {
-            mapSnSerialNo.put( Imsn1.IssueNoteNo + "#" + Imsn1.IssueLineItemNo, Imsn1.SerialNo );
+            mapSnSerialNo.set( Imsn1.IssueNoteNo + "#" + Imsn1.IssueLineItemNo, Imsn1.SerialNo );
             if ( dbWms ) {
                 dbWms.transaction( function( tx ) {
                     dbSql = "INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)"
@@ -261,7 +261,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 } else {
                     CurrentQty += 1;
                     mapBarCodeScanQty.remove( numBarcode );
-                    mapBarCodeScanQty.put( numBarcode, CurrentQty );
+                    mapBarCodeScanQty.set( numBarcode, CurrentQty );
                     $scope.vginDetail.QtyScan = CurrentQty;
                     $( '#txt-detail-barcode' ).select();
                     if ( dbWms ) {
@@ -313,10 +313,10 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
             }
             SnArray.push( sn );
             mapSnScanQty.remove( $scope.vginDetail.BarCodeScan );
-            mapSnScanQty.put( $scope.vginDetail.BarCodeScan, SnArray );
+            mapSnScanQty.set( $scope.vginDetail.BarCodeScan, SnArray );
             CurrentQty += 1;
             mapBarCodeScanQty.remove( $scope.vginDetail.BarCodeScan );
-            mapBarCodeScanQty.put( $scope.vginDetail.BarCodeScan, CurrentQty );
+            mapBarCodeScanQty.set( $scope.vginDetail.BarCodeScan, CurrentQty );
             $scope.vginDetail.QtyScan = CurrentQty;
             if ( dbWms ) {
                 dbWms.transaction( function( tx ) {
@@ -342,12 +342,12 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                     } else {
                         SnArray = new Array();
                         SnArray.push( sn );
-                        mapSnScanQty.put( $scope.vginDetail.BarCodeScan, SnArray );
+                        mapSnScanQty.set( $scope.vginDetail.BarCodeScan, SnArray );
                     }
                 } else {
                     SnArray = new Array();
                     SnArray.push( sn );
-                    mapSnScanQty.put( $scope.vginDetail.BarCodeScan, SnArray );
+                    mapSnScanQty.set( $scope.vginDetail.BarCodeScan, SnArray );
                 }
                 setSnQty( sn, SnArray, CurrentQty );
             }
@@ -359,7 +359,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
         } );
         var updateQty = function() {
             mapSnScanQty.remove( $scope.vginDetail.BarCodeScan );
-            mapSnScanQty.put( $scope.vginDetail.BarCodeScan, $scope.vginDetail.QtyScan );
+            mapSnScanQty.set( $scope.vginDetail.BarCodeScan, $scope.vginDetail.QtyScan );
             if ( dbWms ) {
                 dbWms.transaction( function( tx ) {
                     dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
