@@ -1,5 +1,5 @@
 # WMS APP
-SysFreight WMS APP For Motorola TC55
+SysFreight WMS APP For CBG
 
 # Environment
 Apache Cordova
