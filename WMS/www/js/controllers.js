@@ -13,9 +13,9 @@ var appControllers = angular.module( 'WMSAPP.controllers', [
     'WMSAPP.services'
 ] );
 
-appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state',
+appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state', '$http',
     '$ionicPopup', '$ionicSideMenuDelegate',
-    function( ENV, $rootScope, $scope, $state, $ionicPopup, $ionicSideMenuDelegate ) {
+    function( ENV, $rootScope, $scope, $state, $http, $ionicPopup, $ionicSideMenuDelegate ) {
         var alertPopup = null;
         var alertPopupTitle = '';
         $scope.Status = {
@@ -32,7 +32,7 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state
         };
         $scope.gotoUpdate = function() {
             if ( !ENV.fromWeb ) {
-                var url = ENV.website + '/update.json';
+                var url = ENV.website + '/' + ENV.updateFile;
                 $http.get( url )
                     .success( function( res ) {
                         var serverAppVersion = res.version;
@@ -142,12 +142,13 @@ appControllers.controller( 'LoginCtrl', [ '$rootScope', '$scope', '$state', '$st
         };
     } ] );
 
-appControllers.controller( 'SettingCtrl', [ 'ENV', '$scope', '$state', '$ionicHistory', '$ionicPopup', '$cordovaToast', '$cordovaFile',
-    function( ENV, $scope, $state, $ionicHistory, $ionicPopup, $cordovaToast, $cordovaFile ) {
+appControllers.controller( 'SettingCtrl', [ 'ENV', '$rootScope', '$scope', '$state', '$ionicHistory', '$ionicPopup', '$cordovaToast', '$cordovaFile',
+    function( ENV, $rootScope,  $scope, $state, $ionicHistory, $ionicPopup, $cordovaToast, $cordovaFile ) {
         $scope.Setting = {
-            Version: ENV.version,
-            WebApiURL: ENV.api.replace( 'http://', '' ),
-            WebSiteUrl: ENV.website.replace( 'http://', '' )
+            Version:    ENV.version,
+            WebApiURL:  rmProtocol(ENV.api),
+            WebSiteUrl: rmProtocol(ENV.website),
+            SSL:        { checked: ENV.ssl === '0' ? false : true }
         };
         $scope.return = function() {
             if ( $ionicHistory.backView() ) {
@@ -160,21 +161,26 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$scope', '$state', '$ionicHi
         };
         $scope.save = function() {
             if ( is.not.empty( $scope.Setting.WebApiURL ) ) {
-                ENV.api = onStrToURL( $scope.Setting.WebApiURL );
+                ENV.api = $scope.Setting.WebApiURL;
             } else {
-                $scope.Setting.WebApiURL = ENV.website.replace( 'http://', '' );
+                $scope.Setting.WebApiURL = rmProtocol(ENV.api);
             }
             if ( is.not.empty( $scope.Setting.WebSiteUrl ) ) {
-                ENV.website = onStrToURL( $scope.Setting.WebSiteUrl );
+                ENV.website = $scope.Setting.WebSiteUrl;
             } else {
-                $scope.Setting.WebSiteUrl = ENV.api.replace( 'http://', '' );
+                $scope.Setting.WebSiteUrl = rmProtocol(ENV.website);
             }
+            ENV.ssl = $scope.Setting.SSL.checked ? '1' : '0';
+            var blnSSL = $scope.Setting.SSL.checked ? true : false;
+            ENV.website = appendProtocol(ENV.website, blnSSL, ENV.port);
+            ENV.api     = appendProtocol(ENV.api, blnSSL, ENV.port);
             if ( !ENV.fromWeb ) {
-                var data = 'website=' + ENV.website + '##api=' + ENV.api;
+                var data = 'website=' + ENV.website + '##api=' + ENV.api + '##ssl=' + ENV.ssl;
                 var path = cordova.file.externalRootDirectory;
                 var file = ENV.rootPath + '/' + ENV.configFile;
                 $cordovaFile.writeFile( path, file, data, true )
                     .then( function( success ) {
+                        //$rootScope.$broadcast( 'logout' );
                         $state.go( 'index.login', {}, {
                             reload: true
                         } );
@@ -182,14 +188,16 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$scope', '$state', '$ionicHi
                         $cordovaToast.showShortBottom( error );
                     } );
             } else {
+                //$rootScope.$broadcast( 'logout' );
                 $state.go( 'index.login', {}, {
                     reload: true
                 } );
             }
         };
         $scope.reset = function() {
-            $scope.Setting.WebApiURL = 'www.sysfreight.net:8081/WebApi';
-            $scope.Setting.WebSiteUrl = 'www.sysfreight.net:8081/mobileapp-wh';
+            $scope.Setting.WebApiURL = 'www.sysfreight.net/WebApi';
+            $scope.Setting.WebSiteUrl = 'www.sysfreight.net/mobileapp-wh';
+            $scope.Setting.SSL = { checked: false };
             if ( !ENV.fromWeb ) {
                 var path = cordova.file.externalRootDirectory;
                 var file = ENV.rootPath + '/' + ENV.configFile;
@@ -197,7 +205,7 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$scope', '$state', '$ionicHi
                     .then( function( success ) {
 
                     }, function( error ) {
-                        $cordovaToast.showShortBottom( error );
+                        //$cordovaToast.showShortBottom( error );
                     } );
             }
         };
@@ -215,25 +223,43 @@ appControllers.controller( 'UpdateCtrl', [ 'ENV', '$scope', '$state', '$statePar
             } );
         };
         $scope.upgrade = function() {
-            DownloadFileService.Download( ENV.website + '/WMS.apk', 'application/vnd.android.package-archive', null, onError, onError );
+            DownloadFileService.Download( ENV.website + '/' + ENV.apkName + '.apk', 'application/vnd.android.package-archive', null, onError, onError );
         };
     } ] );
 
-appControllers.controller( 'MainCtrl', [ '$scope', '$state',
-    function( $scope, $state ) {
+appControllers.controller( 'MainCtrl', [ '$scope', '$state', '$ionicPopup',
+    function( $scope, $state, $ionicPopup ) {
+        $scope.func_Dashboard = function() {
+            $ionicPopup.alert( {
+                title: 'Stay Tuned.',
+                okType: 'button-calm'
+            } );
+        };
         $scope.func_GR = function() {
             $state.go( 'grList', {}, {
                 reload: true
             } );
         };
         $scope.func_Putaway = function() {
+            /*
             $state.go( 'grList', {}, {
                 reload: true
             } );
+            */
+            $ionicPopup.alert( {
+                title: 'Stay Tuned.',
+                okType: 'button-calm'
+            } );
         };
         $scope.func_GT = function() {
+            /*
             $state.go( 'grList', {}, {
                 reload: true
+            } );
+            */
+            $ionicPopup.alert( {
+                title: 'Stay Tuned.',
+                okType: 'button-calm'
             } );
         };
         $scope.func_Vgin = function() {
@@ -242,7 +268,7 @@ appControllers.controller( 'MainCtrl', [ '$scope', '$state',
             } );
         };
         $scope.func_Picking = function() {
-            $state.go( 'grList', {}, {
+            $state.go( 'pickingList', {}, {
                 reload: true
             } );
         };

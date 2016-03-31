@@ -18,12 +18,15 @@
         <div class="list list-inset">
             <label class="item item-input item-stacked-label">
                 <span class="input-label">API URL</span>
-                <input type="text" placeholder="www.sysfreight.com:8081/WebApi" ng-model="Setting.WebApiURL">
+                <input type="text" placeholder="www.sysfreight.com/WebApi" ng-model="Setting.WebApiURL">
             </label>
             <label class="item item-input item-stacked-label">
                 <span class="input-label">Web Site URL</span>
-                <input type="text" placeholder="www.sysfreight.net:8081/mobileapp" ng-model="Setting.WebSiteUrl">
-            </label>            
+                <input type="text" placeholder="www.sysfreight.net/mobileapp-wh" ng-model="Setting.WebSiteUrl">
+            </label>
+            <ion-toggle ng-model="Setting.SSL.checked">
+               SSL Encryption
+           </ion-toggle>
         </div>
     </ion-pane>
     <ion-footer-bar class="bar-positive">
