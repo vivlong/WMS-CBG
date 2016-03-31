@@ -1,0 +1,18 @@
+<div class=dashboard-page>
+    <div class=container-fluid>
+        <div class=row>
+            <div class="col-sm-3 col-md-2 sidebar">
+                <div class=text-center>
+                    <h2 class=brand ui-sref=landing>Shake <small><sup><sup>&alpha;lpha</sup></sup> </small> </h2>
+                    <h2> <small>{{userData.firstName || ''}}</small> </h2> </div>
+                <ul class="nav nav-sidebar">
+                    <li ng-class="{active: $state.includes('cards')}"><a ui-sref=cards><i class="fa fa-credit-card nav-icon"></i>My cards<span class=sr-only>(current)</span></a></li>
+                    <li ng-class="{active: $state.includes('fees')}"><a ui-sref=fees><i class="fa fa-usd nav-icon"></i>List of fees</a></li>
+                    <li ng-class="{active: $state.includes('limits')}"><a ui-sref=limits><i class="fa fa-sliders nav-icon"></i>Card limits</a></li>
+                    <li ng-class="{active: $state.includes('account')}"><a ui-sref=account><i class="fa fa-user nav-icon"></i>My account</a></li>
+                    <li><a ng-click=logout() style=cursor:pointer><i class="fa fa-sign-out nav-icon"></i>Logout</a></li>
+                </ul> <span style="font-size:9px;position: absolute;bottom: 10px; padding-right:10px;">The card is issued by Wave Crest Holdings Limited pursuant to a license from Visa Europe. Visa is a registered trademark of Visa Incorporated. Wave Crest Holdings Limited is a licensed electronic money institution by the Financial Services Commission. </span></div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" ui-view> </div>
+        </div>
+    </div>
+</div>
