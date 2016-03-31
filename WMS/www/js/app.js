@@ -74,6 +74,7 @@ app.run( [ 'ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeo
                     } );
             } else {
                 var blnSSL = 'https:' === document.location.protocol ? true : false;
+                ENV.ssl = blnSSL ? '1' : '0';
                 ENV.website = appendProtocol( ENV.website, blnSSL, ENV.port );
                 ENV.api = appendProtocol( ENV.api, blnSSL, ENV.port );
             }
