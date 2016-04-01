@@ -1,15 +1,17 @@
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class=container>
         <div class=navbar-header>
-            <button type=button class="navbar-toggle collapsed" data-toggle=collapse data-target=#navbar aria-expanded=false> <span class=sr-only>Toggle navigation</span> <span class=icon-bar></span> <span class=icon-bar></span> <span class=icon-bar></span> </button> <a class=navbar-brand ui-sref=landing>Shake</a> </div>
+            <button type=button class="navbar-toggle collapsed" data-toggle=collapse data-target=#navbar aria-expanded=false>
+                <span class=sr-only>Toggle navigation</span>
+                <span class=icon-bar></span>
+                <span class=icon-bar></span>
+                <span class=icon-bar></span>
+            </button>
+            <a class=navbar-brand ui-sref=landing>WMS</a>
+        </div>
         <div id=navbar class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right" ng-hide="$state.includes('terms') || $state.includes('privacy')">
-                <li><a href=http://blog.shakepay.co>Blog</a></li>
                 <li><a ui-sref=faq>FAQ</a></li>
-                <li class=hidden-xs>
-                    <p class="navbar-text navbar__separator" style=color:white;cursor:default>|</p>
-                </li>
-                <li> <a ng-hide=auth href=# ui-sref=login>Sign in</a> <a ng-show=auth href=# ui-sref=dashboard>Dashboard</a> </li>
             </ul>
         </div>
     </div>
