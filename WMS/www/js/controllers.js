@@ -59,10 +59,10 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state
                         } );
                     } );
             } else {
-                alertPopupTitle = 'Web Platform Not Supported!';
+                alertPopupTitle = 'No Updates!';
                 alertPopup = $ionicPopup.alert( {
                     title: alertPopupTitle,
-                    okType: 'button-assertive'
+                    okType: 'button-calm'
                 } );
             }
         }
@@ -241,25 +241,13 @@ appControllers.controller( 'MainCtrl', [ '$scope', '$state', '$ionicPopup',
             } );
         };
         $scope.func_Putaway = function() {
-            /*
-            $state.go( 'grList', {}, {
+            $state.go( 'putawayList', {}, {
                 reload: true
-            } );
-            */
-            $ionicPopup.alert( {
-                title: 'Stay Tuned.',
-                okType: 'button-calm'
             } );
         };
         $scope.func_GT = function() {
-            /*
-            $state.go( 'grList', {}, {
+            $state.go( 'gtList', {}, {
                 reload: true
-            } );
-            */
-            $ionicPopup.alert( {
-                title: 'Stay Tuned.',
-                okType: 'button-calm'
             } );
         };
         $scope.func_Vgin = function() {

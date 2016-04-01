@@ -216,6 +216,34 @@ app.config( [ '$httpProvider', '$stateProvider', '$urlRouterProvider', '$ionicCo
                 url: '/picking/list',
                 templateUrl: 'view/Picking/list.html',
                 controller: 'PickingListCtrl'
+            } )
+            .state( 'pickingDetail', {
+                url: '/picking/detail/:CustomerCode/:TrxNo/:GoodsIssueNoteNo',
+                cache: 'false',
+                templateUrl: 'view/Picking/detail.html',
+                controller: 'PickingDetailCtrl'
+            } )
+            .state( 'putawayList', {
+                url: '/putaway/list',
+                templateUrl: 'view/Putaway/list.html',
+                controller: 'PutawayListCtrl'
+            } )
+            .state( 'putawayDetail', {
+                url: '/putaway/detail/:CustomerCode/:TrxNo/:GoodsIssueNoteNo',
+                cache: 'false',
+                templateUrl: 'view/Putaway/detail.html',
+                controller: 'PutawayDetailCtrl'
+            } )
+            .state( 'gtList', {
+                url: '/gt/list',
+                templateUrl: 'view/GoodsTransfer/list.html',
+                controller: 'GtListCtrl'
+            } )
+            .state( 'gtDetail', {
+                url: '/gt/detail/:CustomerCode/:TrxNo/:GoodsIssueNoteNo',
+                cache: 'false',
+                templateUrl: 'view/GoodsTransfer/detail.html',
+                controller: 'GtDetailCtrl'
             } );
         $urlRouterProvider.otherwise( '/login' );
     } ] );
