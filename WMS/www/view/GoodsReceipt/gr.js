@@ -1,5 +1,5 @@
-appControllers.controller( 'GrListCtrl', [ 'ENV', '$scope', '$stateParams', '$state', '$ionicPopup', 'ApiService',
-    function( ENV, $scope, $stateParams, $state, $ionicPopup, ApiService ) {
+appControllers.controller( 'GrListCtrl', [ 'ENV', '$scope', '$stateParams', '$state', 'ApiService',
+    function( ENV, $scope, $stateParams, $state, ApiService ) {
         var alertPopup = null;
         var alertPopupTitle = '';
         $scope.Rcbp1 = {};
@@ -52,6 +52,7 @@ appControllers.controller( 'GrListCtrl', [ 'ENV', '$scope', '$stateParams', '$st
             }
         } ) );
         $( '#div-list-rcbp' ).focus();
+        /*
         var BhEngine = new Bloodhound( {
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace( 'value' ),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -99,6 +100,7 @@ appControllers.controller( 'GrListCtrl', [ 'ENV', '$scope', '$stateParams', '$st
         ].join( ' ' ), function( d ) {
             console.log( this.value );
         } );
+        */
     }
 ] );
 
@@ -246,7 +248,6 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                 }
             }
         };
-
         var checkSn = function( sn, SnArray ) {
             var blnExistSn = false;
             for ( var i = 0; i < SnArray.length; i++ ) {
@@ -303,7 +304,6 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                 setSnQty( sn, SnArray, mapBcValue );
             }
         };
-
         $scope.openModal = function() {
             $scope.modal.show();
             if ( dbWms ) {
@@ -480,7 +480,6 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                 }, 2500 );
             } );
         };
-
         var GetImgr2ProductCode = function( GoodsReceiptNoteNo ) {
             var strUri = '/api/wms/imgr2?GoodsReceiptNoteNo=' + GoodsReceiptNoteNo;
             ApiService.GetParam( strUri, true ).then( function success( result ) {
@@ -499,7 +498,6 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
             } );
         };
         GetImgr2ProductCode( $scope.Detail.strGRN );
-
         $( '#txt-barcode' ).on( 'focus', ( function() {
             if ( window.cordova && window.cordova.plugins.Keyboard ) {
                 cordova.plugins.Keyboard.close();

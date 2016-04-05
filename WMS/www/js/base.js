@@ -36,6 +36,14 @@ var insertImgi2s = function(imgi2) {
         });
     }
 };
+var insertImsn1s = function(Imsn1) {
+    if (dbWms) {
+        dbWms.transaction(function(tx) {
+            dbSql = 'INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)';
+            tx.executeSql(dbSql, [Imsn1.IssueNoteNo, Imsn1.IssueLineItemNo, Imsn1.SerialNo], null, dbError);
+        });
+    }
+};
 var appendProtocol = function(url, blnSSL, portNo) {
     if (url.length > 0 && url.toUpperCase().indexOf('HTTPS://') < 0 && url.toUpperCase().indexOf('HTTP://') < 0) {
         if(blnSSL){

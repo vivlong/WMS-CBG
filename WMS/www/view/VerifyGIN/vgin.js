@@ -1,12 +1,12 @@
-appControllers.controller( 'VginListCtrl', [ '$scope', '$stateParams', '$state', '$timeout', '$ionicPopup', 'ApiService',
-    function( $scope, $stateParams, $state, $timeout, $ionicPopup, ApiService ) {
-        $scope.Rcbp1 = {};
+appControllers.controller( 'VginListCtrl', [ '$scope', '$stateParams', '$state', 'ApiService',
+    function( $scope, $stateParams, $state, ApiService ) {
+        $scope.rcbp1 = {};
         $scope.GinNo = {};
-        $scope.Imgi1s = {};
-        $scope.refreshRcbp1 = function( BusinessPartyName ) {
-            var strUri = '/api/wms/rcbp1?' + BusinessPartyName;
+        $scope.imgi1s = {};
+        $scope.refreshRcbp1s = function( BusinessPartyName ) {
+            var strUri = '/api/wms/rcbp1BusinessPartyName=?' + BusinessPartyName;
             ApiService.GetParam( strUri, true ).then( function success( result ) {
-                $scope.Rcbp1s = result.data.results;
+                $scope.rcbp1s = result.data.results;
             } );
         };
         $scope.refreshGinNos = function( Grn ) {
@@ -18,7 +18,7 @@ appControllers.controller( 'VginListCtrl', [ '$scope', '$stateParams', '$state',
         $scope.ShowImgi1 = function( Customer ) {
             var strUri = '/api/wms/imgi1?CustomerCode=' + Customer;
             ApiService.GetParam( strUri, true ).then( function success( result ) {
-                $scope.Imgi1s = result.data.results;
+                $scope.imgi1s = result.data.results;
                 if ( window.cordova && window.cordova.plugins.Keyboard ) {
                     cordova.plugins.Keyboard.close();
                 }

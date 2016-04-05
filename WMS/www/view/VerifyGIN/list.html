@@ -10,16 +10,16 @@
                     <label>Customer</label>
                 </div>
                 <div class="col col-67">
-                    <ui-select ng-model="Rcbp1.selected"
+                    <ui-select ng-model="rcbp1.selected"
                                 theme="bootstrap"
                                 reset-search-input="true"
-                                on-select="ShowImgi1(Rcbp1.selected.BusinessPartyCode)">
+                                on-select="Showimgi1(rcbp1.selected.BusinessPartyCode)">
                         <ui-select-match allow-clear="true" placeholder="Enter to search..." style="overflow:hidden;">{{$select.selected.BusinessPartyName}}</ui-select-match>
-                        <ui-select-choices repeat="Rcbp1 in Rcbp1s track by $index"
-                                           refresh="refreshRcbp1($select.search)"
+                        <ui-select-choices repeat="rcbp1 in rcbp1s track by $index"
+                                           refresh="refreshrcbp1s($select.search)"
                                            refresh-delay="0"
                                            position="down">
-                            <div ng-bind="Rcbp1.BusinessPartyName"></div>
+                            <div ng-bind="rcbp1.BusinessPartyName"></div>
                         </ui-select-choices>
                     </ui-select>
                 </div>
@@ -47,11 +47,11 @@
     </ion-pane>
     <ion-content style="margin-top:100px;">
         <ion-list id="div-vgin-list" tabindex="-1">
-            <ion-item ng-repeat="Imgi1 in Imgi1s" id="Imgi1-{{ Imgi1.Index }}" class="item-remove-animate item-icon-right" ng-click="GoToDetail(Imgi1)">
-                <p style="font-size:0.8em;">Customer&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgi1.CustomerCode" style="font-size:1.2em;"></span></p>
-                <p style="font-size:0.8em;">GIN&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgi1.GoodsIssueNoteNo" style="font-size:1.3em;"></span></p>
-                <p style="font-size:0.8em;">Issue Date&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="showDate(Imgi1.IssueDateTime)" style="font-size:1.1em;"></span></p>
-                <p style="font-size:0.8em;">Ref No&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgi1.RefNo" style="font-size:1.1em;"></span></p>
+            <ion-item ng-repeat="imgi1 in imgi1s" class="item-remove-animate item-icon-right" ng-click="GoToDetail(imgi1)">
+                <p style="font-size:0.8em;">Customer&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="imgi1.CustomerCode" style="font-size:1.2em;"></span></p>
+                <p style="font-size:0.8em;">GIN&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="imgi1.GoodsIssueNoteNo" style="font-size:1.3em;"></span></p>
+                <p style="font-size:0.8em;">Issue Date&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="showDate(imgi1.IssueDateTime)" style="font-size:1.1em;"></span></p>
+                <p style="font-size:0.8em;">Ref No&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="imgi1.RefNo" style="font-size:1.1em;"></span></p>
             </ion-item>
         </ion-list>
     </ion-content>

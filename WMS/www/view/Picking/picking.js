@@ -1,5 +1,5 @@
-appControllers.controller('PickingListCtrl', ['$scope', '$stateParams', '$state', '$timeout', '$ionicPopup', 'ApiService',
-    function($scope, $stateParams, $state, $timeout, $ionicPopup, ApiService) {
+appControllers.controller('PickingListCtrl', ['$scope', '$stateParams', '$state', 'ApiService',
+    function($scope, $stateParams, $state, ApiService) {
         $scope.rcbp1 = {};
         $scope.GinNo = {};
         $scope.Imgi1s = {};
@@ -176,20 +176,6 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                 }else{
                     return true;
                 }
-            } else if(is.equal(type,'SerialNo')) {
-                if(!is.equal($scope.Detail.Scan.SerialNo,$scope.Detail.Imgi2.SerialNo)){
-                    if(ENV.fromWeb){
-                        alertPopup = $ionicPopup.alert({
-                            title: 'Invalid Serial No Picked.',
-                            okType: 'button-assertive'
-                        });
-                    } else {
-                        $cordovaToast.showShortBottom('Invalid Serial No Picked.');
-                    }
-                    return false;
-                }else{
-                    return true;
-                }
             } else{
                 return true;
             }
@@ -262,7 +248,6 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                 }
             }
         };
-
         var GetImgi2ProductCode = function(GoodsIssueNoteNo) {
             var strUri = '/api/wms/imgi2?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
             ApiService.GetParam(strUri, true).then(function success(result) {
@@ -293,15 +278,6 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
 
         };
         GetImgi2ProductCode($scope.Detail.GIN);
-        var insertImsn1s = function(Imsn1) {
-            hmSnSerialNo.set(Imsn1.IssueNoteNo + "#" + Imsn1.IssueLineItemNo, Imsn1.SerialNo);
-            if (dbWms) {
-                dbWms.transaction(function(tx) {
-                    dbSql = "INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)"
-                    tx.executeSql(dbSql, [Imsn1.IssueNoteNo, Imsn1.IssueLineItemNo, Imsn1.SerialNo], null, dbError);
-                });
-            }
-        };
         var GetImsn1SerialNo = function(GoodsIssueNoteNo) {
             var strUri = '/api/wms/imsn1?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
             ApiService.GetParam(strUri, true).then(function success(result) {
@@ -314,13 +290,13 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                 }
                 if ($scope.Detail.Imsn1s.length > 0) {
                     for (var i = 0; i < $scope.Detail.Imsn1s.length; i++) {
+                        hmSnSerialNo.set($scope.Detail.Imsn1s[i].IssueNoteNo + "#" + $scope.Detail.Imsn1s[i].IssueLineItemNo, Imsn1.SerialNo);
                         insertImsn1s($scope.Detail.Imsn1s[i]);
                     }
                 }
             });
         };
         GetImsn1SerialNo($scope.Detail.GIN);
-
         var setBarCodeQty = function(numBarcode) {
             if ($scope.Detail.BarCodeScan === numBarcode) {
                 var CurrentQty = 0;
@@ -448,9 +424,7 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
         $('#txt-sn').on('keydown', function(e) {
             if (e.which === 9 || e.which === 13) {
                 if (alertPopup === null) {
-                    if(blnVerifyInput('SerialNo')){
-                        ShowSn($scope.Detail.SerialNo, false);
-                    }
+                    ShowSn($scope.Detail.SerialNo, false);
                 } else {
                     alertPopup.close();
                     alertPopup = null;
