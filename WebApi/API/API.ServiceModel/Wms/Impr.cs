@@ -10,26 +10,24 @@ using WebApi.ServiceModel.Tables;
 
 namespace WebApi.ServiceModel.Wms
 {
-    [Route("/wms/action/list/imgr2/{GoodsReceiptNoteNo}", "Get")]
-    public class List_Imgr2 : IReturn<CommonResponse>
+				[Route("/wms/impr1", "Get")]				//impr1?BarCode=
+    //[Route("/wms/action/list/impr1/{BarCode}", "Get")]
+    public class Impr : IReturn<CommonResponse>
     {
-        public string GoodsReceiptNoteNo { get; set; }
+        public string BarCode { get; set; }
     }
-    public class List_Imgr2_Logic
+    public class Impr_Logic
     {        
         public IDbConnectionFactory DbConnectionFactory { get; set; }
-        public List<Imgr2> GetList(List_Imgr2 request)
+        public Impr1 Get_Impr1_List(Impr request)
         {
-            List<Imgr2> Result = null;
+            Impr1 Result = null;
             try
             {
 																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
                 {
-                    Result = db.Select<Imgr2>(
-                        "Select * From Imgr2 " +
-                        "Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
-                        "Where Imgr1.GoodsReceiptNoteNo={0}",
-                        request.GoodsReceiptNoteNo
+                    Result = db.QuerySingle<Impr1>(
+                        "Select * From Impr1 Where IsNull(ProductCode,'')<>'' And IsNull(StatusCode,'')<>'DEL' And UserDefine01=" + Modfunction.SQLSafeValue(request.BarCode)
                     );
                 }
             }

@@ -12,17 +12,16 @@ namespace WebApi.ServiceModel.Wms
 {
 				//[Route("/wms/rcbp1/sps", "Get")]				//sps?RecordCount= & BusinessPartyName=
 				[Route("/wms/rcbp1", "Get")]								//rcbp1?BusinessPartyName= &TrxNo=			
-    public class List_Rcbp1 : IReturn<CommonResponse>
+    public class Rcbp : IReturn<CommonResponse>
     {
         public string TrxNo { get; set; }
         public string BusinessPartyName { get; set; }
 								public string RecordCount { get; set; }
     }
-    public class List_Rcbp1_Logic
-    {
-        
+    public class Rcbp_Logic
+    {        
         public IDbConnectionFactory DbConnectionFactory { get; set; }
-        public List<Rcbp1> GetList(List_Rcbp1 request)
+        public List<Rcbp1> Get_Rcbp1_List(Rcbp request)
         {
             List<Rcbp1> Result = null;
             try
@@ -31,17 +30,17 @@ namespace WebApi.ServiceModel.Wms
                 {
                     if (!string.IsNullOrEmpty(request.BusinessPartyName))
                     {
-																								string strSQL = "Select *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' And PartyType='CL' And BusinessPartyName LIKE '" + request.BusinessPartyName + "%' Order By BusinessPartyCode Asc";
+																								string strSQL = "Select Top 10 *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' And BusinessPartyName LIKE '" + request.BusinessPartyName + "%' Order By BusinessPartyCode Asc";
 																								Result = db.Select<Rcbp1>(strSQL);
                     }
                     else if (!string.IsNullOrEmpty(request.TrxNo))
                     {
-																								string strSQL = "Select *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' And TrxNo=" + int.Parse(request.TrxNo);
+																								string strSQL = "Select top 1 *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' And TrxNo=" + int.Parse(request.TrxNo);
 																								Result = db.Select<Rcbp1>(strSQL);
                     }
                     else
                     {
-																								string strSQL = "Select Top 20 *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' And PartyType='CL' Order By BusinessPartyName Asc";
+																								string strSQL = "Select Top 10 *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' Order By BusinessPartyName Asc";
 																								Result = db.Select<Rcbp1>(strSQL);
                     }
                 }
@@ -49,7 +48,7 @@ namespace WebApi.ServiceModel.Wms
             catch { throw; }
             return Result;
         }
-								public List<Rcbp1> GetSpsList(List_Rcbp1 request)
+								public List<Rcbp1> Get_Rcbp1_SpsList(Rcbp request)
 								{
 												List<Rcbp1> Result = null;
 												try

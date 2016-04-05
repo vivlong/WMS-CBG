@@ -39,106 +39,67 @@ namespace WebApi.ServiceInterface
 												catch (Exception ex) { cr(ecr, ex); }
 												return ecr;
 								}
-								public ServiceModel.Wms.List_Imgr1_Logic list_Imgr1_Logic { get; set; }
-								public object Any(ServiceModel.Wms.List_Imgr1 request)
+								public ServiceModel.Wms.Imgr_Logic wms_Imgr_Logic { get; set; }
+								public object Any(ServiceModel.Wms.Imgr request)
+								{
+												CommonResponse ecr = new CommonResponse();
+												ecr.initial();
+												try
+												{
+																ServiceInterface.Wms.TableService ts = new ServiceInterface.Wms.TableService();
+																ts.TS_Imgr(auth, request, wms_Imgr_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
+												}
+												catch (Exception ex) { cr(ecr, ex); }
+												return ecr;
+								}
+								public ServiceModel.Wms.Impr_Logic wms_Impr_Logic { get; set; }
+								public object Any(ServiceModel.Wms.Impr request)
 								{
 												CommonResponse ecr = new CommonResponse();
 												ecr.initial();
 												try
 												{
 																ServiceInterface.Wms.TableService ls = new ServiceInterface.Wms.TableService();
-																ls.List_Imgr1(auth, request, list_Imgr1_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
+																ls.TS_Impr(auth, request, wms_Impr_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
 												}
 												catch (Exception ex) { cr(ecr, ex); }
 												return ecr;
-								}
-								public ServiceModel.Wms.List_Impr1_Logic list_Impr1_Logic { get; set; }
-								public object Any(ServiceModel.Wms.List_Impr1 request)
+								}								
+								public ServiceModel.Wms.Imgi_Logic wms_Imgi_Logic { get; set; }
+								public object Any(ServiceModel.Wms.Imgi request)
+								{
+												CommonResponse ecr = new CommonResponse();
+												ecr.initial();
+												try
+												{
+																ServiceInterface.Wms.TableService ts = new ServiceInterface.Wms.TableService();
+																ts.TS_Imgi(auth, request, wms_Imgi_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
+												}
+												catch (Exception ex) { cr(ecr, ex); }
+												return ecr;
+								}								
+								public ServiceModel.Wms.Imsn_Logic wms_Imsn_Logic { get; set; }
+								public object Any(ServiceModel.Wms.Imsn request)
 								{
 												CommonResponse ecr = new CommonResponse();
 												ecr.initial();
 												try
 												{
 																ServiceInterface.Wms.TableService ls = new ServiceInterface.Wms.TableService();
-																ls.List_Impr1(auth, request, list_Impr1_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
+																ls.TS_Imsn(auth, request, wms_Imsn_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
 												}
 												catch (Exception ex) { cr(ecr, ex); }
 												return ecr;
 								}
-								public ServiceModel.Wms.List_Imgr2_Logic list_Imgr2_Logic { get; set; }
-								public object Any(ServiceModel.Wms.List_Imgr2 request)
+								public ServiceModel.Wms.Rcbp_Logic wms_Rcbp_Logic { get; set; }
+								public object Any(ServiceModel.Wms.Rcbp request)
 								{
 												CommonResponse ecr = new CommonResponse();
 												ecr.initial();
 												try
 												{
-																ServiceInterface.Wms.TableService ls = new ServiceInterface.Wms.TableService();
-																ls.List_Imgr2(auth, request, list_Imgr2_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
-												}
-												catch (Exception ex) { cr(ecr, ex); }
-												return ecr;
-								}
-								public ServiceModel.Wms.Confirm_Imgr1_Logic confirm_Imgr1_Logic { get; set; }
-								public object Any(ServiceModel.Wms.Confirm_Imgr1 request)
-								{
-												CommonResponse ecr = new CommonResponse();
-												ecr.initial();
-												try
-												{
-																ServiceInterface.Wms.ConfirmService cs = new ServiceInterface.Wms.ConfirmService();
-																cs.ConfirmImgr1(auth, request, confirm_Imgr1_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
-												}
-												catch (Exception ex) { cr(ecr, ex); }
-												return ecr;
-								}
-								public ServiceModel.Wms.List_Imgi1_Logic list_Imgi1_Logic { get; set; }
-								public object Any(ServiceModel.Wms.List_Imgi1 request)
-								{
-												CommonResponse ecr = new CommonResponse();
-												ecr.initial();
-												try
-												{
-																ServiceInterface.Wms.TableService ls = new ServiceInterface.Wms.TableService();
-																ls.List_Imgi1(auth, request, list_Imgi1_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
-												}
-												catch (Exception ex) { cr(ecr, ex); }
-												return ecr;
-								}
-								public ServiceModel.Wms.List_Imgi2_Logic list_Imgi2_Logic { get; set; }
-								public object Any(ServiceModel.Wms.List_Imgi2 request)
-								{
-												CommonResponse ecr = new CommonResponse();
-												ecr.initial();
-												try
-												{
-																ServiceInterface.Wms.TableService ls = new ServiceInterface.Wms.TableService();
-																ls.List_Imgi2(auth, request, list_Imgi2_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
-												}
-												catch (Exception ex) { cr(ecr, ex); }
-												return ecr;
-								}
-								public ServiceModel.Wms.List_Imsn1_Logic list_Imsn1_Logic { get; set; }
-								public object Any(ServiceModel.Wms.List_Imsn1 request)
-								{
-												CommonResponse ecr = new CommonResponse();
-												ecr.initial();
-												try
-												{
-																ServiceInterface.Wms.TableService ls = new ServiceInterface.Wms.TableService();
-																ls.List_Imsn1(auth, request, list_Imsn1_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
-												}
-												catch (Exception ex) { cr(ecr, ex); }
-												return ecr;
-								}
-								public ServiceModel.Wms.List_Rcbp1_Logic list_Rcbp1_Logic { get; set; }
-								public object Any(ServiceModel.Wms.List_Rcbp1 request)
-								{
-												CommonResponse ecr = new CommonResponse();
-												ecr.initial();
-												try
-												{
-																ServiceInterface.Wms.TableService ls = new ServiceInterface.Wms.TableService();
-																ls.List_Rcbp1(auth, request, list_Rcbp1_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
+																ServiceInterface.Wms.TableService ts = new ServiceInterface.Wms.TableService();
+																ts.TS_Rcbp(auth, request, wms_Rcbp_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
 												}
 												catch (Exception ex) { cr(ecr, ex); }
 												return ecr;

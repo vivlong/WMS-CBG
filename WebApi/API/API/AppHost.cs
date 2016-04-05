@@ -64,14 +64,11 @@ namespace WebApi
             container.RegisterAutoWired<WebApi.ServiceModel.Auth>();
             //WMS
 												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Wms_Login_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Wms.List_Rcbp1_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Wms.List_Imgr1_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Wms.List_Impr1_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Wms.List_Imgr2_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Wms.List_Imgi1_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Wms.List_Imgi2_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Wms.List_Imsn1_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Wms.Confirm_Imgr1_Logic>();
+												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Rcbp_Logic>();
+            container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imgr_Logic>();
+            container.RegisterAutoWired<WebApi.ServiceModel.Wms.Impr_Logic>();
+            container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imgi_Logic>();
+            container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imsn_Logic>();
 												//TMS
 												container.RegisterAutoWired<WebApi.ServiceModel.Tms.Jmjm_Logic>();
 												container.RegisterAutoWired<WebApi.ServiceModel.Tms.Sibl_Logic>();

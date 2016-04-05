@@ -133,19 +133,15 @@
     <Compile Include="Tms\Tms_Login.cs" />
     <Compile Include="Utils\Download.cs" />
     <Compile Include="Utils\Uploading.cs" />
-    <Compile Include="Wms\List_Imgi1.cs" />
-    <Compile Include="Wms\List_Imsn1.cs" />
-    <Compile Include="Wms\List_Imgi2.cs" />
+    <Compile Include="Wms\Imgi.cs" />
+    <Compile Include="Wms\Imsn.cs" />
     <Compile Include="Freight\Rcbp.cs" />
-    <Compile Include="Wms\List_Imgr2.cs" />
-    <Compile Include="Wms\List_Impr1.cs" />
-    <Compile Include="Wms\List_Imgr1.cs" />
-    <Compile Include="Wms\List_Rcbp1.cs" />
+    <Compile Include="Wms\Impr.cs" />
+    <Compile Include="Wms\Imgr.cs" />
+    <Compile Include="Wms\Rcbp.cs" />
     <Compile Include="Wms\Wms_Login.cs" />
     <Compile Include="Modfunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Wms\Confirm_Imgr1.cs" />
-    <Compile Include="Wms\Insert_Imsn1.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
