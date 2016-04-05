@@ -1,4 +1,4 @@
-﻿<ion-view title="VGIN-Detail">
+﻿<ion-view title="Picking-Detail">
     <ion-header-bar class="bar-positive" align-title="center">
         <button class="button button-icon icon ion-android-arrow-back" ng-click="returnList()"></button>
         <div class="h1 title">Pick List</div>
@@ -6,55 +6,42 @@
     </ion-header-bar>
     <ion-content>
         <div class="list card">
-            <!--div class="item" style="padding:8px;">
-                <div class="pull-left">
-                    <p style="font-size: small;">GIN No    : <span style="font-size: medium;" ng-bind="Detail.strGIN"></span></p>
-                </div>
-                <div class="pull-right">
-                    <label class="toggle toggle-calm">
-                        <input type="checkbox" ng-model="Notification.checked" ng-change="NotificationChange()">
-                        <div class="track">
-                            <div class="handle"></div>
-                        </div>
-                    </label>
-                </div>
-            </div-->
             <div class="item item-body" style="padding:8px;">
                 <div class="list">
-                    <label class="item item-input">
-                        <span class="input-label col-40" style="padding-top:2px; padding-bottom: 2px; font-size: small;">
+                    <label class="item item-input" style="padding-left:6px;">
+                        <span class="input-label col-33" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
                             Store No
                         </span>&nbsp;:&nbsp;
-                        <span style="font-size: medium;" ng-bind="Detail.StoreNo"></span>
+                        <span style="font-size: medium;" ng-bind="Detail.Imgi2.StoreNo"></span>
                     </label>
-                    <label class="item item-input">
-                        <span class="input-label col-40" style="padding-top:2px; padding-bottom: 2px; font-size: small;">
+                    <label class="item item-input" style="padding-left:6px;">
+                        <span class="input-label col-33" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
                             Product Code
                         </span>&nbsp;:&nbsp;
-                        <span style="font-size: medium;" ng-bind="Detail.ProductCode"></span>
+                        <span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductCode"></span>
                     </label>
-                    <label class="item item-input">
-                        <span class="input-label col-40" style="padding-top:2px; padding-bottom: 2px; font-size: small;">
+                    <label class="item item-input" style="padding-left:6px;">
+                        <span class="input-label col-33" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
                             Description
                         </span>&nbsp;:&nbsp;
-                        <span style="font-size: medium;" ng-bind="Detail.ProductName"></span>
+                        <span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductDescription"></span>
                     </label>
-                    <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small; min-width:60%;">Qty To Issue&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;" ng-bind="Detail.Qty"></span></span>
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">BAL&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;color:red;" ng-bind="Detail.QtyBal"></span></span>
+                    <label class="item item-input" style="padding-left:6px;">
+                        <span class="input-label col-50" style="padding-top:2px; padding-bottom: 2px; font-size: x-small; min-width:60%;">Qty To Issue&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;" ng-bind="Detail.Imgi2.Qty"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">BAL&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;color:red;" ng-bind="Detail.Imgi2.QtyBal"></span></span>
                     </label>
                     <div class="row">
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Store No&nbsp;&nbsp;:&nbsp;&nbsp;</span>
-                                <input type="text" id="txt-detail-storeno" ng-model="Detail.StoreNo">
+                                <input type="text" id="txt-storeno" ng-model="Detail.Scan.StoreNo">
                             </label>
                         </div>
                         <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="CamScanBarCode()"><i class="icon ion-qr-scanner"></i></button>
+                            <button class="button button-clear button-small" ng-click="openCam('StoreNo')"><i class="icon ion-qr-scanner"></i></button>
                         </div>
                         <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearBarCode()"><i class="icon ion-android-close"></i></button>
+                            <button class="button button-clear button-small" ng-click="clearInput('StoreNo')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
                     <hr style="margin: 0;"/>
@@ -62,14 +49,14 @@
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</span>
-                                <input type="text" id="txt-detail-barcode" ng-model="Detail.BarCodeScan">
+                                <input type="text" id="txt-barcode" ng-model="Detail.Scan.BarCode">
                             </label>
                         </div>
                         <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="CamScanBarCode()"><i class="icon ion-qr-scanner"></i></button>
+                            <button class="button button-clear button-small" ng-click="openCam('BarCode')"><i class="icon ion-qr-scanner"></i></button>
                         </div>
                         <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearBarCode()"><i class="icon ion-android-close"></i></button>
+                            <button class="button button-clear button-small" ng-click="clearInput('BarCode')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
                     <hr style="margin: 0;"/>
@@ -77,18 +64,20 @@
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Serial No&nbsp;&nbsp;:&nbsp;&nbsp;</span>
-                                <input type="text" id="txt-detail-sn" ng-model="Detail.SerialNoScan" readonly>
+                                <input type="text" id="txt-sn" ng-model="Detail.Scan.SerialNo" readonly>
                             </label>
                         </div>
                         <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="CamScanBarCode()"><i class="icon ion-qr-scanner"></i></button>
+                            <button class="button button-clear button-small" ng-click="openCam('SerialNo')"><i class="icon ion-qr-scanner"></i></button>
                         </div>
                         <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearSerialNo()"><i class="icon ion-android-close"></i></button>
+                            <button class="button button-clear button-small" ng-click="clearInput('SerialNo')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; min-width:85%;">Qty&nbsp;&nbsp;:&nbsp;&nbsp;<span id="txt-detail-qty" style="font-weight:bold;" ng-bind="Detail.QtyScan"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; min-width:85%;">Qty&nbsp;&nbsp;:&nbsp;&nbsp;
+                            <span id="txt-qty" style="font-weight:bold;" ng-bind="Detail.Scan.Qty"></span>
+                        </span>
                         <button class="button button-clear button-small" ng-click="changeQty()"><i class="icon ion-android-create"></i></button>
                     </label>
                 </div>
@@ -97,9 +86,9 @@
     </ion-content>
     <ion-footer-bar style="padding:1px;">
         <div class="button-bar">
-            <a class="button button-light" style="line-height: 44px;" id="btn-vgin-detail-comfirm" ng-click="showImgi2Prev()">Previous</a>
-            <a class="button button-light" style="line-height: 44px;" id="btn-vgin-detail-next" ng-click="showImgi2Next()">Next</a>
-            <a class="button button-light" style="line-height: 44px;" id="btn-vgin-detail-cancel" ng-click="returnList()">Cancel</a>
+            <a class="button button-light" style="line-height: 44px;" id="btn-prev" ng-click="showImgi2Prev()">Previous</a>
+            <a class="button button-positive" style="line-height: 44px;" id="btn-next" ng-click="showImgi2Next()">Next</a>
+            <a class="button button-light" style="line-height: 44px;" id="btn-cancel" ng-click="returnList()">Cancel</a>
         </div>
     </ion-footer-bar>
 </ion-view>

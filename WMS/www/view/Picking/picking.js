@@ -1,394 +1,492 @@
-appControllers.controller( 'PickingListCtrl', [ '$scope', '$stateParams', '$state', '$timeout', '$ionicPopup', 'ApiService',
-    function( $scope, $stateParams, $state, $timeout, $ionicPopup, ApiService ) {
-        $scope.Rcbp1 = {};
+appControllers.controller('PickingListCtrl', ['$scope', '$stateParams', '$state', '$timeout', '$ionicPopup', 'ApiService',
+    function($scope, $stateParams, $state, $timeout, $ionicPopup, ApiService) {
+        $scope.rcbp1 = {};
         $scope.GinNo = {};
         $scope.Imgi1s = {};
-        $scope.refreshRcbp1 = function( BusinessPartyName ) {
-            var strUri = '/api/wms/rcbp1?' + BusinessPartyName;
-            ApiService.GetParam( strUri, true ).then( function success( result ) {
-                $scope.Rcbp1s = result.data.results;
-            } );
+        $scope.refreshRcbp1s = function(BusinessPartyName) {
+            var strUri = '/api/wms/rcbp1?BusinessPartyName=' + BusinessPartyName;
+            ApiService.GetParam(strUri, true).then(function success(result) {
+                $scope.rcbp1s = result.data.results;
+            });
         };
-        $scope.refreshGinNos = function( Grn ) {
+        $scope.refreshGinNos = function(Grn) {
             var strUri = '/api/wms/imgi1?GoodsIssueNoteNo=' + Grn;
-            ApiService.GetParam( strUri, true ).then( function success( result ) {
+            ApiService.GetParam(strUri, true).then(function success(result) {
                 $scope.GinNos = result.data.results;
-            } );
+            });
         };
-        $scope.ShowImgi1 = function( Customer ) {
-            var strUri = '/api/wms/imgi1?CustomerCode=' + Customer;
-            ApiService.GetParam( strUri, true ).then( function success( result ) {
+        $scope.ShowImgi1 = function(CustomerCode) {
+            var strUri = '/api/wms/imgi1?CustomerCode=' + CustomerCode;
+            ApiService.GetParam(strUri, true).then(function success(result) {
                 $scope.Imgi1s = result.data.results;
-                if ( window.cordova && window.cordova.plugins.Keyboard ) {
+                if (window.cordova && window.cordova.plugins.Keyboard) {
                     cordova.plugins.Keyboard.close();
                 }
-                $( '#div-vgin-list' ).focus();
-            } );
+                $('#div-vgin-list').focus();
+            });
         };
-        $scope.showDate = function( utc ) {
-            return moment( utc ).format( 'DD-MMM-YYYY' );
+        $scope.showDate = function(utc) {
+            return moment(utc).format('DD-MMM-YYYY');
         };
-        $scope.GoToDetail = function( Imgi1 ) {
-            if ( Imgi1 != null ) {
-                $state.go( 'pickingDetail', {
+        $scope.GoToDetail = function(Imgi1) {
+            if (Imgi1 != null) {
+                $state.go('pickingDetail', {
                     'CustomerCode': Imgi1.CustomerCode,
                     'TrxNo': Imgi1.TrxNo,
                     'GoodsIssueNoteNo': Imgi1.GoodsIssueNoteNo
                 }, {
                     reload: true
-                } );
+                });
             }
         };
         $scope.returnMain = function() {
-            $state.go( 'index.main', {}, {
+            $state.go('index.main', {}, {
                 reload: true
-            } );
+            });
         };
-        $( '#div-list-rcbp' ).on( 'focus', ( function() {
-            if ( window.cordova && window.cordova.plugins.Keyboard ) {
+        $('#div-list-rcbp').on('focus', (function() {
+            if (window.cordova && window.cordova.plugins.Keyboard) {
                 cordova.plugins.Keyboard.close();
             }
-        } ) );
-        $( '#div-list-rcbp' ).focus();
-    } ] );
+        }));
+        $('#div-list-rcbp').focus();
+    }
+]);
 
-appControllers.controller( 'PickingDetailCtrl', [ '$scope', '$stateParams', '$state', '$http', '$timeout', '$ionicHistory', '$ionicLoading', '$ionicPopup', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
-    function( $scope, $stateParams, $state, $http, $timeout, $ionicHistory, $ionicLoading, $ionicPopup, $cordovaToast, $cordovaBarcodeScanner, ApiService ) {
-        $scope.DetailImgi2 = {};
-        $scope.DetailImsn1 = {};
-        $scope.Detail = {};
-        $scope.Detail.BarCodeScan = "";
-        $scope.Detail.SerialNoScan = "";
-        $scope.Detail.QtyBal = 0;
-        $scope.Detail.QtyScan = 0;
-        $scope.Detail.strCustomer = $stateParams.CustomerCode;
-        $scope.Detail.strGIN = $stateParams.GoodsIssueNoteNo;
-        var mapBarCodeScanQty = new HashMap();
-        var mapSnScanQty = new HashMap();
-        var mapSnSerialNo = new HashMap();
+appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams', '$state', '$http', '$timeout', '$ionicHistory', '$ionicLoading', '$ionicPopup', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
+    function(ENV, $scope, $stateParams, $state, $http, $timeout, $ionicHistory, $ionicLoading, $ionicPopup, $cordovaToast, $cordovaBarcodeScanner, ApiService) {
+        var alertPopup = null;
+        var alertTitle = '';
+        $scope.Detail = {
+            Customer: $stateParams.CustomerCode,
+            GIN: $stateParams.GoodsIssueNoteNo,
+            Scan: {
+                StoreNo: '',
+                BarCode: '',
+                SerialNo: '',
+                Qty: 0
+            },
+            Imgi2s:{},
+            Imgi2:{
+                RowNum:         0,
+                TrxNo:          0,
+                LineItemNo :    0,
+                StoreNo:        '',
+                ProductCode:    '',
+                ProductDescription:    '',
+                SerialNoFlag:   '',
+                BarCode:        '',
+                Qty:            0,
+                QtyBal:         0
+            },
+            Imsn1s:{}
+        };
+        var hmBarCodeScanQty = new HashMap();
+        var hmSnScanQty = new HashMap();
+        var hmSnSerialNo = new HashMap();
         var returnListFun = function() {
-            if ( $ionicHistory.backView() ) {
+            if ($ionicHistory.backView()) {
                 $ionicHistory.goBack();
             } else {
-                $state.go( 'pickingList', {}, {
+                $state.go('pickingList', {}, {
                     reload: true
-                } );
+                });
             }
         };
         $scope.returnList = returnListFun;
-        $scope.CamScanBarCode = function() {
-            $cordovaBarcodeScanner.scan().then( function( imageData ) {
-                $scope.Detail.BarCodeScan = imageData.text;
-                ShowProduct( $scope.Detail.BarCodeScan, true );
-            }, function( error ) {
-                $cordovaToast.showShortBottom( error );
-            } );
-        };
-        $scope.CamScanSerialNo = function() {
-            if ( $( '#txt-detail-sn' ).attr( "readonly" ) != "readonly" ) {
-                $cordovaBarcodeScanner.scan().then( function( imageData ) {
-                    $scope.Detail.SerialNoScan = imageData.text;
-                    ShowSn( $scope.Detail.SerialNoScan, false );
-                }, function( error ) {
-                    $cordovaToast.showShortBottom( error );
-                } );
+        $scope.openCam = function(type) {
+            if(is.equal(type,'StoreNo')){
+                $cordovaBarcodeScanner.scan().then(function(imageData) {
+                    $scope.Detail.Scan.StoreNo = imageData.text;
+                }, function(error) {
+                    $cordovaToast.showShortBottom(error);
+                });
+            }else if(is.equal(type,'BarCode')){
+                $cordovaBarcodeScanner.scan().then(function(imageData) {
+                    $scope.Detail.Scan.BarCode = imageData.text;
+                    ShowProduct($scope.Detail.Scan.BarCode, true);
+                }, function(error) {
+                    $cordovaToast.showShortBottom(error);
+                });
+            } else if(is.equal(type,'SerialNo')){
+                if ($('#txt-sn').attr("readonly") != "readonly") {
+                    $cordovaBarcodeScanner.scan().then(function(imageData) {
+                        $scope.Detail.Scan.SerialNo = imageData.text;
+                        ShowSn($scope.Detail.Scan.SerialNo, false);
+                    }, function(error) {
+                        $cordovaToast.showShortBottom(error);
+                    });
+                }
             }
         };
-        $scope.clearBarCode = function() {
-            if ( $scope.Detail.BarCodeScan.length > 0 ) {
-                $scope.Detail.BarCodeScan = "";
-                $scope.Detail.SerialNoScan = "";
-                $scope.Detail.QtyScan = 0;
-                $( '#txt-detail-sn' ).attr( "readonly", true );
-                $( '#txt-detail-barcode' ).select();
+        $scope.clearInput = function(type) {
+            if(is.equal(type,'BarCode')){
+                if ($scope.Detail.Scan.BarCode.length > 0) {
+                    $scope.Detail.Scan.BarCode = '';
+                    $scope.Detail.Scan.SerialNo = '';
+                    $scope.Detail.Scan.Qty = 0;
+                    $('#txt-sn').attr('readonly', true);
+                    $('#txt-barcode').select();
+                }
+            } else if(is.equal(type,'SerialNo')){
+                if ($scope.Detail.Scan.SerialNo.length > 0) {
+                    $scope.Detail.Scan.SerialNo = "";
+                    $('#txt-sn').select();
+                }
+            } else if(is.equal(type,'StoreNo')){
+                if ($scope.Detail.Scan.StoreNo.length > 0) {
+                    $scope.Detail.Scan.StoreNo = '';
+                    $('#txt-storeno').select();
+                }
+            } else {
+                $scope.Detail.Scan.StoreNo = '';
+                $scope.Detail.Scan.BarCode = '';
+                $scope.Detail.Scan.SerialNo = '';
+                $scope.Detail.Scan.Qty = 0;
+                $('#txt-sn').attr('readonly', true);
+                $('#txt-storeno').select();
             }
         };
-        $scope.clearSerialNo = function() {
-            if ( $scope.Detail.SerialNoScan.length > 0 ) {
-                $scope.Detail.SerialNoScan = "";
-                $( '#txt-detail-sn' ).select();
+        var blnVerifyInput = function(type){
+            if(is.equal(type,'StoreNo')) {
+                if(!is.equal($scope.Detail.Scan.StoreNo,$scope.Detail.Imgi2.StoreNo)){
+                    if(ENV.fromWeb){
+                        alertPopup = $ionicPopup.alert({
+                            title: 'Invalid Store No.',
+                            okType: 'button-assertive'
+                        });
+                    } else {
+                        $cordovaToast.showShortBottom('Invalid Store No.');
+                    }
+                    return false;
+                }else{
+                    return true;
+                }
+            } else if(is.equal(type,'BarCode')) {
+                if(!is.equal($scope.Detail.Scan.BarCode,$scope.Detail.Imgi2.BarCode)){
+                    if(ENV.fromWeb){
+                        alertPopup = $ionicPopup.alert({
+                            title: 'Invalid Product Picked.',
+                            okType: 'button-assertive'
+                        });
+                    } else {
+                        $cordovaToast.showShortBottom('Invalid Product Picked.');
+                    }
+                    return false;
+                }else{
+                    return true;
+                }
+            } else if(is.equal(type,'SerialNo')) {
+                if(!is.equal($scope.Detail.Scan.SerialNo,$scope.Detail.Imgi2.SerialNo)){
+                    if(ENV.fromWeb){
+                        alertPopup = $ionicPopup.alert({
+                            title: 'Invalid Serial No Picked.',
+                            okType: 'button-assertive'
+                        });
+                    } else {
+                        $cordovaToast.showShortBottom('Invalid Serial No Picked.');
+                    }
+                    return false;
+                }else{
+                    return true;
+                }
+            } else{
+                return true;
             }
         };
         $scope.showImgi2Prev = function() {
             var blnHasPrev = false;
-            var intLineItemNo = $scope.Detail.LineItemNo - 1;
-            if ( $scope.DetailImgi2.length > 0 ) {
-                for ( var i = 0; i < $scope.DetailImgi2.length; i++ ) {
-                    if ( $scope.DetailImgi2[ i ].LineItemNo === intLineItemNo ) {
-                        blnHasPrev = true;
-                        break;
-                    }
-                }
+            var intRow = $scope.Detail.Imgi2.RowNum - 1;
+            if ($scope.Detail.Imgi2s.length > 0 && intRow > 0 && is.equal($scope.Detail.Imgi2s[intRow-1].RowNum,intRow)) {
+                blnHasPrev = true;
             }
-            if ( blnHasPrev ) {
-                $scope.clearBarCode();
-                showImgi2( intLineItemNo - 1 );
+            if (blnHasPrev) {
+                $scope.clearInput();
+                showImgi2(intRow - 1);
             } else {
-                $cordovaToast.showShortBottom( "Already the first one." );
+                if(ENV.fromWeb){
+                    alertPopup = $ionicPopup.alert({
+                        title: 'Already the first one.',
+                        okType: 'button-calm'
+                    });
+                } else {
+                    $cordovaToast.showShortBottom('Already the first one.');
+                }
             }
         }
         $scope.showImgi2Next = function() {
             var blnHasNext = false;
-            var intLineItemNo = $scope.Detail.LineItemNo + 1;
-            if ( $scope.DetailImgi2.length > 0 ) {
-                for ( var i = 0; i < $scope.DetailImgi2.length; i++ ) {
-                    if ( $scope.DetailImgi2[ i ].LineItemNo === intLineItemNo ) {
-                        blnHasNext = true;
-                        break;
-                    }
-                }
+            var intRow = $scope.Detail.Imgi2.RowNum + 1;
+            if ($scope.Detail.Imgi2s.length > 0 && $scope.Detail.Imgi2s.length >= intRow && is.equal($scope.Detail.Imgi2s[intRow-1].RowNum,intRow)) {
+                blnHasNext = true;
             }
-            if ( blnHasNext ) {
-                $scope.clearBarCode();
-                showImgi2( intLineItemNo - 1 );
+            if (blnHasNext) {
+                $scope.clearInput();
+                showImgi2(intRow-1);
             } else {
-                $cordovaToast.showShortBottom( "Already the last one." );
+                if(ENV.fromWeb){
+                    alertPopup = $ionicPopup.alert({
+                        title: 'Already the last one.',
+                        okType: 'button-calm'
+                    });
+                } else {
+                    $cordovaToast.showShortBottom('Already the last one.');
+                }
             }
         }
-        var showImgi2 = function( LineItemNo ) {
-            if ( LineItemNo != null && $scope.DetailImgi2.length > 0 ) {
-                $scope.Detail.TrxNo = $scope.DetailImgi2[ LineItemNo ].TrxNo;
-                $scope.Detail.LineItemNo = $scope.DetailImgi2[ LineItemNo ].LineItemNo;
-                $scope.Detail.StoreNo = $scope.DetailImgi2[ LineItemNo ].StoreNo;
-                $scope.Detail.ProductCode = $scope.DetailImgi2[ LineItemNo ].ProductCode;
-                $scope.Detail.ProductName = $scope.DetailImgi2[ LineItemNo ].ProductName;
-                $scope.Detail.SerialNoFlag = $scope.DetailImgi2[ LineItemNo ].SerialNoFlag;
-                $scope.Detail.BarCode = $scope.DetailImgi2[ LineItemNo ].UserDefine01;
-                switch ( $scope.DetailImgi2[ LineItemNo ].DimensionFlag ) {
+        var showImgi2 = function(row) {
+            if (row != null && $scope.Detail.Imgi2s.length >= row) {
+                $scope.Detail.Imgi2.RowNum = $scope.Detail.Imgi2s[row].RowNum;
+                $scope.Detail.Imgi2.TrxNo = $scope.Detail.Imgi2s[row].TrxNo;
+                $scope.Detail.Imgi2.LineItemNo = $scope.Detail.Imgi2s[row].LineItemNo;
+                $scope.Detail.Imgi2.StoreNo = $scope.Detail.Imgi2s[row].StoreNo;
+                $scope.Detail.Imgi2.ProductCode = $scope.Detail.Imgi2s[row].ProductCode;
+                $scope.Detail.Imgi2.ProductDescription = $scope.Detail.Imgi2s[row].ProductDescription;
+                $scope.Detail.Imgi2.SerialNoFlag = $scope.Detail.Imgi2s[row].SerialNoFlag;
+                $scope.Detail.Imgi2.BarCode = $scope.Detail.Imgi2s[row].UserDefine01;
+                switch ($scope.Detail.Imgi2s[row].DimensionFlag) {
                     case '1':
-                        $scope.Detail.Qty = $scope.DetailImgi2[ LineItemNo ].PackingQty;
+                        $scope.Detail.Imgi2.Qty = $scope.Detail.Imgi2s[row].PackingQty;
                         break;
                     case '2':
-                        $scope.Detail.Qty = $scope.DetailImgi2[ LineItemNo ].WholeQty;
+                        $scope.Detail.Imgi2.Qty = $scope.Detail.Imgi2s[row].WholeQty;
                         break;
                     default:
-                        $scope.Detail.Qty = $scope.DetailImgi2[ LineItemNo ].LooseQty;
+                        $scope.Detail.Imgi2.Qty = $scope.Detail.Imgi2s[row].LooseQty;
                 }
-                if ( !mapBarCodeScanQty ) {
-                    if ( mapBarCodeScanQty.containsKey( $scope.Detail.BarCode ) ) {
-                        $scope.Detail.QtyScan = mapBarCodeScanQty.get( $scope.Detail.BarCode );
+                $scope.Detail.Imgi2.QtyBal = $scope.Detail.Imgi2.Qty;
+                if (!hmBarCodeScanQty) {
+                    if (hmBarCodeScanQty.has($scope.Detail.Imgi2.BarCode)) {
+                        $scope.Detail.Scan.Qty = hmBarCodeScanQty.get($scope.Detail.Imgi2.BarCode);
                     }
                 }
             }
         };
-        var insertImgi2 = function( DetailImgi2Actual ) {
-            var intTrxNo = DetailImgi2Actual.TrxNo;
-            var intLineItemNo = DetailImgi2Actual.LineItemNo;
-            var strStoreNo = DetailImgi2Actual.StoreNo;
-            var strProductCode = DetailImgi2Actual.ProductCode;
-            var intProductTrxNo = DetailImgi2Actual.ProductTrxNo;
-            var strDimensionFlag = DetailImgi2Actual.DimensionFlag;
-            var strProductName = DetailImgi2Actual.ProductName;
-            var strSerialNoFlag = DetailImgi2Actual.SerialNoFlag;
-            var strBarCode = DetailImgi2Actual.UserDefine01;
-            var intPackingQty = DetailImgi2Actual.PackingQty;
-            var intWholeQty = DetailImgi2Actual.WholeQty;
-            var intLooseQty = DetailImgi2Actual.LooseQty;
-            mapBarCodeScanQty.set( strBarCode, 0 );
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
-                    tx.executeSql( "INSERT INTO Imgi2 (TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, DimensionFlag, ProductName, SerialNoFlag, BarCode, PackingQty, WholeQty, LooseQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?)", [ intTrxNo, intLineItemNo, strStoreNo, intProductTrxNo, strProductCode, strDimensionFlag, strProductName, strSerialNoFlag, strBarCode, intPackingQty, intWholeQty, intLooseQty ], null, dbError );
-                } );
-            }
-        };
-        var GetImgi2ProductCode = function( GoodsIssueNoteNo ) {
+
+        var GetImgi2ProductCode = function(GoodsIssueNoteNo) {
             var strUri = '/api/wms/imgi2?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
-            ApiService.GetParam( strUri, true ).then( function success( result ) {
-                $scope.DetailImgi2 = result.data.results;
-                if ( dbWms ) {
-                    dbWms.transaction( function( tx ) {
+            ApiService.GetParam(strUri, true).then(function success(result) {
+                $scope.Detail.Imgi2s = result.data.results;
+                if (dbWms) {
+                    dbWms.transaction(function(tx) {
                         dbSql = "Delete from Imgi2";
-                        tx.executeSql( dbSql, [], null, dbError )
-                    } );
+                        tx.executeSql(dbSql, [], null, dbError)
+                    });
                 }
-                if ( $scope.DetailImgi2.length > 0 ) {
-                    for ( var i = 0; i < $scope.DetailImgi2.length; i++ ) {
-                        insertImgi2( $scope.DetailImgi2[ i ] );
+                if ($scope.Detail.Imgi2s.length > 0) {
+                    for (var i = 0; i < $scope.Detail.Imgi2s.length; i++) {
+                        hmBarCodeScanQty.set($scope.Detail.Imgi2s[i].BarCode, 0);
+                        insertImgi2s($scope.Detail.Imgi2s[i]);
                     }
-                    showImgi2( 0 );
+                    showImgi2(0);
                 } else {
-                    var alertPopup = $ionicPopup.alert( {
+                    alertPopup = $ionicPopup.alert({
                         title: 'This GIN has no Products.',
                         okType: 'button-calm'
-                    } );
-                    $timeout( function() {
+                    });
+                    $timeout(function() {
                         alertPopup.close();
                         returnListFun();
-                    }, 2500 );
+                    }, 2500);
                 }
-            } );
+            });
 
         };
-        GetImgi2ProductCode( $scope.Detail.strGIN );
-        var insertImsn1 = function( Imsn1 ) {
-            mapSnSerialNo.set( Imsn1.IssueNoteNo + "#" + Imsn1.IssueLineItemNo, Imsn1.SerialNo );
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
+        GetImgi2ProductCode($scope.Detail.GIN);
+        var insertImsn1s = function(Imsn1) {
+            hmSnSerialNo.set(Imsn1.IssueNoteNo + "#" + Imsn1.IssueLineItemNo, Imsn1.SerialNo);
+            if (dbWms) {
+                dbWms.transaction(function(tx) {
                     dbSql = "INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)"
-                    tx.executeSql( dbSql, [ Imsn1.IssueNoteNo, Imsn1.IssueLineItemNo, Imsn1.SerialNo ], null, dbError );
-                } );
+                    tx.executeSql(dbSql, [Imsn1.IssueNoteNo, Imsn1.IssueLineItemNo, Imsn1.SerialNo], null, dbError);
+                });
             }
         };
-        var GetImsn1SerialNo = function( GoodsIssueNoteNo ) {
+        var GetImsn1SerialNo = function(GoodsIssueNoteNo) {
             var strUri = '/api/wms/imsn1?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
-            ApiService.GetParam( strUri, true ).then( function success( result ) {
-                $scope.DetailImsn1 = result.data.results;
-                if ( dbWms ) {
-                    dbWms.transaction( function( tx ) {
+            ApiService.GetParam(strUri, true).then(function success(result) {
+                $scope.Detail.Imsn1s = result.data.results;
+                if (dbWms) {
+                    dbWms.transaction(function(tx) {
                         dbSql = "Delete from Imsn1";
-                        tx.executeSql( dbSql, [], null, dbError )
-                    } );
+                        tx.executeSql(dbSql, [], null, dbError)
+                    });
                 }
-                if ( $scope.DetailImsn1.length > 0 ) {
-                    for ( var i = 0; i < $scope.DetailImsn1.length; i++ ) {
-                        insertImsn1( $scope.DetailImsn1[ i ] );
+                if ($scope.Detail.Imsn1s.length > 0) {
+                    for (var i = 0; i < $scope.Detail.Imsn1s.length; i++) {
+                        insertImsn1s($scope.Detail.Imsn1s[i]);
                     }
                 }
-            } );
+            });
         };
-        GetImsn1SerialNo( $scope.Detail.strGIN );
-        var setBarCodeQty = function( numBarcode ) {
-            if ( $scope.Detail.BarCodeScan === numBarcode ) {
+        GetImsn1SerialNo($scope.Detail.GIN);
+
+        var setBarCodeQty = function(numBarcode) {
+            if ($scope.Detail.BarCodeScan === numBarcode) {
                 var CurrentQty = 0;
-                if ( !mapBarCodeScanQty.isEmpty() ) {
-                    if ( mapBarCodeScanQty.containsKey( numBarcode ) ) {
-                        CurrentQty = mapBarCodeScanQty.get( numBarcode );
+                if (!hmBarCodeScanQty.isEmpty()) {
+                    if (hmBarCodeScanQty.containsKey(numBarcode)) {
+                        CurrentQty = hmBarCodeScanQty.get(numBarcode);
                     }
                 }
-                if ( $scope.Detail.SerialNoFlag != null && $scope.Detail.SerialNoFlag === 'Y' ) {
-                    $( '#txt-detail-sn' ).removeAttr( "readonly" );
-                    $( '#txt-detail-sn' ).select();
+                if ($scope.Detail.SerialNoFlag != null && $scope.Detail.SerialNoFlag === 'Y') {
+                    $('#txt-sn').removeAttr("readonly");
+                    $('#txt-sn').select();
                 } else {
                     CurrentQty += 1;
-                    mapBarCodeScanQty.remove( numBarcode );
-                    mapBarCodeScanQty.set( numBarcode, CurrentQty );
+                    hmBarCodeScanQty.remove(numBarcode);
+                    hmBarCodeScanQty.set(numBarcode, CurrentQty);
                     $scope.Detail.QtyScan = CurrentQty;
-                    $( '#txt-detail-barcode' ).select();
-                    if ( dbWms ) {
-                        dbWms.transaction( function( tx ) {
+                    $('#txt-barcode').select();
+                    if (dbWms) {
+                        dbWms.transaction(function(tx) {
                             dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
-                            tx.executeSql( dbSql, [ $scope.Detail.QtyScan, $scope.Detail.TrxNo, $scope.Detail.LineItemNo ], null, dbError );
-                        } );
+                            tx.executeSql(dbSql, [$scope.Detail.QtyScan, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
+                        });
                     }
                 }
             } else {
-                var alertPopup = $ionicPopup.alert( {
+                var alertPopup = $ionicPopup.alert({
                     title: 'Invalid product picked.',
                     okType: 'button-assertive'
-                } );
-                $timeout( function() {
+                });
+                $timeout(function() {
                     alertPopup.close();
-                }, 2500 );
+                }, 2500);
             }
         };
-        var ShowProduct = function( barcode, blnScan ) {
-            var numBarcode = barcode.replace( /[^0-9/d]/g, '' );
-            if ( blnScan ) {
-                $scope.Detail.BarCodeScan = numBarcode;
+        var ShowProduct = function(barcode, blnScan) {
+            var numBarcode = barcode.replace(/[^0-9/d]/g, '');
+            if (blnScan) {
+                $scope.Detail.Scan.BarCode = numBarcode;
             }
-            if ( numBarcode != null && numBarcode > 0 ) {
-                setBarCodeQty( numBarcode );
+            if (numBarcode != null && numBarcode > 0) {
+                setBarCodeQty(numBarcode);
             }
         };
-        $( '#txt-detail-barcode' ).on( 'keydown', function( e ) {
-            if ( e.which === 9 || e.which === 13 ) {
-                ShowProduct( $scope.Detail.BarCodeScan, false );
-            }
-        } );
-        var checkSn = function( sn, SnArray ) {
+        var checkSn = function(sn, SnArray) {
             var blnExistSn = false;
-            for ( var i = 0; i < SnArray.length; i++ ) {
-                if ( SnArray[ i ].toString() === sn ) {
+            for (var i = 0; i < SnArray.length; i++) {
+                if (SnArray[i].toString() === sn) {
                     blnExistSn = true;
                     break;
                 }
             }
             return blnExistSn;
         };
-        var setSnQty = function( sn, SnArray, CurrentQty ) {
-            if ( SnArray.length > 1 ) {
-                if ( checkSn( sn, SnArray ) ) {
+        var setSnQty = function(sn, SnArray, CurrentQty) {
+            if (SnArray.length > 1) {
+                if (checkSn(sn, SnArray)) {
                     return;
                 }
             }
-            SnArray.push( sn );
-            mapSnScanQty.remove( $scope.Detail.BarCodeScan );
-            mapSnScanQty.set( $scope.Detail.BarCodeScan, SnArray );
+            SnArray.push(sn);
+            hmSnScanQty.remove($scope.Detail.BarCodeScan);
+            hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
             CurrentQty += 1;
-            mapBarCodeScanQty.remove( $scope.Detail.BarCodeScan );
-            mapBarCodeScanQty.set( $scope.Detail.BarCodeScan, CurrentQty );
+            hmBarCodeScanQty.remove($scope.Detail.BarCodeScan);
+            hmBarCodeScanQty.set($scope.Detail.BarCodeScan, CurrentQty);
             $scope.Detail.QtyScan = CurrentQty;
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
+            if (dbWms) {
+                dbWms.transaction(function(tx) {
                     dbSql = "INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)";
-                    tx.executeSql( dbSql, [ $scope.Detail.strGIN, $scope.Detail.LineItemNo, sn ], null, null );
+                    tx.executeSql(dbSql, [$scope.Detail.strGIN, $scope.Detail.LineItemNo, sn], null, null);
                     dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
-                    tx.executeSql( dbSql, [ CurrentQty, $scope.Detail.TrxNo, $scope.Detail.LineItemNo ], null, dbError );
-                } );
+                    tx.executeSql(dbSql, [CurrentQty, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
+                });
             }
-            $( '#txt-detail-sn' ).select();
+            $('#txt-sn').select();
         };
-        var ShowSn = function( sn, blnScan ) {
-            if ( sn != null && sn > 0 ) {
-                if ( blnScan ) {
+        var ShowSn = function(sn, blnScan) {
+            if (sn != null && sn > 0) {
+                if (blnScan) {
                     $scope.Detail.SerialNo = sn;
                 }
 
-                var CurrentQty = mapBarCodeScanQty.get( $scope.Detail.BarCodeScan );
+                var CurrentQty = hmBarCodeScanQty.get($scope.Detail.BarCodeScan);
                 var SnArray = null;
-                if ( !mapSnScanQty.isEmpty() ) {
-                    if ( mapSnScanQty.containsKey( $scope.Detail.BarCodeScan ) ) {
-                        SnArray = mapSnScanQty.get( $scope.Detail.BarCodeScan );
+                if (!hmSnScanQty.isEmpty()) {
+                    if (hmSnScanQty.containsKey($scope.Detail.BarCodeScan)) {
+                        SnArray = hmSnScanQty.get($scope.Detail.BarCodeScan);
                     } else {
                         SnArray = new Array();
-                        SnArray.push( sn );
-                        mapSnScanQty.set( $scope.Detail.BarCodeScan, SnArray );
+                        SnArray.push(sn);
+                        hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
                     }
                 } else {
                     SnArray = new Array();
-                    SnArray.push( sn );
-                    mapSnScanQty.set( $scope.Detail.BarCodeScan, SnArray );
+                    SnArray.push(sn);
+                    hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
                 }
-                setSnQty( sn, SnArray, CurrentQty );
+                setSnQty(sn, SnArray, CurrentQty);
             }
         };
-        $( '#txt-detail-sn' ).on( 'keydown', function( e ) {
-            if ( e.which === 9 || e.which === 13 ) {
-                ShowSn( $scope.Detail.SerialNo, false );
+        $('#txt-storeno').on('keydown', function(e) {
+            if (e.which === 9 || e.which === 13) {
+                if (alertPopup === null) {
+                    if(blnVerifyInput('StoreNo')){
+                        $('#txt-barcode').focus();
+                    }
+                } else {
+                    alertPopup.close();
+                    alertPopup = null;
+                }
             }
-        } );
+        });
+        $('#txt-barcode').on('keydown', function(e) {
+            if (e.which === 9 || e.which === 13) {
+                if (alertPopup === null) {
+                    if(blnVerifyInput('BarCode')){
+                        ShowProduct($scope.Detail.Scan.BarCode, false);
+                    }
+                } else {
+                    alertPopup.close();
+                    alertPopup = null;
+                }
+            }
+        });
+        $('#txt-sn').on('keydown', function(e) {
+            if (e.which === 9 || e.which === 13) {
+                if (alertPopup === null) {
+                    if(blnVerifyInput('SerialNo')){
+                        ShowSn($scope.Detail.SerialNo, false);
+                    }
+                } else {
+                    alertPopup.close();
+                    alertPopup = null;
+                }
+            }
+        });
         var updateQty = function() {
-            mapSnScanQty.remove( $scope.Detail.BarCodeScan );
-            mapSnScanQty.set( $scope.Detail.BarCodeScan, $scope.Detail.QtyScan );
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
+            hmSnScanQty.remove($scope.Detail.BarCodeScan);
+            hmSnScanQty.set($scope.Detail.BarCodeScan, $scope.Detail.QtyScan);
+            if (dbWms) {
+                dbWms.transaction(function(tx) {
                     dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
-                    tx.executeSql( dbSql, [ $scope.Detail.QtyScan, $scope.Detail.TrxNo, $scope.Detail.LineItemNo ], null, dbError );
-                } );
+                    tx.executeSql(dbSql, [$scope.Detail.QtyScan, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
+                });
             }
         };
         $scope.changeQty = function() {
-            if ( $scope.Detail.QtyScan > 0 && $scope.Detail.BarCodeScan.length > 0 ) {
-                if ( !mapBarCodeScanQty.isEmpty() && mapBarCodeScanQty.containsKey( $scope.Detail.BarCodeScan ) ) {
-                    var promptPopup = $ionicPopup.show( {
+            if ($scope.Detail.QtyScan > 0 && $scope.Detail.BarCodeScan.length > 0) {
+                if (!hmBarCodeScanQty.isEmpty() && hmBarCodeScanQty.containsKey($scope.Detail.BarCodeScan)) {
+                    var promptPopup = $ionicPopup.show({
                         template: '<input type="number" ng-model="Detail.QtyScan">',
                         title: 'Enter Qty',
                         subTitle: 'Are you sure to change Qty manually?',
                         scope: $scope,
-                        buttons: [
-                            {
-                                text: 'Cancel'
-                            },
-                            {
-                                text: '<b>Save</b>',
-                                type: 'button-positive',
-                                onTap: function( e ) {
-                                    updateQty();
-                                }
-                          }
-                        ]
-                    } );
+                        buttons: [{
+                            text: 'Cancel'
+                        }, {
+                            text: '<b>Save</b>',
+                            type: 'button-positive',
+                            onTap: function(e) {
+                                updateQty();
+                            }
+                        }]
+                    });
                 }
             }
         };
-    } ] );
+    }
+]);

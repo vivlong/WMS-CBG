@@ -8,8 +8,8 @@
         <div class="list card">
             <div class="item">
                 <div class="pull-left">
-                    <h2>Customer : <span ng-bind="grtDetail.strCustomer"></span></h2>
-                    <p>ASN No    : <span ng-bind="grtDetail.strGRN"></span></p>
+                    <h2>Customer : <span ng-bind="Detail.strCustomer"></span></h2>
+                    <p>ASN No    : <span ng-bind="Detail.strGRN"></span></p>
                 </div>
             </div>
             <div class="item item-body">
@@ -18,41 +18,41 @@
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">BarCode&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-grt-detail-barcode" ng-model="grtDetail.strBarCode" autofocus="autofocus" style="padding-right: 14px;">
+                                <input type="text" id="txt-barcode" ng-model="Detail.strBarCode" autofocus="autofocus" style="padding-right: 14px;">
                             </label>
                         </div>
                         <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="CamScanBarCode()"><i class="icon ion-qr-scanner"></i></button>
+                            <button class="button button-clear button-small" ng-click="openCam('BarCode')"><i class="icon ion-qr-scanner"></i></button>
                         </div>
                         <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearBarCode()"><i class="icon ion-android-close"></i></button>
+                            <button class="button button-clear button-small" ng-click="clearInput('BarCode')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Product Code : <span ng-bind="grtDetailImpr1.ProductCode"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Product Code : <span ng-bind="Detail.Impr1.ProductCode"></span></span>
                     </label>
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description : <span ng-bind="grtDetailImpr1.ProductName"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description : <span ng-bind="Detail.Impr1.ProductName"></span></span>
                     </label>
                     <div class="row">
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Serial No&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-grt-detail-sn" ng-model="grtDetail.SerialNo" style="padding-right: 14px;" readonly>
+                                <input type="text" id="txt-sn" ng-model="Detail.SerialNo" style="padding-right: 14px;" readonly>
                             </label>
                         </div>
                         <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="CamScanSerialNo()"><i class="icon ion-qr-scanner"></i></button>
+                            <button class="button button-clear button-small" ng-click="openCam('SerialNo')"><i class="icon ion-qr-scanner"></i></button>
                         </div>
                         <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearSerialNo()"><i class="icon ion-android-close"></i></button>
+                            <button class="button button-clear button-small" ng-click="clearInput('SerialNo')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col col-90" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Qty&nbsp;&nbsp;:</span>
-                                <span id="txt-grt-detail-qty" ng-bind="grtDetail.Qty"></span>
+                                <span id="txt-qty" ng-bind="Detail.Qty"></span>
                             </label>
                         </div>
                         <div class="col">
