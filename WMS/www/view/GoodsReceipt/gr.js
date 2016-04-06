@@ -104,9 +104,9 @@ appControllers.controller( 'GrListCtrl', [ 'ENV', '$scope', '$stateParams', '$st
     }
 ] );
 
-appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state', '$http', '$timeout', '$ionicHistory', '$ionicLoading', '$ionicPopup', '$ionicModal', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
-    function( $scope, $stateParams, $state, $http, $timeout, $ionicHistory, $ionicLoading, $ionicPopup, $ionicModal, $cordovaToast, $cordovaBarcodeScanner, ApiService ) {
-
+appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$stateParams', '$state', '$http', '$timeout', '$ionicHistory', '$ionicLoading', '$ionicPopup', '$ionicModal', '$cordovaKeyboard', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
+    function($rootScope, $scope, $stateParams, $state, $http, $timeout, $ionicHistory, $ionicLoading, $ionicPopup, $ionicModal, $$cordovaKeyboard, $cordovaToast, $cordovaBarcodeScanner, ApiService ) {
+        var alertPopup = null;
         var hmBarCodeScanQty = new HashMap();
         var hmSnScanQty = new HashMap();
         $scope.Detail = {
@@ -119,9 +119,9 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                 Qty: 0
             },
             Impr1: {},
-            Imgr2s: {}
+            Imgr2s: {},
+            Imgr2sDb:{}
         };
-        $scope.Imgr2s = {};
         $ionicModal.fromTemplateUrl( 'scan.html', {
             scope: $scope,
             animation: 'slide-in-up'
@@ -192,7 +192,7 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                     }
                 }
             } else {
-                var alertPopup = $ionicPopup.alert( {
+                alertPopup = $ionicPopup.alert( {
                     title: mapValue.ProductCode,
                     subTitle: 'It not belongs to this GRN.',
                     okType: 'button-assertive'
@@ -221,11 +221,21 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                     } else {
                         $scope.Detail.Impr1 = {};
                         $scope.Detail.Scan.Qty = 0;
+                        alertPopup = $ionicPopup.alert( {
+                            title: 'Wrong Product',
+                            subTitle: 'It not belongs to this GRN.',
+                            okType: 'button-assertive'
+                        } );
                     }
-                }, function error( result ) {
+                },function error(){
                     $scope.Detail.Impr1 = {};
                     $scope.Detail.Scan.Qty = 0;
-                } );
+                    alertPopup = $ionicPopup.alert( {
+                        title: 'Wrong Product',
+                        subTitle: 'It not belongs to this GRN.',
+                        okType: 'button-assertive'
+                    } );
+                });
             } else {
                 $scope.Detail.Impr1.ProductCode = mapValue.ProductCode;
                 $scope.Detail.Impr1.ProductName = mapValue.ProductName;
@@ -238,7 +248,6 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                 $scope.Detail.Scan.BarCode = numBarcode;
             }
             if ( numBarcode != null && numBarcode > 0 ) {
-                var currQty = 0;
                 if ( hmBarCodeScanQty.count() > 0 ) {
                     if ( hmBarCodeScanQty.has( numBarcode ) ) {
                         var mapValue = hmBarCodeScanQty.get( numBarcode );
@@ -308,23 +317,20 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
             }
         };
         $scope.openModal = function() {
-            $scope.modal.show();
             if ( dbWms ) {
                 dbWms.transaction( function( tx ) {
                     dbSql = 'Select * from Imgr2';
                     tx.executeSql( dbSql, [], function( tx, results ) {
-                        var arr = new Array();
+                        var arrImgr2s = new Array();
                         for ( var i = 0; i < results.rows.length; i++ ) {
-                            var objImgr2 = {};
-                            objImgr2.TrxNo = results.rows.item( i ).TrxNo;
-                            objImgr2.LineItemNo = results.rows.item( i ).LineItemNo;
-                            objImgr2.ProductCode = results.rows.item( i ).ProductCode;
-                            if ( results.rows.item( i ).ScanQty > 0 ) {
-                                objImgr2.ScanQty = results.rows.item( i ).ScanQty;
-                            } else {
-                                objImgr2.ScanQty = 0;
-                            }
-                            objImgr2.BarCode = results.rows.item( i ).BarCode;
+                            var objImgr2 = {
+                                TrxNo: results.rows.item( i ).TrxNo,
+                                LineItemNo:results.rows.item( i ).LineItemNo,
+                                ProductCode:results.rows.item( i ).ProductCode,
+                                BarCode:results.rows.item( i ).BarCode,
+                                ScanQty: results.rows.item( i ).ScanQty > 0 ? results.rows.item( i ).ScanQty : 0,
+                                ActualQty:0
+                            };
                             switch ( results.rows.item( i ).DimensionFlag ) {
                                 case '1':
                                     objImgr2.ActualQty = results.rows.item( i ).PackingQty;
@@ -335,15 +341,16 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
                                 default:
                                     objImgr2.ActualQty = results.rows.item( i ).LooseQty;
                             }
-                            arr.push( objImgr2 );
+                            arrImgr2s.push( objImgr2 );
                         }
-                        $scope.Imgr2s = arr;
+                        $scope.Detail.Imgr2sDb = arrImgr2s;
                     }, dbError )
                 } );
             }
+            $scope.modal.show();
         };
         $scope.closeModal = function() {
-            $scope.Imgr2s = {};
+            $scope.Detail.Imgr2sDb = {};
             $scope.modal.hide();
         };
         $scope.returnList = function() {
@@ -502,18 +509,35 @@ appControllers.controller( 'GrDetailCtrl', [ '$scope', '$stateParams', '$state',
         };
         GetImgr2ProductCode( $scope.Detail.GRN );
         $( '#txt-barcode' ).on( 'focus', ( function() {
-            if ( window.cordova && window.cordova.plugins.Keyboard ) {
-                cordova.plugins.Keyboard.close();
+            if ( window.cordova ) {
+                $cordovaKeyboard.close();
+            }
+        } ) );
+        $( '#txt-barcode' ).on( 'click', ( function() {
+            if ( window.cordova ) {
+                $cordovaKeyboard.close();
             }
         } ) );
         $( '#txt-barcode' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
-                showImpr( $scope.Detail.Scan.BarCode, false );
+                if (alertPopup === null) {
+                    showImpr( $scope.Detail.Scan.BarCode, false );
+                    $scope.Detail.Scan.BarCode = '';
+                } else {
+                    alertPopup.close();
+                    alertPopup = null;
+                }
             }
         } );
         $( '#txt-sn' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
-                ShowSn( $scope.Detail.Scan.SerialNo, false );
+                if (alertPopup === null) {
+                    ShowSn( $scope.Detail.Scan.SerialNo, false );
+                    $scope.Detail.Scan.SerialNo = '';
+                } else {
+                    alertPopup.close();
+                    alertPopup = null;
+                }
             }
         } );
     }

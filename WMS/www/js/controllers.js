@@ -8,6 +8,7 @@ var appControllers = angular.module( 'WMSAPP.controllers', [
     'ngCordova.plugins.fileOpener2',
     'ngCordova.plugins.datePicker',
     'ngCordova.plugins.barcodeScanner',
+    'ngCordova.plugins.keyboard',
     'ui.select',
     'WMSAPP.config',
     'WMSAPP.services'
@@ -246,7 +247,7 @@ appControllers.controller( 'MainCtrl', [ '$scope', '$state', '$ionicPopup',
             } );
         };
         $scope.func_GT = function() {
-            $state.go( 'gtList', {}, {
+            $state.go( 'gtFrom', {}, {
                 reload: true
             } );
         };

@@ -30,7 +30,7 @@
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">BarCode&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-barcode" ng-model="Detail.Scan.BarCode" autofocus="autofocus" style="padding-right: 14px;">
+                                <input type="text" id="txt-barcode" ng-model="Detail.Scan.BarCode" style="padding-right: 14px;">
                             </label>
                         </div>
                         <div class="col col-10">
@@ -81,36 +81,36 @@
                 </ion-header-bar>
                 <ion-content>
                     <ion-list>
-                        <ion-item ng-repeat="Imgr2 in Imgr2s">
+                        <ion-item ng-repeat="Imgr2 in Detail.Imgr2sDb">
                             <div class="row">
-                                <div class="col col-50">
+                                <div class="col col-33">
                                     <p style="font-size:0.8em;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                                 </div>
-                                <div class="col col-50">
+                                <div class="col">
                                     <span ng-bind="Imgr2.BarCode" style="font-size:1.2em;"></span>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col col-50">
-                                    <p style="font-size:0.8em;">Product Code&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                                <div class="col col-33">
+                                    <p style="font-size:0.8em;">Product&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                                 </div>
-                                <div class="col col-50">
+                                <div class="col">
                                     <span ng-bind="Imgr2.ProductCode" style="font-size:1.2em;"></span>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col col-50">
+                                <div class="col col-33">
                                     <p style="font-size:0.8em;">Scan Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                                 </div>
-                                <div class="col col-50">
+                                <div class="col">
                                     <span ng-bind="Imgr2.ScanQty" style="font-size:1.2em; color:red;"></span>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col col-50">
+                                <div class="col col-33">
                                     <p style="font-size:0.8em;">Actual Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                                 </div>
-                                <div class="col col-50">
+                                <div class="col">
                                     <span ng-bind="Imgr2.ActualQty" style="font-size:1.2em;"></span>
                                 </div>
                             </div>
@@ -125,7 +125,7 @@
             </ion-modal-view>
         </script>
     </ion-content>
-    <ion-footer-bar class="bar-positive">
+    <ion-footer-bar class="bar-positive hide-on-keyboard-open">
         <div class="button-bar">
             <button class="button icon ion-android-done" ng-click="checkConfirm()">
                 &nbsp;Confirm

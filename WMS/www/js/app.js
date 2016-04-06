@@ -5,19 +5,21 @@ var app = angular.module( 'WMSAPP', [
     'ionic-datepicker',
     'ngCordova.plugins.toast',
     'ngCordova.plugins.file',
+    'ngCordova.plugins.keyboard',
     'WMSAPP.config',
     //'WMSAPP.factories',
     'WMSAPP.services',
     'WMSAPP.controllers'
 ] );
-app.run( [ 'ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$ionicPopup', '$ionicHistory', '$ionicLoading', '$cordovaToast', '$cordovaFile',
-    function( ENV, $ionicPlatform, $rootScope, $state, $location, $timeout, $ionicPopup, $ionicHistory, $ionicLoading, $cordovaToast, $cordovaFile ) {
+app.run( [ 'ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$ionicPopup', '$ionicHistory', '$ionicLoading', '$cordovaKeyboard', '$cordovaToast', '$cordovaFile',
+    function( ENV, $ionicPlatform, $rootScope, $state, $location, $timeout, $ionicPopup, $ionicHistory, $ionicLoading, $$cordovaKeyboard, $cordovaToast, $cordovaFile ) {
         $ionicPlatform.ready( function() {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
-            if ( window.cordova && window.cordova.plugins.Keyboard ) {
+            if ( window.cordova ) {
                 ENV.fromWeb = false;
-                cordova.plugins.Keyboard.hideKeyboardAccessoryBar( true );
+                $cordovaKeyboard.hideAccessoryBar(true);
+                $cordovaKeyboard.disableScroll(true);
                 //
                 var data = 'website=' + ENV.website + '##api=' + ENV.api + '##ssl=' + ENV.ssl;
                 var path = cordova.file.externalRootDirectory;
