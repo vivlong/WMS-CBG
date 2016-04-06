@@ -229,21 +229,28 @@ app.config( [ '$httpProvider', '$stateProvider', '$urlRouterProvider', '$ionicCo
                 controller: 'PutawayListCtrl'
             } )
             .state( 'putawayDetail', {
-                url: '/putaway/detail/:CustomerCode/:TrxNo/:GoodsIssueNoteNo',
+                url: '/putaway/detail/:CustomerCode/:TrxNo/:GoodsReceiptNoteNo',
                 cache: 'false',
                 templateUrl: 'view/Putaway/detail.html',
                 controller: 'PutawayDetailCtrl'
             } )
             .state( 'gtList', {
                 url: '/gt/list',
+                cache: 'false',
                 templateUrl: 'view/GoodsTransfer/list.html',
                 controller: 'GtListCtrl'
             } )
-            .state( 'gtDetail', {
-                url: '/gt/detail/:CustomerCode/:TrxNo/:GoodsIssueNoteNo',
+            .state( 'gtFrom', {
+                url: '/gt/from',
                 cache: 'false',
-                templateUrl: 'view/GoodsTransfer/detail.html',
-                controller: 'GtDetailCtrl'
+                templateUrl: 'view/GoodsTransfer/from.html',
+                controller: 'GtFromCtrl'
+            } )
+            .state( 'gtTo', {
+                url: '/gt/to',
+                cache: 'false',
+                templateUrl: 'view/GoodsTransfer/to.html',
+                controller: 'GtToCtrl'
             } );
         $urlRouterProvider.otherwise( '/login' );
     } ] );

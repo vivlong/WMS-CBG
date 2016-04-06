@@ -6,19 +6,31 @@
 	</ion-header-bar>
     <ion-content>
         <div class="list card">
-            <div class="item">
-                <div class="pull-left">
-                    <h2>Customer : <span ng-bind="Detail.strCustomer"></span></h2>
-                    <p>ASN No    : <span ng-bind="Detail.strGRN"></span></p>
+            <div class="item" style="padding-top: 6px;padding-bottom: 6px;">
+                <div class="row">
+                    <div class="col" style="max-width: 35%;">
+                        <h2>Customer&nbsp;:</h2>
+                    </div>
+                    <div class="col">
+                        <h2><span ng-bind="Detail.Customer"></span></h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col" style="max-width: 35%;">
+                        <p>GRN&nbsp;:</p>
+                    </div>
+                    <div class="col">
+                        <p><span ng-bind="Detail.GRN"></span></p>
+                    </div>
                 </div>
             </div>
-            <div class="item item-body">
+            <div class="item item-body" style="padding-top: 6px;padding-bottom: 6px;">
                 <div class="list">
                     <div class="row">
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">BarCode&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-barcode" ng-model="Detail.strBarCode" autofocus="autofocus" style="padding-right: 14px;">
+                                <input type="text" id="txt-barcode" ng-model="Detail.Scan.BarCode" autofocus="autofocus" style="padding-right: 14px;">
                             </label>
                         </div>
                         <div class="col col-10">
@@ -38,7 +50,7 @@
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Serial No&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-sn" ng-model="Detail.SerialNo" style="padding-right: 14px;" readonly>
+                                <input type="text" id="txt-sn" ng-model="Detail.Scan.SerialNo" style="padding-right: 14px;" readonly>
                             </label>
                         </div>
                         <div class="col col-10">
@@ -52,7 +64,7 @@
                         <div class="col col-90" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Qty&nbsp;&nbsp;:</span>
-                                <span id="txt-qty" ng-bind="Detail.Qty"></span>
+                                <span id="txt-qty" ng-bind="Detail.Scan.Qty"></span>
                             </label>
                         </div>
                         <div class="col">
@@ -113,10 +125,14 @@
             </ion-modal-view>
         </script>
     </ion-content>
-	<ion-footer-bar style="padding:1px;">
-		<div class="button-bar">
-            <a class="button button-positive" id="btn-grt-detail-confirm" style="line-height: 44px;" ng-click="checkConfirm()">Confirm</a>
-            <a class="button button-light" id="btn-grt-detail-cancel" style="line-height: 44px;" ng-click="returnList()">Cancel</a>
-		</div>
-	</ion-footer-bar>
+    <ion-footer-bar class="bar-positive">
+        <div class="button-bar">
+            <button class="button icon ion-android-done" ng-click="checkConfirm()">
+                &nbsp;Confirm
+            </button>
+            <button class="button icon ion-arrow-return-right" ng-click="returnList()">
+                &nbsp;Cancel
+            </button>
+        </div>
+    </ion-footer-bar>
 </ion-view>

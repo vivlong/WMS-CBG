@@ -84,11 +84,17 @@
             </div>
         </div>
     </ion-content>
-    <ion-footer-bar style="padding:1px;">
+    <ion-footer-bar class="bar-positive">
         <div class="button-bar">
-            <a class="button button-light" style="line-height: 44px;" id="btn-prev" ng-click="showImgi2Prev()">Previous</a>
-            <a class="button button-positive" style="line-height: 44px;" id="btn-next" ng-click="showImgi2Next()">Next</a>
-            <a class="button button-light" style="line-height: 44px;" id="btn-cancel" ng-click="returnList()">Cancel</a>
+            <button class="button icon ion-android-arrow-dropleft" ng-click="showImgi2Prev()">
+                &nbsp;Previous
+            </button>
+            <button class="button icon ion-android-arrow-dropright" ng-click="showImgi2Next()">
+                &nbsp;Next
+            </button>
+            <button class="button icon ion-arrow-return-right" ng-click="returnList()">
+                &nbsp;Cancel
+            </button>
         </div>
     </ion-footer-bar>
 </ion-view>
