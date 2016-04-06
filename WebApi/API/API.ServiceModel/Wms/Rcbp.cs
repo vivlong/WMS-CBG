@@ -38,11 +38,11 @@ namespace WebApi.ServiceModel.Wms
 																								string strSQL = "Select top 1 *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' And TrxNo=" + int.Parse(request.TrxNo);
 																								Result = db.Select<Rcbp1>(strSQL);
                     }
-                    else
-                    {
-																								string strSQL = "Select Top 10 *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' Order By BusinessPartyName Asc";
-																								Result = db.Select<Rcbp1>(strSQL);
-                    }
+                    //else
+                    //{
+																				//				string strSQL = "Select Top 10 *,(Select Top 1 CountryName From Rccy1 Where CountryCode=Rcbp1.CountryCode) AS CountryName From Rcbp1 Where IsNUll(StatusCode,'')<>'DEL' Order By BusinessPartyName Asc";
+																				//				Result = db.Select<Rcbp1>(strSQL);
+                    //}
                 }
             }
             catch { throw; }
