@@ -88,7 +88,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
             } );
         };
         $scope.CamScanSerialNo = function() {
-            if ( $( '#txt-detail-sn' ).attr( "readonly" ) != "readonly" ) {
+            if ( $( '#txt-sn' ).attr( "readonly" ) != "readonly" ) {
                 $cordovaBarcodeScanner.scan().then( function( imageData ) {
                     $scope.Detail.Scan.SerialNo = imageData.text;
                     ShowSn( $scope.Detail.Scan.SerialNo, false );
@@ -102,14 +102,14 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 $scope.Detail.Scan.BarCode = "";
                 $scope.Detail.Scan.SerialNo = "";
                 $scope.Detail.Scan.Qty = 0;
-                $( '#txt-detail-sn' ).attr( "readonly", true );
-                $( '#txt-detail-barcode' ).select();
+                $( '#txt-sn' ).attr( "readonly", true );
+                $( '#txt-barcode' ).select();
             }
         };
         $scope.clearSerialNo = function() {
             if ( $scope.Detail.Scan.SerialNo.length > 0 ) {
                 $scope.Detail.Scan.SerialNo = "";
-                $( '#txt-detail-sn' ).select();
+                $( '#txt-sn' ).select();
             }
         };
         $scope.showImgi2Prev = function() {
@@ -150,6 +150,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
         }
         var showImgi2 = function( LineItemNo ) {
             if ( LineItemNo != null && $scope.Detail.Imgi2s.length > 0 ) {
+                $scope.Detail.RowNum = $scope.Detail.Imgi2s[ LineItemNo ].RowNum;
                 $scope.Detail.TrxNo = $scope.Detail.Imgi2s[ LineItemNo ].TrxNo;
                 $scope.Detail.LineItemNo = $scope.Detail.Imgi2s[ LineItemNo ].LineItemNo;
                 $scope.Detail.StoreNo = $scope.Detail.Imgi2s[ LineItemNo ].StoreNo;
@@ -293,7 +294,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 setBarCodeQty( numBarcode );
             }
         };
-        $( '#txt-detail-barcode' ).on( 'keydown', function( e ) {
+        $( '#txt-barcode' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 ShowProduct( $scope.Detail.Scan.BarCode, false );
             }
@@ -355,7 +356,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 setSnQty( sn, SnArray, CurrentQty );
             }
         };
-        $( '#txt-detail-sn' ).on( 'keydown', function( e ) {
+        $( '#txt-sn' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 ShowSn( $scope.Detail.SerialNo, false );
             }
