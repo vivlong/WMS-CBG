@@ -116,6 +116,7 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
             Imgr2s: {}
         };
         $scope.Imgr2s = {};
+        /*
         $ionicModal.fromTemplateUrl( 'scan.html', {
             scope: $scope,
             animation: 'slide-in-up'
@@ -126,6 +127,46 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
         $scope.$on( '$destroy', function() {
             $scope.modal.remove();
         } );
+        $scope.openModal = function() {
+            $scope.modal.show();
+            if ( dbWms ) {
+                dbWms.transaction( function( tx ) {
+                    dbSql = 'Select * from Imgr2';
+                    tx.executeSql( dbSql, [], function( tx, results ) {
+                        var arr = new Array();
+                        for ( var i = 0; i < results.rows.length; i++ ) {
+                            var objImgr2 = {};
+                            objImgr2.TrxNo = results.rows.item( i ).TrxNo;
+                            objImgr2.LineItemNo = results.rows.item( i ).LineItemNo;
+                            objImgr2.ProductCode = results.rows.item( i ).ProductCode;
+                            if ( results.rows.item( i ).ScanQty > 0 ) {
+                                objImgr2.ScanQty = results.rows.item( i ).ScanQty;
+                            } else {
+                                objImgr2.ScanQty = 0;
+                            }
+                            objImgr2.BarCode = results.rows.item( i ).BarCode;
+                            switch ( results.rows.item( i ).DimensionFlag ) {
+                                case '1':
+                                    objImgr2.ActualQty = results.rows.item( i ).PackingQty;
+                                    break;
+                                case '2':
+                                    objImgr2.ActualQty = results.rows.item( i ).WholeQty;
+                                    break;
+                                default:
+                                    objImgr2.ActualQty = results.rows.item( i ).LooseQty;
+                            }
+                            arr.push( objImgr2 );
+                        }
+                        $scope.Imgr2s = arr;
+                    }, dbError )
+                } );
+            }
+        };
+        $scope.closeModal = function() {
+            $scope.Imgr2s = {};
+            $scope.modal.hide();
+        };
+        */
         $scope.openCam = function( type ) {
             if ( is.equal( type, 'BarCode' ) ) {
                 $cordovaBarcodeScanner.scan().then( function( imageData ) {
@@ -300,53 +341,11 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
                 setSnQty( sn, SnArray, mapBcValue );
             }
         };
-        $scope.openModal = function() {
-            $scope.modal.show();
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
-                    dbSql = 'Select * from Imgr2';
-                    tx.executeSql( dbSql, [], function( tx, results ) {
-                        var arr = new Array();
-                        for ( var i = 0; i < results.rows.length; i++ ) {
-                            var objImgr2 = {};
-                            objImgr2.TrxNo = results.rows.item( i ).TrxNo;
-                            objImgr2.LineItemNo = results.rows.item( i ).LineItemNo;
-                            objImgr2.ProductCode = results.rows.item( i ).ProductCode;
-                            if ( results.rows.item( i ).ScanQty > 0 ) {
-                                objImgr2.ScanQty = results.rows.item( i ).ScanQty;
-                            } else {
-                                objImgr2.ScanQty = 0;
-                            }
-                            objImgr2.BarCode = results.rows.item( i ).BarCode;
-                            switch ( results.rows.item( i ).DimensionFlag ) {
-                                case '1':
-                                    objImgr2.ActualQty = results.rows.item( i ).PackingQty;
-                                    break;
-                                case '2':
-                                    objImgr2.ActualQty = results.rows.item( i ).WholeQty;
-                                    break;
-                                default:
-                                    objImgr2.ActualQty = results.rows.item( i ).LooseQty;
-                            }
-                            arr.push( objImgr2 );
-                        }
-                        $scope.Imgr2s = arr;
-                    }, dbError )
-                } );
-            }
-        };
-        $scope.closeModal = function() {
-            $scope.Imgr2s = {};
-            $scope.modal.hide();
-        };
-        $scope.returnList = function() {
-            if ( $ionicHistory.backView() ) {
-                $ionicHistory.goBack();
-            } else {
-                $state.go( 'putawayList', {}, {
-                    reload: true
-                } );
-            }
+
+        $scope.returnMain = function() {
+            $state.go( 'index.main', {}, {
+                reload: true
+            } );
         };
         $scope.clearInput = function( type ) {
             if ( is.equal( type, 'BarCode' ) ) {
@@ -493,7 +492,6 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
                 }
             } );
         };
-        GetImgr2ProductCode( $scope.Detail.GRN );
         $( '#txt-barcode' ).on( 'focus', ( function() {
             if ( window.cordova && window.cordova.plugins.Keyboard ) {
                 cordova.plugins.Keyboard.close();
