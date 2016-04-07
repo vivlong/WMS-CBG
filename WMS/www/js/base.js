@@ -12,14 +12,40 @@ function dbError(tx, error) {
 var dbWms = window.openDatabase(dbInfo.dbName, dbInfo.dbVersion, dbInfo.dbDisplayName, dbInfo.dbEstimatedSize);
 if (dbWms) {
     dbWms.transaction(function (tx) {
-        dbSql = "CREATE TABLE if not exists Imgr2 (TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
+        dbSql = 'DROP TABLE if exists Imgr2';
         tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE if not exists Imsn1 (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
+        dbSql = 'DROP TABLE if exists Imgi2';
         tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE if not exists Imgi2 (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, DimensionFlag TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
+        dbSql = 'DROP TABLE if exists Imsn1';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imgr2 (TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imsn1 (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imgi2 (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, DimensionFlag TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = 'DROP TABLE if exists Imgr2_Putaway';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imgr2_Putaway (TrxNo INT, LineItemNo INT, StoreNo TEXT, StagingAreaFlag TEXT, ProductTrxNo INT, ProductCode TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
         tx.executeSql(dbSql, [], null, dbError);
     });
 }
+var db_del_Imgr2_Putaway = function (){
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Delete from Imgr2_Putaway';
+            tx.executeSql( dbSql, [], null, dbError )
+        } );
+    }
+}
+var db_add_Imgr2_Putaway = function( Imgr2 ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'INSERT INTO Imgr2_Putaway (TrxNo, LineItemNo, StoreNo, StagingAreaFlag, ProductTrxNo, ProductCode, BarCode, DimensionFlag, PackingQty, WholeQty, LooseQty, ScanQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            tx.executeSql( dbSql, [ Imgr2.TrxNo, Imgr2.LineItemNo, Imgr2.StoreNo, Imgr2.StagingAreaFlag, Imgr2.ProductTrxNo, Imgr2.ProductCode, Imgr2.BarCode, Imgr2.DimensionFlag, Imgr2.PackingQty, Imgr2.WholeQty, Imgr2.LooseQty, 0], null, dbError );
+        } );
+    }
+};
 var insertImgr2s = function( Imgr2 ) {
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
