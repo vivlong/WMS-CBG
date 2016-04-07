@@ -91,6 +91,9 @@
     <Compile Include="Tables\Imgi2.cs" />
     <Compile Include="Tables\Imgi1.cs" />
     <Compile Include="Tables\Imgr1.cs" />
+    <Compile Include="Tables\Imgr2_Putaway.cs" />
+    <Compile Include="Tables\Impa1.cs" />
+    <Compile Include="Tables\Whwh2.cs" />
     <Compile Include="Tables\Imgr2.cs" />
     <Compile Include="Tables\Impr1.cs" />
     <Compile Include="Tables\Jmje1.cs" />
@@ -134,6 +137,8 @@
     <Compile Include="Utils\Download.cs" />
     <Compile Include="Utils\Uploading.cs" />
     <Compile Include="Wms\Imgi.cs" />
+    <Compile Include="Wms\Impa.cs" />
+    <Compile Include="Wms\Whwh.cs" />
     <Compile Include="Wms\Imsn.cs" />
     <Compile Include="Freight\Rcbp.cs" />
     <Compile Include="Wms\Impr.cs" />

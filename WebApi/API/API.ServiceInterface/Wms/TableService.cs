@@ -30,13 +30,21 @@ namespace WebApi.ServiceInterface.Wms
         {
             if (auth.AuthResult(token, uri))
             {
-																if (uri.IndexOf("/wms/imgr1/comfirm") > 0)
+																if (uri.IndexOf("/wms/imgr1/confirm") > 0)
 																{
-																				imgr_Logic.Confirm_Imgr1(request);
+																				ecr.data.results = imgr_Logic.Confirm_Imgr1(request);
 																}
 																else if (uri.IndexOf("/wms/imgr1") > 0)
 																{
 																				ecr.data.results = imgr_Logic.Get_Imgr1_List(request);
+																}
+																else if (uri.IndexOf("/wms/imgr2/putaway/update") > 0)
+																{
+																				ecr.data.results = imgr_Logic.Update_Imgr2_StoreNo(request);
+																}
+																else if (uri.IndexOf("/wms/imgr2/putaway") > 0)
+																{
+																				ecr.data.results = imgr_Logic.Get_Imgr2_Putaway_List(request);
 																}
 																else if (uri.IndexOf("/wms/imgr2") > 0)
 																{
@@ -68,6 +76,23 @@ namespace WebApi.ServiceInterface.Wms
                 ecr.meta.message = "Unauthorized";
             }
         }
+								public void TS_Whwh(Auth auth, Whwh request, Whwh_Logic whwh_Logic, CommonResponse ecr, string[] token, string uri)
+								{
+												if (auth.AuthResult(token, uri))
+												{
+																if (uri.IndexOf("/wms/whwh2") > 0)
+																{
+																				ecr.data.results = whwh_Logic.Get_Whwh2_List(request);
+																}
+																ecr.meta.code = 200;
+																ecr.meta.message = "OK";
+												}
+												else
+												{
+																ecr.meta.code = 401;
+																ecr.meta.message = "Unauthorized";
+												}
+								}
         public void TS_Imgi(Auth auth, Imgi request, Imgi_Logic imgi_Logic, CommonResponse ecr, string[] token, string uri)
         {
             if (auth.AuthResult(token, uri))
