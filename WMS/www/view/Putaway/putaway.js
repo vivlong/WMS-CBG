@@ -97,6 +97,7 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
                 hmImgr2.remove( barcode );
                 hmImgr2.set( barcode, imgr2 );
                 $scope.Detail.Scan.Qty = imgr2.ScanQty;
+				
                 //$( '#div-barcode' ).focus();
                 if ( dbWms ) {
                     dbWms.transaction( function( tx ) {
@@ -109,8 +110,9 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
         };
         var getImpr = function( barcode, imgr2 ) {
             $scope.Detail.Impr1.ProductCode = imgr2.ProductCode;
-            $scope.Detail.Impr1.ProductDescription = imgr2.ProductDescription;
+            $scope.Detail.Impr1.ProductDescription = imgr2.ProductDescription;			
             setScanQty( barcode, imgr2 );
+			$scope.$apply();
         }
         var showImpr = function( barcode, blnScan ) {
             //barcode = barcode.replace( /[^0-9/d]/g, '' );
@@ -148,6 +150,7 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
             hmImgr2.remove( $scope.Detail.Scan.BarCode );
             hmImgr2.set( $scope.Detail.Scan.BarCode , mapValue );
             $scope.Detail.Scan.Qty = mapValue.ScanQty;
+			$scope.$apply();
             if ( dbWms ) {
                 dbWms.transaction( function( tx ) {
                     dbSql = 'INSERT INTO Imsn1 (ReceiptNoteNo, ReceiptLineItemNo, SerialNo) values(?, ?, ?)';
@@ -367,7 +370,7 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
                         }, {
                             text: '<b>Save</b>',
                             type: 'button-positive',
-                            onTap: function( e ) {
+                            onTap: function( e ) {								
                                 updateQty( imgr2 );
                             }
                         } ]
