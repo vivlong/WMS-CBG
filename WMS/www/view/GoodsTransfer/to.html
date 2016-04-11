@@ -84,22 +84,30 @@
     <script id="scan.html" type="text/ng-template">
         <ion-modal-view>
             <ion-header-bar class="bar-positive" align-title="center">
-                <div class="h1 title">Transfer From Detail</div>
+                <div class="h1 title">Transfer To Detail</div>
             </ion-header-bar>
             <ion-content>
                 <ion-list>
                     <ion-item ng-repeat="Imgr2 in Detail.Imgr2sDb">
                         <div class="row">
                             <div class="col col-50">
-                                <p style="font-size:0.8em;">Store No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                                <p style="font-size:0.8em;">Old Store No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.StoreNo" style="font-size:1.2em;"></span>
+                                <span ng-bind="Imgr2.StoreNoFrom" style="font-size:1.2em;"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col col-50">
-                                <p style="font-size:0.8em;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                                <p style="font-size:0.8em;">New Store No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgr2.StoreNoTo" style="font-size:1.2em;"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-50">
+                                <p style="font-size:0.8em;">Internal BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
                                 <span ng-bind="Imgr2.BarCode" style="font-size:1.2em;"></span>

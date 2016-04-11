@@ -415,25 +415,26 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
                             $ionicLoading.show();
                             var blnDiscrepancies = false;
                             for ( var i = 0; i < len; i++ ) {
-                                var objDetailImgr2 = {};
-                                objDetailImgr2.intTrxNo = results.rows.item( i ).TrxNo;
-                                objDetailImgr2.intLineItemNo = results.rows.item( i ).LineItemNo;
-                                objDetailImgr2.strProductCode = results.rows.item( i ).ProductCode;
-                                objDetailImgr2.intScanQty = results.rows.item( i ).ScanQty;
-                                objDetailImgr2.strBarCode = results.rows.item( i ).BarCode;
-                                if ( objDetailImgr2.strBarCode != null && objDetailImgr2.strBarCode.length > 0 ) {
+                                var imgr2 = {
+                                    intTrxNo : results.rows.item( i ).TrxNo,
+                                    intLineItemNo : results.rows.item( i ).LineItemNo,
+                                    strProductCode : results.rows.item( i ).ProductCode,
+                                    intScanQty : results.rows.item( i ).ScanQty,
+                                    strBarCode : results.rows.item( i ).BarCode
+                                };
+                                if ( imgr2.strBarCode != null && imgr2.strBarCode.length > 0 ) {
                                     switch ( results.rows.item( i ).DimensionFlag ) {
                                         case '1':
-                                            objDetailImgr2.intQty = results.rows.item( i ).PackingQty;
+                                            imgr2.intQty = results.rows.item( i ).PackingQty;
                                             break;
                                         case '2':
-                                            objDetailImgr2.intQty = results.rows.item( i ).WholeQty;
+                                            imgr2.intQty = results.rows.item( i ).WholeQty;
                                             break;
                                         default:
-                                            objDetailImgr2.intQty = results.rows.item( i ).LooseQty;
+                                            imgr2.intQty = results.rows.item( i ).LooseQty;
                                     }
-                                    if ( objDetailImgr2.intQty != objDetailImgr2.intScanQty ) {
-                                        console.log( 'Product (' + objDetailImgr2.strProductCode + ') Qty not equal.' );
+                                    if ( imgr2.intQty != imgr2.intScanQty ) {
+                                        console.log( 'Product (' + imgr2.strProductCode + ') Qty not equal.' );
                                         blnDiscrepancies = true;
                                     }
                                 } else {
@@ -442,31 +443,31 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
                             }
                             if ( blnDiscrepancies ) {
                                 $ionicLoading.hide();
-                                var checkPopup = $ionicPopup.show( {
-                                    title: 'Discrepancies on Qty.',
-                                    buttons: [ {
-                                        text: 'Cancel',
-                                        onTap: function( e ) {
-                                            checkPopup.close();
-                                        }
-                                    }, {
-                                        text: '<b>Check</b>',
-                                        type: 'button-assertive',
-                                        onTap: function( e ) {
-                                            $timeout( function() {
-                                                $scope.openModal();
-                                            }, 250 );
-                                            checkPopup.close();
-                                        }
-                                    } ]
-                                } );
+                                onErrorConfirm();
                             } else {
                                 sendConfirm();
                             }
                         }
+                        else{
+                            $ionicLoading.hide();
+                            onErrorConfirm();
+                        }
                     }, dbError )
                 } );
             }
+        };
+        var onErrorConfirm = function(){
+            var checkPopup = $ionicPopup.show( {
+                title: 'Discrepancies on Qty.',
+                buttons: [{
+                    text: '<b>Check</b>',
+                    type: 'button-assertive',
+                    onTap: function( e ) {
+                        checkPopup.close();
+                        $scope.openModal();
+                    }
+                } ]
+            } );
         };
         var sendConfirm = function() {
             var userID = sessionStorage.getItem( 'UserId' ).toString();

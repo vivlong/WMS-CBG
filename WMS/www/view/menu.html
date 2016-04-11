@@ -20,6 +20,9 @@
                 <ion-item nav-clear ng-click="gotoUpdate()">
                     <i class="icon iconfont ion-android-sync"></i>&nbsp;&nbsp;Check Update
                 </ion-item>
+                <ion-item nav-clear menu-close ng-if="Status.Login" href="#/main">
+                    <i class="icon iconfont ion-android-menu"></i>&nbsp;&nbsp;Main Menu
+                </ion-item>
                 <ion-item class="item-divider">
                 </ion-item>
                 <ion-item nav-clear menu-close ng-if="!Status.Login" href="#/login">

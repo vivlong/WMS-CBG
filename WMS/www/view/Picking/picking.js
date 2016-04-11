@@ -53,8 +53,8 @@ appControllers.controller('PickingListCtrl', ['$scope', '$stateParams', '$state'
     }
 ]);
 
-appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams', '$state', '$http', '$timeout', '$ionicHistory', '$ionicLoading', '$ionicPopup', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
-    function(ENV, $scope, $stateParams, $state, $http, $timeout, $ionicHistory, $ionicLoading, $ionicPopup, $cordovaToast, $cordovaBarcodeScanner, ApiService) {
+appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams', '$state', '$timeout', '$ionicHistory', '$ionicPopup', '$ionicModal', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
+    function(ENV, $scope, $stateParams, $state, $timeout, $ionicHistory, $ionicPopup, $ionicModal, $cordovaToast, $cordovaBarcodeScanner, ApiService) {
         var alertPopup = null;
         var alertTitle = '';
         $scope.Detail = {
@@ -66,7 +66,6 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                 SerialNo: '',
                 Qty: 0
             },
-            Imgi2s:{},
             Imgi2:{
                 RowNum:         0,
                 TrxNo:          0,
@@ -79,6 +78,8 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                 Qty:            0,
                 QtyBal:         0
             },
+            Imgi2s:{},
+            Imgi2sDb:{},
             Imsn1s:{}
         };
         var hmBarCodeScanQty = new HashMap();
@@ -461,6 +462,51 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                     });
                 }
             }
+        };
+        $ionicModal.fromTemplateUrl( 'scan.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        } ).then( function( modal ) {
+            $scope.modal = modal;
+        } );
+        $scope.$on( '$destroy', function() {
+            $scope.modal.remove();
+        } );
+        $scope.openModal = function() {
+            if ( dbWms ) {
+                dbWms.transaction( function( tx ) {
+                    dbSql = 'Select * from Imgi2';
+                    tx.executeSql( dbSql, [], function( tx, results ) {
+                        $scope.Detail.Imgi2sDb = new Array();
+                        for ( var i = 0; i < results.rows.length; i++ ) {
+                            var imgi2 = {
+                                TrxNo : results.rows.item( i ).TrxNo,
+                                LineItemNo : results.rows.item( i ).LineItemNo,
+                                StoreNo : results.rows.item( i ).StoreNo,
+                                ProductCode : results.rows.item( i ).ProductCode,
+                                ScanQty : results.rows.item( i ).ScanQty > 0 ? results.rows.item( i ).ScanQty : 0,
+                                BarCode : results.rows.item( i ).BarCode
+                            };
+                            switch ( results.rows.item( i ).DimensionFlag ) {
+                                case '1':
+                                    imgi2.ActualQty = results.rows.item( i ).PackingQty;
+                                    break;
+                                case '2':
+                                    imgi2.ActualQty = results.rows.item( i ).WholeQty;
+                                    break;
+                                default:
+                                    imgi2.ActualQty = results.rows.item( i ).LooseQty;
+                            }
+                            $scope.Detail.Imgi2sDb.push( imgi2 );
+                        }
+                    }, dbError )
+                } );
+            }
+            $scope.modal.show();
+        };
+        $scope.closeModal = function() {
+            $scope.Detail.Imgi2sDb = {};
+            $scope.modal.hide();
         };
     }
 ]);
