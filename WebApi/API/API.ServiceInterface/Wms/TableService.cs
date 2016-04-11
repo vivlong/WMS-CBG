@@ -46,6 +46,10 @@ namespace WebApi.ServiceInterface.Wms
 																{
 																				ecr.data.results = imgr_Logic.Get_Imgr2_Putaway_List(request);
 																}
+																else if (uri.IndexOf("/wms/imgr2/transfer") > 0)
+																{
+																				ecr.data.results = imgr_Logic.Get_Imgr2_Transfer_List(request);
+																}
 																else if (uri.IndexOf("/wms/imgr2") > 0)
 																{
 																				ecr.data.results = imgr_Logic.Get_Imgr2_List(request);

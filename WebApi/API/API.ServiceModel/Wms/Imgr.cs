@@ -15,6 +15,7 @@ namespace WebApi.ServiceModel.Wms
 				[Route("/wms/imgr2", "Get")]												//imgr2?GoodsReceiptNoteNo=
 				[Route("/wms/imgr2/putaway", "Get")]				//putaway?GoodsReceiptNoteNo=
 				[Route("/wms/imgr2/putaway/update", "Get")]				//update?StoreNo= & TrxNo= & LineItemNo=
+				[Route("/wms/imgr2/transfer", "Get")]			//transfer?TrxNo= & LineItemNo=
     public class Imgr : IReturn<CommonResponse>
     {
         public string CustomerCode { get; set; }
@@ -64,7 +65,7 @@ namespace WebApi.ServiceModel.Wms
 																																	i => i.CustomerCode != null && i.CustomerCode != "" && i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode == request.StatusCode && i.GoodsReceiptNoteNo.StartsWith(request.GoodsReceiptNoteNo)
 																												);
 																								}
-                    }                  
+                    }
                 }
             }
             catch { throw; }
@@ -81,7 +82,7 @@ namespace WebApi.ServiceModel.Wms
 																								"Select Imgr2.* From Imgr2 " +
 																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
 																								"Where Imgr1.GoodsReceiptNoteNo='" + request.GoodsReceiptNoteNo + "'"
-																				);
+																				);																	
 																}
 												}
 												catch { throw; }
@@ -101,14 +102,31 @@ namespace WebApi.ServiceModel.Wms
 																								strBarCodeFiled = strBarCodeFiled + "Convert(varchar(10),Imgr2." + strBarCodeFormats[i] + ") + '-' +";
 																				}
 																				strBarCodeFiled = strBarCodeFiled.Remove(strBarCodeFiled.LastIndexOf(')')+1);
-																				Result = db.Select<Imgr2_Putaway>(
-																								"Select Imgr2.*, " +
+																				string strSql = "Select Imgr2.*, " +
 																								"(" + strBarCodeFiled + ") AS BarCode," +
 																								"(Select StagingAreaFlag From Whwh2 Where WarehouseCode=Imgr2.WarehouseCode And StoreNo=Imgr2.StoreNo) AS StagingAreaFlag " +
 																								"From Imgr2 " +
 																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
-																								"Where Imgr1.GoodsReceiptNoteNo='" + request.GoodsReceiptNoteNo + "'"
-																				);
+																								"Where Imgr1.GoodsReceiptNoteNo='" + request.GoodsReceiptNoteNo + "'";
+																				Result = db.Select<Imgr2_Putaway>(strSql);
+																}
+												}
+												catch { throw; }
+												return Result;
+								}
+
+								public List<Imgr2_Transfer> Get_Imgr2_Transfer_List(Imgr request)
+								{
+												List<Imgr2_Transfer> Result = null;
+												try
+												{
+																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																{
+																				string strSql = "Select Imgr2.*, " +
+																								"(Select Top 1 SerialNoFlag From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS SerialNoFlag " +
+																								"From Imgr2 " +
+																								"Where Imgr2.TrxNo=" + int.Parse(request.TrxNo) + " And Imgr2.LineItemNo=" + int.Parse(request.LineItemNo);
+																				Result = db.Select<Imgr2_Transfer>(strSql);
 																}
 												}
 												catch { throw; }
