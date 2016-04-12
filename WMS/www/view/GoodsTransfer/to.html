@@ -12,7 +12,7 @@
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Store No&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-storeno" ng-model="Detail.Scan.StoreNo" style="padding-right: 14px;">
+                                <input type="text" id="txt-storeno-to" ng-model="Detail.Scan.StoreNo" style="padding-right: 14px;">
                             </label>
                         </div>
                         <div class="col col-10">
@@ -26,7 +26,7 @@
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Internal Barcode&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-barcode" ng-model="Detail.Scan.BarCode" style="padding-right: 14px;">
+                                <input type="text" id="txt-barcode-to" ng-model="Detail.Scan.BarCode" style="padding-right: 14px;">
                             </label>
                         </div>
                         <div class="col col-10">
@@ -46,7 +46,7 @@
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Serial No&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-sn" ng-model="Detail.Scan.SerialNo" style="padding-right: 14px;" readonly>
+                                <input type="text" id="txt-sn-to" ng-model="Detail.Scan.SerialNo" style="padding-right: 14px;" readonly>
                             </label>
                         </div>
                         <div class="col col-10">
@@ -73,7 +73,7 @@
     </ion-content>
     <ion-footer-bar class="bar-positive hide-on-keyboard-open">
         <div class="button-bar">
-            <button class="button icon ion-android-done" ng-click="gotoTransferFrom()">
+            <button class="button icon ion-android-done" ng-click="checkConfirm()">
                 &nbsp;Confirm
             </button>
             <button class="button icon ion-arrow-return-right" ng-click="gotoTransferFrom()">
@@ -123,10 +123,18 @@
                         </div>
                         <div class="row">
                             <div class="col col-50">
+                                <p style="font-size:0.8em;">Actual Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgr2.ScanQtyFrom" style="font-size:1.2em; color:red;"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-50">
                                 <p style="font-size:0.8em;">Scan Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.ScanQty" style="font-size:1.2em; color:red;"></span>
+                                <span ng-bind="Imgr2.ScanQtyTo" style="font-size:1.2em; color:red;"></span>
                             </div>
                         </div>
                     </ion-item>

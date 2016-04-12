@@ -30,7 +30,7 @@ if (dbWms) {
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = 'DROP TABLE if exists Imgr2_Transfer';
         tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE Imgr2_Transfer (TrxNo INT, LineItemNo INT, StoreNo TEXT, StoreNoFrom TEXT, StoreNoTo TEXT, ProductTrxNo INT, ProductCode TEXT, SerialNoFlag TEXT, BarCode TEXT, ScanQty INT)";
+        dbSql = "CREATE TABLE Imgr2_Transfer (TrxNo INT, LineItemNo INT, StoreNo TEXT, StoreNoFrom TEXT, StoreNoTo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, ScanQtyFrom INT, ScanQtyTo INT)";
         tx.executeSql(dbSql, [], null, dbError);
     });
 }
@@ -42,11 +42,11 @@ var db_del_Imgr2_Putaway = function (){
         } );
     }
 }
-var db_add_Imgr2_Putaway = function( Imgr2 ) {
+var db_add_Imgr2_Putaway = function( imgr2 ) {
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
             dbSql = 'INSERT INTO Imgr2_Putaway (TrxNo, LineItemNo, StoreNo, StagingAreaFlag, ProductTrxNo, ProductCode, BarCode, DimensionFlag, PackingQty, WholeQty, LooseQty, ScanQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            tx.executeSql( dbSql, [ Imgr2.TrxNo, Imgr2.LineItemNo, Imgr2.StoreNo, Imgr2.StagingAreaFlag, Imgr2.ProductTrxNo, Imgr2.ProductCode, Imgr2.BarCode, Imgr2.DimensionFlag, Imgr2.PackingQty, Imgr2.WholeQty, Imgr2.LooseQty, 0], null, dbError );
+            tx.executeSql( dbSql, [ imgr2.TrxNo, imgr2.LineItemNo, imgr2.StoreNo, imgr2.StagingAreaFlag, imgr2.ProductTrxNo, imgr2.ProductCode, imgr2.BarCode, imgr2.DimensionFlag, imgr2.PackingQty, imgr2.WholeQty, imgr2.LooseQty, 0], null, dbError );
         } );
     }
 };
@@ -58,15 +58,29 @@ var db_del_Imgr2_Transfer = function (){
         } );
     }
 }
-var db_add_Imgr2_Transfer = function( Imgr2 ) {
+var db_add_Imgr2_Transfer = function( imgr2 ) {
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
-            dbSql = 'INSERT INTO Imgr2_Transfer (TrxNo, LineItemNo, StoreNo, StoreNoFrom, StoreNoTo, ProductTrxNo, ProductCode, SerialNoFlag, BarCode, ScanQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            tx.executeSql( dbSql, [ Imgr2.TrxNo, Imgr2.LineItemNo, Imgr2.StoreNo, Imgr2.StoreNoFrom, Imgr2.StoreNoTo, Imgr2.ProductTrxNo, Imgr2.ProductCode, Imgr2.SerialNoFlag, Imgr2.BarCode, 0], null, dbError );
+            dbSql = 'INSERT INTO Imgr2_Transfer (TrxNo, LineItemNo, StoreNo, StoreNoFrom, StoreNoTo, ProductTrxNo, ProductCode, ProductDescription, SerialNoFlag, BarCode, ScanQtyFrom, ScanQtyTo) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            tx.executeSql( dbSql, [ imgr2.TrxNo, imgr2.LineItemNo, imgr2.StoreNo, imgr2.StoreNoFrom, imgr2.StoreNoTo, imgr2.ProductTrxNo, imgr2.ProductCode, imgr2.ProductDescription, imgr2.SerialNoFlag, imgr2.BarCode, 0, 0], null, dbError );
         } );
     }
 };
-
+var db_update_Imgr2_Transfer = function( imgr2, type ) {
+    if ( dbWms ) {
+        if(is.equal(type,'from')){
+            dbWms.transaction( function( tx ) {
+                dbSql = 'Update Imgr2_Transfer set ScanQtyFrom=?,StoreNoFrom=? Where TrxNo=? and LineItemNo=?';
+                tx.executeSql( dbSql, [ imgr2.ScanQtyFrom, imgr2.StoreNoFrom, imgr2.TrxNo, imgr2.LineItemNo ], null, dbError );
+            } );
+        }else if(is.equal(type,'to')){
+            dbWms.transaction( function( tx ) {
+                dbSql = 'Update Imgr2_Transfer set ScanQtyTo=?,StoreNoTo=? Where TrxNo=? and LineItemNo=?';
+                tx.executeSql( dbSql, [ imgr2.ScanQtyTo, imgr2.StoreNoTo, imgr2.TrxNo, imgr2.LineItemNo ], null, dbError );
+            } );
+        }
+    }
+};
 var insertImgr2s = function( Imgr2 ) {
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {

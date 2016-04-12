@@ -132,20 +132,15 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
         } );
         var setScanQty = function( barcode, imgr2 ) {
             if ( imgr2.SerialNoFlag != null && imgr2.SerialNoFlag === 'Y' ) {
-                $scope.Detail.Scan.Qty = imgr2.ScanQty;
-                $( '#txt-sn' ).removeAttr( 'readonly' );
-                $( '#txt-sn' ).select();
+                $scope.Detail.Scan.Qty = imgr2.ScanQtyFrom;
+                $( '#txt-sn-from' ).removeAttr( 'readonly' );
+                $( '#txt-sn-from' ).select();
             } else {
-                imgr2.ScanQty += 1;
+                imgr2.ScanQtyFrom += 1;
                 hmImgr2.remove( barcode );
                 hmImgr2.set( barcode, imgr2 );
-                $scope.Detail.Scan.Qty = imgr2.ScanQty;
-                if ( dbWms ) {
-                    dbWms.transaction( function( tx ) {
-                        dbSql = 'Update Imgr2_Transfer set ScanQty=?,StoreNoFrom=? Where TrxNo=? and LineItemNo=?';
-                        tx.executeSql( dbSql, [ imgr2.ScanQty, imgr2.StoreNoFrom, imgr2.TrxNo, imgr2.LineItemNo ], null, dbError );
-                    } );
-                }
+                $scope.Detail.Scan.Qty = imgr2.ScanQtyFrom;
+                db_update_Imgr2_Transfer(imgr2,'from');
             }
         };
         var onErrorInternalBarcode = function() {
@@ -173,13 +168,14 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
                                 BarCode : barcode,
                                 ProductCode : $scope.Detail.Imgr2.ProductCode,
                                 ProductDescription : $scope.Detail.Imgr2.ProductDescription,
+                                ProductTrxNo : $scope.Detail.Imgr2.ProductTrxNo,
                                 SerialNoFlag : $scope.Detail.Imgr2.SerialNoFlag,
                                 StoreNo : $scope.Detail.Imgr2.StoreNo,
                                 StoreNoFrom : $scope.Detail.Scan.StoreNo,
                                 StoreNoTo : '',
                                 TrxNo : keys[0],
                                 LineItemNo : keys[1],
-                                ScanQty : 0
+                                ScanQtyFrom : 0
                             };
                             hmImgr2.set( barcode, imgr2 );
                             db_add_Imgr2_Transfer(imgr2);
@@ -270,12 +266,11 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
         var updateQty = function( imgr2 ) {
             if ( dbWms ) {
                 dbWms.transaction( function( tx ) {
-                    dbSql = 'Update Imgr2_Transfer set ScanQty=? Where TrxNo=? and LineItemNo=?';
+                    dbSql = 'Update Imgr2_Transfer set ScanQtyFrom=? Where TrxNo=? and LineItemNo=?';
                     tx.executeSql( dbSql, [ $scope.Detail.Scan.Qty, imgr2.TrxNo, imgr2.LineItemNo ], null, dbError );
                 } );
             }
         };
-
         $scope.openCam = function( type ) {
             if ( is.equal( type, 'StoreNo' ) ) {
                 $cordovaBarcodeScanner.scan().then( function( imageData ) {
@@ -314,7 +309,7 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
                                 LineItemNo : results.rows.item( i ).LineItemNo,
                                 StoreNo : results.rows.item( i ).StoreNo,
                                 ProductCode : results.rows.item( i ).ProductCode,
-                                ScanQty : results.rows.item( i ).ScanQty > 0 ? results.rows.item( i ).ScanQty : 0,
+                                ScanQtyFrom : results.rows.item( i ).ScanQtyFrom > 0 ? results.rows.item( i ).ScanQtyFrom : 0,
                                 BarCode : results.rows.item( i ).BarCode
                             };
                             arr.push( objImgr2 );
@@ -337,17 +332,17 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
         $scope.clearInput = function( type ) {
             if ( is.equal( type, 'StoreNo' ) ) {
                 $scope.Detail.Scan.StoreNo = '';
-                $( '#txt-storeno' ).select();
+                $( '#txt-storeno-from' ).select();
             } else if ( is.equal( type, 'BarCode' ) ) {
                 $scope.Detail.Scan.BarCode = '';
                 $scope.Detail.Scan.SerialNo = '';
                 $scope.Detail.Scan.Qty = 0;
                 $scope.Detail.Imgr2 = {};
-                $( '#txt-sn' ).attr( 'readonly', true );
-                $( '#txt-barcode' ).select();
+                $( '#txt-sn-from' ).attr( 'readonly', true );
+                $( '#txt-barcode-from' ).select();
             } else if ( is.equal( type, 'SerialNo' ) ) {
                 $scope.Detail.Scan.SerialNo = '';
-                $( '#txt-sn' ).select();
+                $( '#txt-sn-from' ).select();
             }
         };
         $scope.changeQty = function() {
@@ -372,75 +367,13 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
                 }
             }
         };
-        $scope.checkConfirm = function() {
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
-                    dbSql = 'Select * from Imgr2_Transfer';
-                    tx.executeSql( dbSql, [], function( tx, results ) {
-                        var len = results.rows.length;
-                        if ( len > 0 ) {
-                            $ionicLoading.show();
-                            var blnDiscrepancies = false;
-                            for ( var i = 0; i < len; i++ ) {
-                                var imgr2 = {
-                                    TrxNo : results.rows.item( i ).TrxNo,
-                                    LineItemNo : results.rows.item( i ).LineItemNo,
-                                    ProductCode : results.rows.item( i ).ProductCode,
-                                    ScanQty : results.rows.item( i ).ScanQty,
-                                    BarCode : results.rows.item( i ).BarCode,
-                                    Qty : 0
-                                };
-                                switch ( results.rows.item( i ).DimensionFlag ) {
-                                    case '1':
-                                        imgr2.Qty = results.rows.item( i ).PackingQty;
-                                        break;
-                                    case '2':
-                                        imgr2.Qty = results.rows.item( i ).WholeQty;
-                                        break;
-                                    default:
-                                        imgr2.Qty = results.rows.item( i ).LooseQty;
-                                }
-                                if ( imgr2.Qty != imgr2.ScanQty ) {
-                                    console.log( 'Product (' + imgr2.ProductCode + ') Qty not equal.' );
-                                    blnDiscrepancies = true;
-                                    break;
-                                }
-                            }
-                            if ( blnDiscrepancies ) {
-                                $ionicLoading.hide();
-                                var checkPopup = $ionicPopup.show( {
-                                    title: 'The following product has not yet putaway.',
-                                    buttons: [ {
-                                        text: 'Cancel',
-                                        onTap: function( e ) {
-                                            checkPopup.close();
-                                        }
-                                    }, {
-                                        text: '<b>Check</b>',
-                                        type: 'button-assertive',
-                                        onTap: function( e ) {
-                                            $timeout( function() {
-                                                $scope.openModal();
-                                            }, 250 );
-                                            checkPopup.close();
-                                        }
-                                    } ]
-                                } );
-                            } else {
-                                confirm();
-                            }
-                        }
-                    }, dbError )
-                } );
-            }
-        };
         $scope.gotoTransferTo = function(){
             $state.go( 'gtTo', {}, {
                 reload: true
             } );
         }
         db_del_Imgr2_Transfer();
-        $( '#txt-storeno' ).on( 'keydown', function( e ) {
+        $( '#txt-storeno-from' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 if (alertPopup === null) {
                     $('#txt-barcode').focus();
@@ -450,7 +383,7 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
                 }
             }
         } );
-        $( '#txt-barcode' ).on( 'keydown', function( e ) {
+        $( '#txt-barcode-from' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 if (alertPopup === null) {
                     showImpr( $scope.Detail.Scan.BarCode );
@@ -460,7 +393,7 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
                 }
             }
         } );
-        $( '#txt-sn' ).on( 'keydown', function( e ) {
+        $( '#txt-sn-from' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 if (alertPopup === null) {
                     ShowSn( $scope.Detail.Scan.SerialNo, false );
@@ -503,20 +436,16 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
         } );
         var setScanQty = function( barcode, imgr2 ) {
             if ( imgr2.SerialNoFlag != null && imgr2.SerialNoFlag === 'Y' ) {
-                $scope.Detail.Scan.Qty = imgr2.ScanQty;
-                $( '#txt-sn' ).removeAttr( 'readonly' );
-                $( '#txt-sn' ).select();
+                $scope.Detail.Scan.Qty = imgr2.ScanQtyTo;
+                $( '#txt-sn-to' ).removeAttr( 'readonly' );
+                $( '#txt-sn-to' ).select();
             } else {
-                imgr2.ScanQty += 1;
+                imgr2.ScanQtyTo += 1;
+                imgr2.StoreNoTo = $scope.Detail.Scan.StoreNo;
                 hmImgr2.remove( barcode );
                 hmImgr2.set( barcode, imgr2 );
-                $scope.Detail.Scan.Qty = imgr2.ScanQty;
-                if ( dbWms ) {
-                    dbWms.transaction( function( tx ) {
-                        dbSql = 'Update Imgr2_Transfer set ScanQty=?,StoreNoFrom=? Where TrxNo=? and LineItemNo=?';
-                        tx.executeSql( dbSql, [ imgr2.ScanQty, imgr2.StoreNoFrom, imgr2.TrxNo, imgr2.LineItemNo ], null, dbError );
-                    } );
-                }
+                $scope.Detail.Scan.Qty = imgr2.ScanQtyTo;
+                db_update_Imgr2_Transfer(imgr2,'to');
             }
         };
         var onErrorInternalBarcode = function() {
@@ -531,53 +460,17 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
             }
         };
         var getImpr = function( barcode, imgr2 ) {
-            if ( is.undefined( imgr2 ) ) {
-                var keys = barcode.split('-');
-                if(keys.length < 2){
-                    onErrorInternalBarcode();
-                }else{
-                    var strUri = '/api/wms/imgr2/transfer?TrxNo=' + keys[0] + '&LineItemNo=' + keys[1];
-                    ApiService.GetParam( strUri, true ).then( function success( result ) {
-                        $scope.Detail.Imgr2 = result.data.results[0];
-                        if ( is.not.undefined( $scope.Detail.Imgr2 ) ) {
-                            var imgr2 = {
-                                BarCode : barcode,
-                                ProductCode : $scope.Detail.Imgr2.ProductCode,
-                                ProductDescription : $scope.Detail.Imgr2.ProductDescription,
-                                SerialNoFlag : $scope.Detail.Imgr2.SerialNoFlag,
-                                StoreNo : $scope.Detail.Imgr2.StoreNo,
-                                StoreNoFrom : $scope.Detail.Scan.StoreNo,
-                                StoreNoTo : '',
-                                TrxNo : keys[0],
-                                LineItemNo : keys[1],
-                                ScanQty : 0
-                            };
-                            hmImgr2.set( barcode, imgr2 );
-                            db_add_Imgr2_Transfer(imgr2);
-                            setScanQty( barcode, imgr2 );
-                        } else {
-                            $scope.Detail.Imgr2 = {};
-                            $scope.Detail.Scan.Qty = 0;
-                            onErrorInternalBarcode();
-                        }
-                    },function error(){
-                        $scope.Detail.Imgr2 = {};
-                        $scope.Detail.Scan.Qty = 0;
-                        onErrorInternalBarcode();
-                    });
-                }
-            } else {
-                $scope.Detail.Imgr2.ProductCode = imgr2.ProductCode;
-                $scope.Detail.Imgr2.ProductDescription = imgr2.ProductDescription;
-                setScanQty( barcode, imgr2 );
-            }
+            $scope.Detail.Imgr2.ProductCode = imgr2.ProductCode;
+            $scope.Detail.Imgr2.ProductDescription = imgr2.ProductDescription;
+            setScanQty( barcode, imgr2 );
         }
         var showImpr = function( barcode ) {
             if ( hmImgr2.has( barcode ) ) {
                 var imgr2 = hmImgr2.get( barcode );
                 getImpr( barcode, imgr2 );
             } else {
-                getImpr( barcode );
+                //getImpr( barcode );
+                onErrorInternalBarcode();
             }
             $scope.$apply();
         };
@@ -646,7 +539,68 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                 } );
             }
         };
-
+        var initImgr2 = function (){
+            if ( dbWms ) {
+                dbWms.transaction( function( tx ) {
+                    dbSql = 'Select * from Imgr2_Transfer';
+                    tx.executeSql( dbSql, [], function( tx, results ) {
+                        for ( var i = 0; i < results.rows.length; i++ ) {
+                            var imgr2 = {
+                                TrxNo : results.rows.item( i ).TrxNo,
+                                LineItemNo : results.rows.item( i ).LineItemNo,
+                                StoreNo : results.rows.item( i ).StoreNo,
+                                StoreNoFrom : results.rows.item( i ).StoreNoFrom,
+                                StoreNoTo : results.rows.item( i ).StoreNoTo,
+                                ProductTrxNo : results.rows.item( i ).ProductTrxNo,
+                                ProductCode : results.rows.item( i ).ProductCode,
+                                ProductDescription : results.rows.item( i ).ProductDescription,
+                                SerialNoFlag : results.rows.item( i ).SerialNoFlag,
+                                ScanQtyFrom : results.rows.item( i ).ScanQtyFrom > 0 ? results.rows.item( i ).ScanQtyFrom : 0,
+                                ScanQtyTo : results.rows.item( i ).ScanQtyTo > 0 ? results.rows.item( i ).ScanQtyTo : 0,
+                                BarCode : results.rows.item( i ).BarCode
+                            };
+                            hmImgr2.set( imgr2.BarCode, imgr2 );
+                        }
+                    }, dbError )
+                } );
+            }
+        };
+        var confirm = function() {
+            var strUri = '/api/wms/imit1/confirm?UserID=' + sessionStorage.getItem( 'UserId').toString();
+            ApiService.GetParam( strUri, false ).then( function success( result ) {
+                if ( dbWms ) {
+                    dbWms.transaction( function( tx ) {
+                        dbSql = 'Select * from Imgr2_Transfer';
+                        tx.executeSql( dbSql, [], function( tx, results ) {
+                            var len = results.rows.length;
+                            if ( len > 0 ) {
+                                $ionicLoading.show();
+                                for ( var i = 0; i < len; i++ ) {
+                                    //var strUri = '/api/wms/imit1/confirm?UserID=' + sessionStorage.getItem( 'UserId').toString();
+                                    //ApiService.GetParam( strUri, false ).then( function success( result ) {
+                                    //
+                                    //} );
+                                }
+                                $ionicLoading.hide();
+                            }
+                            var alertPopup = $ionicPopup.alert( {
+                                title: 'Comfirm success.',
+                                okType: 'button-calm'
+                            } );
+                            $timeout( function() {
+                                alertPopup.close();
+                                $scope.returnMain();
+                            }, 2500 );
+                        }, dbError );
+                    } );
+                }
+            } );
+        };
+        $scope.returnMain = function() {
+            $state.go( 'index.main', {}, {
+                reload: true
+            } );
+        };
         $scope.openCam = function( type ) {
             if ( is.equal( type, 'StoreNo' ) ) {
                 $cordovaBarcodeScanner.scan().then( function( imageData ) {
@@ -683,9 +637,11 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                             var objImgr2 = {
                                 TrxNo : results.rows.item( i ).TrxNo,
                                 LineItemNo : results.rows.item( i ).LineItemNo,
-                                StoreNo : results.rows.item( i ).StoreNo,
+                                StoreNoFrom : results.rows.item( i ).StoreNoFrom,
+                                StoreNoTo : results.rows.item( i ).StoreNoTo,
                                 ProductCode : results.rows.item( i ).ProductCode,
-                                ScanQty : results.rows.item( i ).ScanQty > 0 ? results.rows.item( i ).ScanQty : 0,
+                                ScanQtyFrom : results.rows.item( i ).ScanQtyFrom > 0 ? results.rows.item( i ).ScanQtyFrom : 0,
+                                ScanQtyTo : results.rows.item( i ).ScanQtyTo > 0 ? results.rows.item( i ).ScanQtyFrom : 0,
                                 BarCode : results.rows.item( i ).BarCode
                             };
                             arr.push( objImgr2 );
@@ -703,17 +659,17 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
         $scope.clearInput = function( type ) {
             if ( is.equal( type, 'StoreNo' ) ) {
                 $scope.Detail.Scan.StoreNo = '';
-                $( '#txt-storeno' ).select();
+                $( '#txt-storeno-to' ).select();
             } else if ( is.equal( type, 'BarCode' ) ) {
                 $scope.Detail.Scan.BarCode = '';
                 $scope.Detail.Scan.SerialNo = '';
                 $scope.Detail.Scan.Qty = 0;
                 $scope.Detail.Imgr2 = {};
-                $( '#txt-sn' ).attr( 'readonly', true );
-                $( '#txt-barcode' ).select();
+                $( '#txt-sn-to' ).attr( 'readonly', true );
+                $( '#txt-barcode-to' ).select();
             } else if ( is.equal( type, 'SerialNo' ) ) {
                 $scope.Detail.Scan.SerialNo = '';
-                $( '#txt-sn' ).select();
+                $( '#txt-sn-to' ).select();
             }
         };
         $scope.changeQty = function() {
@@ -740,33 +696,29 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
         };
         $scope.checkConfirm = function() {
             if ( dbWms ) {
+                $ionicLoading.show();
                 dbWms.transaction( function( tx ) {
                     dbSql = 'Select * from Imgr2_Transfer';
                     tx.executeSql( dbSql, [], function( tx, results ) {
                         var len = results.rows.length;
                         if ( len > 0 ) {
-                            $ionicLoading.show();
                             var blnDiscrepancies = false;
                             for ( var i = 0; i < len; i++ ) {
                                 var imgr2 = {
                                     TrxNo : results.rows.item( i ).TrxNo,
                                     LineItemNo : results.rows.item( i ).LineItemNo,
+                                    StoreNo : results.rows.item( i ).StoreNo,
+                                    StoreNoFrom : results.rows.item( i ).StoreNoFrom,
+                                    StoreNoTo : results.rows.item( i ).StoreNoTo,
+                                    ProductTrxNo : results.rows.item( i ).ProductTrxNo,
                                     ProductCode : results.rows.item( i ).ProductCode,
-                                    ScanQty : results.rows.item( i ).ScanQty,
-                                    BarCode : results.rows.item( i ).BarCode,
-                                    Qty : 0
+                                    ProductDescription : results.rows.item( i ).ProductDescription,
+                                    SerialNoFlag : results.rows.item( i ).SerialNoFlag,
+                                    ScanQtyFrom : results.rows.item( i ).ScanQtyFrom > 0 ? results.rows.item( i ).ScanQtyFrom : 0,
+                                    ScanQtyTo : results.rows.item( i ).ScanQtyTo > 0 ? results.rows.item( i ).ScanQtyTo : 0,
+                                    BarCode : results.rows.item( i ).BarCode
                                 };
-                                switch ( results.rows.item( i ).DimensionFlag ) {
-                                    case '1':
-                                        imgr2.Qty = results.rows.item( i ).PackingQty;
-                                        break;
-                                    case '2':
-                                        imgr2.Qty = results.rows.item( i ).WholeQty;
-                                        break;
-                                    default:
-                                        imgr2.Qty = results.rows.item( i ).LooseQty;
-                                }
-                                if ( imgr2.Qty != imgr2.ScanQty ) {
+                                if ( imgr2.ScanQtyFrom != imgr2.ScanQtyTo ) {
                                     console.log( 'Product (' + imgr2.ProductCode + ') Qty not equal.' );
                                     blnDiscrepancies = true;
                                     break;
@@ -775,7 +727,7 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                             if ( blnDiscrepancies ) {
                                 $ionicLoading.hide();
                                 var checkPopup = $ionicPopup.show( {
-                                    title: 'The following product has not yet putaway.',
+                                    title: 'The following product has not yet transfer.',
                                     buttons: [ {
                                         text: 'Cancel',
                                         onTap: function( e ) {
@@ -793,6 +745,7 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                                     } ]
                                 } );
                             } else {
+                                $ionicLoading.hide();
                                 confirm();
                             }
                         }
@@ -809,7 +762,7 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                 } );
             }
         }
-        $( '#txt-storeno' ).on( 'keydown', function( e ) {
+        $( '#txt-storeno-to' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 if (alertPopup === null) {
                     $('#txt-barcode').focus();
@@ -819,7 +772,7 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                 }
             }
         } );
-        $( '#txt-barcode' ).on( 'keydown', function( e ) {
+        $( '#txt-barcode-to' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 if (alertPopup === null) {
                     showImpr( $scope.Detail.Scan.BarCode );
@@ -829,7 +782,7 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                 }
             }
         } );
-        $( '#txt-sn' ).on( 'keydown', function( e ) {
+        $( '#txt-sn-to' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 if (alertPopup === null) {
                     ShowSn( $scope.Detail.Scan.SerialNo, false );
@@ -839,4 +792,5 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                 }
             }
         } );
+        initImgr2();
     } ] );
