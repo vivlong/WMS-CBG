@@ -88,6 +88,7 @@
     <Compile Include="Freight\Tracking.cs" />
     <Compile Include="Freight\Rcvy.cs" />
     <Compile Include="Freight\ViewPDF.cs" />
+    <Compile Include="Tables\Imit.cs" />
     <Compile Include="Tables\Imgi2.cs" />
     <Compile Include="Tables\Imgi1.cs" />
     <Compile Include="Tables\Imgr1.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Tms\Tms_Login.cs" />
     <Compile Include="Utils\Download.cs" />
     <Compile Include="Utils\Uploading.cs" />
+    <Compile Include="Wms\Imit.cs" />
     <Compile Include="Wms\Imgi.cs" />
     <Compile Include="Wms\Impa.cs" />
     <Compile Include="Wms\Whwh.cs" />

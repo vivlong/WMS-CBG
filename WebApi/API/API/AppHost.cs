@@ -69,6 +69,7 @@ namespace WebApi
             container.RegisterAutoWired<WebApi.ServiceModel.Wms.Impr_Logic>();
             container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imgi_Logic>();
 												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imsn_Logic>();
+												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imit_Logic>();
 												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Whwh_Logic>();
 												//TMS
 												container.RegisterAutoWired<WebApi.ServiceModel.Tms.Jmjm_Logic>();

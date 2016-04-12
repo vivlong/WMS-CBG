@@ -114,7 +114,6 @@ namespace WebApi.ServiceModel.Wms
 												catch { throw; }
 												return Result;
 								}
-
 								public List<Imgr2_Transfer> Get_Imgr2_Transfer_List(Imgr request)
 								{
 												List<Imgr2_Transfer> Result = null;

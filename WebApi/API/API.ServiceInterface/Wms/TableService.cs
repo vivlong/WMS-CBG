@@ -139,5 +139,22 @@ namespace WebApi.ServiceInterface.Wms
                 ecr.meta.message = "Unauthorized";
             }
         }
+								public void TS_Imit(Auth auth, Imit request, Imit_Logic imit_Logic, CommonResponse ecr, string[] token, string uri)
+								{
+												if (auth.AuthResult(token, uri))
+												{
+																if (uri.IndexOf("/wms/imit1/confirm") > 0)
+																{
+																				ecr.data.results = imit_Logic.Confirm_Imit1(request);
+																}
+																ecr.meta.code = 200;
+																ecr.meta.message = "OK";
+												}
+												else
+												{
+																ecr.meta.code = 401;
+																ecr.meta.message = "Unauthorized";
+												}
+								}
     }
 }
