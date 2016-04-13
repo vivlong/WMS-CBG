@@ -568,6 +568,7 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
         var confirm = function() {
             var strUri = '/api/wms/imit1/confirm?UserID=' + sessionStorage.getItem( 'UserId').toString();
             ApiService.GetParam( strUri, false ).then( function success( result ) {
+                var imit1 = result.data.results;
                 if ( dbWms ) {
                     dbWms.transaction( function( tx ) {
                         dbSql = 'Select * from Imgr2_Transfer';
@@ -576,10 +577,10 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                             if ( len > 0 ) {
                                 $ionicLoading.show();
                                 for ( var i = 0; i < len; i++ ) {
-                                    //var strUri = '/api/wms/imit1/confirm?UserID=' + sessionStorage.getItem( 'UserId').toString();
-                                    //ApiService.GetParam( strUri, false ).then( function success( result ) {
-                                    //
-                                    //} );
+                                    var strUri = '/api/wms/imit2/create?TrxNo=' + imit1.TrxNo + '&LineItemNo=' + results.rows.item( i ).LineItemNo + ' &NewStoreNo=' + results.rows.item( i ).StoreNoTo + ' &Qty=' + results.rows.item( i ).ScanQtyTo + ' &UpdateBy=' + sessionStorage.getItem( 'UserId').toString();
+                                    ApiService.GetParam( strUri, false ).then( function success( result ) {
+
+                                    } );
                                 }
                                 $ionicLoading.hide();
                             }
