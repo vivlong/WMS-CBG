@@ -97,20 +97,13 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
                 hmImgr2.remove( barcode );
                 hmImgr2.set( barcode, imgr2 );
                 $scope.Detail.Scan.Qty = imgr2.ScanQty;
-				
-                //$( '#div-barcode' ).focus();
-                if ( dbWms ) {
-                    dbWms.transaction( function( tx ) {
-                        dbSql = 'Update Imgr2_Putaway set ScanQty=?,StoreNo=? Where TrxNo=? and LineItemNo=?';
-                        tx.executeSql( dbSql, [ imgr2.ScanQty, imgr2.StoreNo, imgr2.TrxNo, imgr2.LineItemNo ], null, dbError );
-                    } );
-                }
-                //$( '#txt-barcode' ).select();
+                $scope.Detail.Scan.BarCode = '';
+                db_update_Imgr2_Putaway(imgr2);
             }
         };
         var getImpr = function( barcode, imgr2 ) {
             $scope.Detail.Impr1.ProductCode = imgr2.ProductCode;
-            $scope.Detail.Impr1.ProductDescription = imgr2.ProductDescription;			
+            $scope.Detail.Impr1.ProductDescription = imgr2.ProductDescription;
             setScanQty( barcode, imgr2 );
 			$scope.$apply();
         }
@@ -370,7 +363,7 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
                         }, {
                             text: '<b>Save</b>',
                             type: 'button-positive',
-                            onTap: function( e ) {								
+                            onTap: function( e ) {
                                 updateQty( imgr2 );
                             }
                         } ]

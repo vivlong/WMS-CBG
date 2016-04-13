@@ -12,27 +12,63 @@ function dbError(tx, error) {
 var dbWms = window.openDatabase(dbInfo.dbName, dbInfo.dbVersion, dbInfo.dbDisplayName, dbInfo.dbEstimatedSize);
 if (dbWms) {
     dbWms.transaction(function (tx) {
-        dbSql = 'DROP TABLE if exists Imgr2';
+        dbSql = 'DROP TABLE if exists Imgr2_Receipt';
         tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imgr2_Receipt (TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
+        tx.executeSql(dbSql, [], null, dbError);
+
+        dbSql = 'DROP TABLE if exists Imsn1_Receipt';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imsn1_Receipt (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
+        tx.executeSql(dbSql, [], null, dbError);
+
         dbSql = 'DROP TABLE if exists Imgi2';
-        tx.executeSql(dbSql, [], null, dbError);
-        dbSql = 'DROP TABLE if exists Imsn1';
-        tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE Imgr2 (TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
-        tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE Imsn1 (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = "CREATE TABLE Imgi2 (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, DimensionFlag TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
         tx.executeSql(dbSql, [], null, dbError);
+
         dbSql = 'DROP TABLE if exists Imgr2_Putaway';
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = "CREATE TABLE Imgr2_Putaway (TrxNo INT, LineItemNo INT, StoreNo TEXT, StagingAreaFlag TEXT, ProductTrxNo INT, ProductCode TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
         tx.executeSql(dbSql, [], null, dbError);
+
         dbSql = 'DROP TABLE if exists Imgr2_Transfer';
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = "CREATE TABLE Imgr2_Transfer (TrxNo INT, LineItemNo INT, StoreNo TEXT, StoreNoFrom TEXT, StoreNoTo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, ScanQtyFrom INT, ScanQtyTo INT)";
         tx.executeSql(dbSql, [], null, dbError);
     });
+}
+var db_del_Imgr2_Receipt = function (){
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Delete from Imgr2_Receipt';
+            tx.executeSql( dbSql, [], null, dbError )
+        } );
+    }
+}
+var db_add_Imgr2_Receipt = function( imgr2 ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'INSERT INTO Imgr2_Receipt (TrxNo, LineItemNo, ProductTrxNo, ProductCode, ProductDescription, SerialNoFlag, BarCode, DimensionFlag, PackingQty, WholeQty, LooseQty, ScanQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            tx.executeSql( dbSql, [ imgr2.TrxNo, imgr2.LineItemNo, imgr2.ProductTrxNo, imgr2.ProductCode, imgr2.ProductDescription, imgr2.SerialNoFlag, imgr2.BarCode, imgr2.DimensionFlag, imgr2.PackingQty, imgr2.WholeQty, imgr2.LooseQty, 0], null, dbError );
+        } );
+    }
+};
+var db_update_Imgr2_Receipt = function( imgr2 ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Update Imgr2_Receipt set ScanQty=? Where TrxNo=? and LineItemNo=?';
+            tx.executeSql( dbSql, [ imgr2.ScanQty, imgr2.TrxNo, imgr2.LineItemNo ], null, dbError );
+        } );
+    }
+};
+var db_del_Imsn1_Receipt = function (){
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Delete from Imsn1_Receipt';
+            tx.executeSql( dbSql, [], null, dbError )
+        } );
+    }
 }
 var db_del_Imgr2_Putaway = function (){
     if ( dbWms ) {
@@ -47,6 +83,14 @@ var db_add_Imgr2_Putaway = function( imgr2 ) {
         dbWms.transaction( function( tx ) {
             dbSql = 'INSERT INTO Imgr2_Putaway (TrxNo, LineItemNo, StoreNo, StagingAreaFlag, ProductTrxNo, ProductCode, BarCode, DimensionFlag, PackingQty, WholeQty, LooseQty, ScanQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             tx.executeSql( dbSql, [ imgr2.TrxNo, imgr2.LineItemNo, imgr2.StoreNo, imgr2.StagingAreaFlag, imgr2.ProductTrxNo, imgr2.ProductCode, imgr2.BarCode, imgr2.DimensionFlag, imgr2.PackingQty, imgr2.WholeQty, imgr2.LooseQty, 0], null, dbError );
+        } );
+    }
+};
+var db_update_Imgr2_Putaway = function( imgr2 ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Update Imgr2_Putaway set ScanQty=?,StoreNo=? Where TrxNo=? and LineItemNo=?';
+            tx.executeSql( dbSql, [ imgr2.ScanQty, imgr2.StoreNo, imgr2.TrxNo, imgr2.LineItemNo ], null, dbError );
         } );
     }
 };
@@ -81,14 +125,7 @@ var db_update_Imgr2_Transfer = function( imgr2, type ) {
         }
     }
 };
-var insertImgr2s = function( Imgr2 ) {
-    if ( dbWms ) {
-        dbWms.transaction( function( tx ) {
-            dbSql = 'INSERT INTO Imgr2 (TrxNo, LineItemNo, ProductTrxNo, ProductCode, DimensionFlag, PackingQty, WholeQty, LooseQty) values(?, ?, ?, ?, ?, ?, ?, ?)';
-            tx.executeSql( dbSql, [ Imgr2.TrxNo, Imgr2.LineItemNo, Imgr2.ProductTrxNo, Imgr2.ProductCode, Imgr2.DimensionFlag, Imgr2.PackingQty, Imgr2.WholeQty, Imgr2.LooseQty ], null, dbError );
-        } );
-    }
-};
+
 var insertImgi2s = function(imgi2) {
     if (dbWms) {
         dbWms.transaction(function(tx) {
@@ -105,6 +142,7 @@ var insertImsn1s = function(Imsn1) {
         });
     }
 };
+
 var appendProtocol = function(url, blnSSL, portNo) {
     if (url.length > 0 && url.toUpperCase().indexOf('HTTPS://') < 0 && url.toUpperCase().indexOf('HTTP://') < 0) {
         if(blnSSL){

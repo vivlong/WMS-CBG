@@ -44,7 +44,7 @@
                         <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Product Code : <span ng-bind="Detail.Impr1.ProductCode"></span></span>
                     </label>
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description : <span ng-bind="Detail.Impr1.ProductName"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description : <span ng-bind="Detail.Impr1.ProductDescription"></span></span>
                     </label>
                     <div class="row">
                         <div class="col col-80" style="padding:0px;">
@@ -117,9 +117,9 @@
                         </ion-item>
                     </ion-list>
                 </ion-content>
-                <ion-footer-bar style="height:8%; padding:0px;">
+                <ion-footer-bar class="bar-positive">
                     <div class="button-bar">
-                        <button class="button icon ion-arrow-return-left" ng-click="closeModal()">&nbsp;Return</button>
+                        <button class="button icon ion-arrow-return-right" ng-click="closeModal()">&nbsp;Return</button>
                     </div>
                 </ion-footer-bar>
             </ion-modal-view>

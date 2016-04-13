@@ -102,14 +102,28 @@ app.run( [ 'ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeo
                         $rootScope.backButtonPressedOnceToExit = false;
                     }, 2000 );
                 }
-            } else if ( $state.includes( 'grtDetail' ) || $state.includes( 'vginDetail' ) ) {
+            } else if (
+                $state.includes( 'grDetail' ) ||
+                $state.includes( 'putawayDetail' ) ||
+                $state.includes( 'gtTo' ) ||
+                $state.includes( 'gtFrom' ) ||
+                $state.includes( 'pickingDetail' ) ||
+                $state.includes( 'vginDetail' ) ) {
                 if ( $rootScope.backButtonPressedOnceToExit ) {
                     if ( $ionicHistory.backView() ) {
                         $ionicHistory.goBack();
                     } else {
-                        if ( $state.includes( 'grtDetail' ) ) {
-                            $state.go( 'grtList', {} );
-                        } else {
+                        if ( $state.includes( 'grDetail' ) ) {
+                            $state.go( 'grList', {} );
+                        } else if ( $state.includes( 'putawayDetail' ) ) {
+                            $state.go( 'putawayList', {} );
+                        } else if ( $state.includes( 'gtTo' ) ) {
+                            $state.go( 'gtFrom', {} );
+                        } else if ( $state.includes( 'gtFrom' ) ) {
+                            $state.go( 'index.main', {} );
+                        } else if ( $state.includes( 'pickingDetail' ) ) {
+                            $state.go( 'pickingList', {} );
+                        } else if ( $state.includes( 'vginDetail' ) ) {
                             $state.go( 'vginList', {} );
                         }
                     }
@@ -120,10 +134,6 @@ app.run( [ 'ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeo
                         $rootScope.backButtonPressedOnceToExit = false;
                     }, 2000 );
                 }
-            } else if ( $state.includes( 'list' ) ) {
-                $state.go( 'index.main', {}, {
-                    reload: true
-                } );
             } else if ( $ionicHistory.backView() ) {
                 $ionicHistory.goBack();
             } else {
