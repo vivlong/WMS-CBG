@@ -50,9 +50,9 @@ namespace WebApi.ServiceInterface.Wms
 																{
 																				ecr.data.results = imgr_Logic.Get_Imgr2_Transfer_List(request);
 																}
-																else if (uri.IndexOf("/wms/imgr2") > 0)
+																else if (uri.IndexOf("/wms/imgr2/receipt") > 0)
 																{
-																				ecr.data.results = imgr_Logic.Get_Imgr2_List(request);
+																				ecr.data.results = imgr_Logic.Get_Imgr2_Receipt_List(request);
 																}
                 ecr.meta.code = 200;
                 ecr.meta.message = "OK";                
@@ -143,9 +143,17 @@ namespace WebApi.ServiceInterface.Wms
 								{
 												if (auth.AuthResult(token, uri))
 												{
-																if (uri.IndexOf("/wms/imit1/confirm") > 0)
+																if (uri.IndexOf("/wms/imit1/create") > 0)
+																{
+																				ecr.data.results = imit_Logic.Insert_Imit1(request);
+																}
+																else if (uri.IndexOf("/wms/imit1/confirm") > 0)
 																{
 																				ecr.data.results = imit_Logic.Confirm_Imit1(request);
+																}
+																else if (uri.IndexOf("/wms/imit2/create") > 0)
+																{
+																				ecr.data.results = imit_Logic.Insert_Imit2(request);
 																}
 																ecr.meta.code = 200;
 																ecr.meta.message = "OK";

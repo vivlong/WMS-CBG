@@ -12,7 +12,7 @@ namespace WebApi.ServiceModel.Wms
 {
 				[Route("/wms/imgr1", "Get")]												//imgr1?GoodsReceiptNoteNo= & CustomerCode= & StatusCode=
 				[Route("/wms/imgr1/confirm", "Get")]				//confirm?TrxNo= &UserID=
-				[Route("/wms/imgr2", "Get")]												//imgr2?GoodsReceiptNoteNo=
+				[Route("/wms/imgr2/receipt", "Get")]				//receipt?GoodsReceiptNoteNo=
 				[Route("/wms/imgr2/putaway", "Get")]				//putaway?GoodsReceiptNoteNo=
 				[Route("/wms/imgr2/putaway/update", "Get")]				//update?StoreNo= & TrxNo= & LineItemNo=
 				[Route("/wms/imgr2/transfer", "Get")]			//transfer?TrxNo= & LineItemNo=
@@ -88,6 +88,28 @@ namespace WebApi.ServiceModel.Wms
 												catch { throw; }
 												return Result;
 								}
+								public List<Imgr2_Receipt> Get_Imgr2_Receipt_List(Imgr request)
+								{
+												List<Imgr2_Receipt> Result = null;
+												try
+												{
+																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																{
+																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
+																				string strBarCodeFiled = impa1[0].BarCodeField;
+																				string strSql = "Select Imgr2.*, " +
+																								"(Select Top 1 UserDefine01 From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS BarCode," +
+																								"(Select Top 1 SerialNoFlag From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS SerialNoFlag," +
+																								"0 AS ScanQty " +
+																								"From Imgr2 " +
+																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
+																								"Where Imgr1.GoodsReceiptNoteNo='" + request.GoodsReceiptNoteNo + "'";
+																				Result = db.Select<Imgr2_Receipt>(strSql);
+																}
+												}
+												catch { throw; }
+												return Result;
+								}
 								public List<Imgr2_Putaway> Get_Imgr2_Putaway_List(Imgr request)
 								{
 												List<Imgr2_Putaway> Result = null;
@@ -96,14 +118,9 @@ namespace WebApi.ServiceModel.Wms
 																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
 																{
 																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
-																				string[] strBarCodeFormats = impa1[0].BarCodeField.Split('-');
-																				string strBarCodeFiled = "";
-																				for(int i=0;i<strBarCodeFormats.Length;i++){
-																								strBarCodeFiled = strBarCodeFiled + "Convert(varchar(10),Imgr2." + strBarCodeFormats[i] + ") + '-' +";
-																				}
-																				strBarCodeFiled = strBarCodeFiled.Remove(strBarCodeFiled.LastIndexOf(')')+1);
+																				string strBarCodeFiled = impa1[0].BarCodeField;
 																				string strSql = "Select Imgr2.*, " +
-																								"(" + strBarCodeFiled + ") AS BarCode," +
+																								"(Select Top 1 " + strBarCodeFiled + " From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS BarCode," +
 																								"(Select StagingAreaFlag From Whwh2 Where WarehouseCode=Imgr2.WarehouseCode And StoreNo=Imgr2.StoreNo) AS StagingAreaFlag " +
 																								"From Imgr2 " +
 																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +

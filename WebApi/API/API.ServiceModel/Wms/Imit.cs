@@ -10,7 +10,8 @@ using WebApi.ServiceModel.Tables;
 
 namespace WebApi.ServiceModel.Wms
 {
-				[Route("/wms/imit1/confirm", "Get")]				//confirm?UserID=
+				[Route("/wms/imit1/create", "Get")]					//create?UserID=
+				[Route("/wms/imit1/confirm", "Get")]				//confirm?TrxNo= &UpdateBy=
 				[Route("/wms/imit2/create", "Get")]					//create?TrxNo= &Imgr2LineItemNo= &Imgr2TrxNo= &Imgr2LineItemNo= &NewStoreNo= &Qty= &UpdateBy= 
 				public class Imit : IReturn<CommonResponse>
     {
@@ -26,7 +27,7 @@ namespace WebApi.ServiceModel.Wms
 				public class Imit_Logic
     {
         public IDbConnectionFactory DbConnectionFactory { get; set; }
-								public List<Imit1> Confirm_Imit1(Imit request)
+								public List<Imit1> Insert_Imit1(Imit request)
 								{
 												List<Imit1> Result = null;
 												int intResult = -1;
@@ -54,6 +55,25 @@ namespace WebApi.ServiceModel.Wms
 																								strSql = "Select top 1 * From Imit1 Order By CreateDateTime Desc";
 																								Result = db.Select<Imit1>(strSql);
 																				}
+																}
+												}
+												catch { throw; }
+												return Result;
+								}
+								public int Confirm_Imit1(Imit request)
+								{
+												int Result = -1;
+												try
+												{
+																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																{
+																				string strSql = "EXEC spi_Imit_Confirm @TrxNo,@UpdateBy";
+																				Result = db.SqlScalar<int>(strSql,
+																								new
+																								{																												
+																												TrxNo = int.Parse(request.TrxNo),
+																												UpdateBy = request.UserID
+																								});
 																}
 												}
 												catch { throw; }
