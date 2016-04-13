@@ -7,7 +7,7 @@ namespace WebApi.ServiceModel.Tables
 {
 				public class Imit1
 				{
-								public string CustomerCode { get; set; }
+								public int TrxNo { get; set; }
 				}
 				public class Imit2
 				{
@@ -20,7 +20,7 @@ namespace WebApi.ServiceModel.Tables
 								public string NewWarehouseCode { get; set; }
 								public string StoreNo { get; set; }
 								public string WarehouseCode { get; set; }
-								public string ProductTrxNo { get; set; }
+								public int ProductTrxNo { get; set; }
 								public int PackingQty { get; set; }
 								public int LooseQty { get; set; }
 								public int WholeQty { get; set; }
