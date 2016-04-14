@@ -57,6 +57,8 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
     function(ENV, $scope, $stateParams, $state, $timeout, $ionicHistory, $ionicPopup, $ionicModal, $cordovaToast, $cordovaBarcodeScanner, ApiService) {
         var alertPopup = null;
         var alertTitle = '';
+        var hmImgi2 = new HashMap();
+        var hmImsn1 = new HashMap();
         $scope.Detail = {
             Customer: $stateParams.CustomerCode,
             GIN: $stateParams.GoodsIssueNoteNo,
@@ -82,10 +84,187 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
             Imgi2sDb:{},
             Imsn1s:{}
         };
-        var hmBarCodeScanQty = new HashMap();
-        var hmSnScanQty = new HashMap();
-        var hmSnSerialNo = new HashMap();
-        var returnListFun = function() {
+        $ionicModal.fromTemplateUrl( 'scan.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        } ).then( function( modal ) {
+            $scope.modal = modal;
+        } );
+        $scope.$on( '$destroy', function() {
+            $scope.modal.remove();
+        } );
+        var showPopup = function( title, type, callback ){
+            if (alertPopup === null) {
+                alertPopup = $ionicPopup.alert( {
+                    title: title,
+                    okType: 'button-' + type
+                } );
+                if( typeof(callback) == 'function') callback(alertPopup);
+            } else {
+                alertPopup.close();
+                alertPopup = null;
+            }
+        };
+        var blnVerifyInput = function(type){
+            var blnPass = true;
+            if(is.equal(type,'StoreNo')) {
+                if(!is.equal($scope.Detail.Scan.StoreNo,$scope.Detail.Imgi2.StoreNo)){
+                    showPopup('Invalid Store No','assertive');
+                    blnPass = false;
+                }
+            } else if(is.equal(type,'BarCode')) {
+                if(!is.equal($scope.Detail.Scan.BarCode,$scope.Detail.Imgi2.BarCode)){
+                    showPopup('Invalid Product Picked','assertive');
+                    blnPass = false;
+                }
+            }
+            return blnPass;
+        };
+        var setScanQty = function( barcode, imgi2 ) {
+            if ( imgi2.SerialNoFlag != null && imgi2.SerialNoFlag === 'Y' ) {
+                $scope.Detail.Scan.Qty = imgi2.ScanQty;
+                $( '#txt-sn' ).removeAttr( 'readonly' );
+                $( '#txt-sn' ).select();
+            } else {
+                imgi2.ScanQty += 1;
+                hmImgi2.remove( barcode );
+                hmImgi2.set( barcode, imgi2 );
+                db_update_Imgi2_Picking(imgi2);
+                $scope.Detail.Scan.Qty = imgi2.ScanQty;
+                $scope.Detail.Scan.BarCode = '';
+            }
+        };
+        var showImpr = function( barcode, blnScan ) {
+            if ( hmImgi2.has( barcode ) ) {
+                var imgi2 = hmImgi2.get( barcode );
+                setScanQty( barcode, imgi2 );
+            } else {
+                showPopup('Invalid Product Picked','assertive');
+            }
+            $scope.$apply();
+        };
+        var checkSn = function(sn, SnArray) {
+            var blnExistSn = false;
+            for (var i = 0; i < SnArray.length; i++) {
+                if (SnArray[i].toString() === sn) {
+                    blnExistSn = true;
+                    break;
+                }
+            }
+            return blnExistSn;
+        };
+        var setSnQty = function(sn, SnArray, CurrentQty) {
+            if (SnArray.length > 1) {
+                if (checkSn(sn, SnArray)) {
+                    return;
+                }
+            }
+            SnArray.push(sn);
+            hmSnScanQty.remove($scope.Detail.BarCodeScan);
+            hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
+            CurrentQty += 1;
+            hmImgi2.remove($scope.Detail.BarCodeScan);
+            hmImgi2.set($scope.Detail.BarCodeScan, CurrentQty);
+            $scope.Detail.QtyScan = CurrentQty;
+            if (dbWms) {
+                dbWms.transaction(function(tx) {
+                    dbSql = "INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)";
+                    tx.executeSql(dbSql, [$scope.Detail.strGIN, $scope.Detail.LineItemNo, sn], null, null);
+                    dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
+                    tx.executeSql(dbSql, [CurrentQty, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
+                });
+            }
+            $('#txt-sn').select();
+        };
+        var ShowSn = function(sn, blnScan) {
+            if (sn != null && sn > 0) {
+                if (blnScan) {
+                    $scope.Detail.SerialNo = sn;
+                }
+
+                var CurrentQty = hmImgi2.get($scope.Detail.BarCodeScan);
+                var SnArray = null;
+                if (!hmSnScanQty.isEmpty()) {
+                    if (hmSnScanQty.containsKey($scope.Detail.BarCodeScan)) {
+                        SnArray = hmSnScanQty.get($scope.Detail.BarCodeScan);
+                    } else {
+                        SnArray = new Array();
+                        SnArray.push(sn);
+                        hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
+                    }
+                } else {
+                    SnArray = new Array();
+                    SnArray.push(sn);
+                    hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
+                }
+                setSnQty(sn, SnArray, CurrentQty);
+            }
+        };
+        var showImgi2 = function(row) {
+            if (row != null && $scope.Detail.Imgi2s.length >= row) {
+                $scope.Detail.Imgi2 = {
+                    RowNum : $scope.Detail.Imgi2s[row].RowNum,
+                    TrxNo : $scope.Detail.Imgi2s[row].TrxNo,
+                    LineItemNo : $scope.Detail.Imgi2s[row].LineItemNo,
+                    StoreNo : $scope.Detail.Imgi2s[row].StoreNo,
+                    ProductTrxNo : $scope.Detail.Imgi2s[row].ProductTrxNo,
+                    ProductCode : $scope.Detail.Imgi2s[row].ProductCode,
+                    ProductDescription : $scope.Detail.Imgi2s[row].ProductDescription,
+                    SerialNoFlag : $scope.Detail.Imgi2s[row].SerialNoFlag,
+                    BarCode : $scope.Detail.Imgi2s[row].BarCode,
+                    Qty : $scope.Detail.Imgi2s[row].Qty,
+                    QtyBal : $scope.Detail.Imgi2s[row].Qty-$scope.Detail.Imgi2s[row].ScanQty,
+                    ScanQty : $scope.Detail.Imgi2s[row].ScanQty
+                };
+            }
+        };
+        var GetImgi2ProductCode = function(GoodsIssueNoteNo) {
+            var strUri = '/api/wms/imgi2/picking?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
+            ApiService.GetParam(strUri, true).then(function success(result) {
+                $scope.Detail.Imgi2s = result.data.results;
+                db_del_Imgi2_Picking();
+                if(is.array($scope.Detail.Imgi2s) && is.not.empty($scope.Detail.Imgi2s)) {
+                    for (var i = 0; i < $scope.Detail.Imgi2s.length; i++) {
+                        hmImgi2.set($scope.Detail.Imgi2s[i].BarCode, $scope.Detail.Imgi2s[i]);
+                        db_add_Imgi2_Picking($scope.Detail.Imgi2s[i]);
+                    }
+                    showImgi2(0);
+                } else {
+                    showPopup('This GIN has no Products','calm',function(popup){
+                        $timeout(function() {
+                            popup.close();
+                            $scope.returnList();
+                        }, 2500);
+                    });
+                }
+            });
+        };
+        GetImgi2ProductCode($scope.Detail.GIN);
+        var GetImsn1SerialNo = function(GoodsIssueNoteNo) {
+            var strUri = '/api/wms/imsn1?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
+            ApiService.GetParam(strUri, true).then(function success(result) {
+                $scope.Detail.Imsn1s = result.data.results;
+                db_del_Imsn1_Picking();
+                if (is.array($scope.Detail.Imsn1s) && is.not.empty($scope.Detail.Imsn1s)) {
+                    for (var i = 0; i < $scope.Detail.Imsn1s.length; i++) {
+                        hmImsn1.set($scope.Detail.Imsn1s[i].IssueNoteNo + "#" + $scope.Detail.Imsn1s[i].IssueLineItemNo, Imsn1.SerialNo);
+                        db_add_Imsn1_Picking($scope.Detail.Imsn1s[i]);
+                    }
+                }
+            });
+        };
+        GetImsn1SerialNo($scope.Detail.GIN);
+        $scope.openModal = function() {
+            db_query_Imgi2_Picking(function(results){
+                $scope.Detail.Imgi2sDb = results;
+            });
+            $scope.modal.show();
+        };
+        $scope.closeModal = function() {
+            $scope.Detail.Imgi2sDb = {};
+            $scope.modal.hide();
+        };
+        $scope.returnList = function() {
             if ($ionicHistory.backView()) {
                 $ionicHistory.goBack();
             } else {
@@ -94,7 +273,27 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                 });
             }
         };
-        $scope.returnList = returnListFun;
+        $scope.changeQty = function() {
+            if ($scope.Detail.Scan.Qty > 0 && $scope.Detail.Scan.BarCode.length > 0) {
+                if (hmImgi2.count()>0 && hmImgi2.has($scope.Detail.Scan.BarCode)) {
+                    var promptPopup = $ionicPopup.show({
+                        template: '<input type="number" ng-model="Detail.QtyScan">',
+                        title: 'Enter Qty',
+                        subTitle: 'Are you sure to change Qty manually?',
+                        scope: $scope,
+                        buttons: [{
+                            text: 'Cancel'
+                        }, {
+                            text: '<b>Save</b>',
+                            type: 'button-positive',
+                            onTap: function(e) {
+                                db_update_Imgi2_Picking($scope.Detail.Imgi2);
+                            }
+                        }]
+                    });
+                }
+            }
+        };
         $scope.openCam = function(type) {
             if(is.equal(type,'StoreNo')){
                 $cordovaBarcodeScanner.scan().then(function(imageData) {
@@ -105,7 +304,7 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
             }else if(is.equal(type,'BarCode')){
                 $cordovaBarcodeScanner.scan().then(function(imageData) {
                     $scope.Detail.Scan.BarCode = imageData.text;
-                    ShowProduct($scope.Detail.Scan.BarCode, true);
+                    showImpr($scope.Detail.Scan.BarCode, true);
                 }, function(error) {
                     $cordovaToast.showShortBottom(error);
                 });
@@ -148,256 +347,24 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                 $('#txt-storeno').select();
             }
         };
-        var blnVerifyInput = function(type){
-            if(is.equal(type,'StoreNo')) {
-                if(!is.equal($scope.Detail.Scan.StoreNo,$scope.Detail.Imgi2.StoreNo)){
-                    if(ENV.fromWeb){
-                        alertPopup = $ionicPopup.alert({
-                            title: 'Invalid Store No.',
-                            okType: 'button-assertive'
-                        });
-                    } else {
-                        $cordovaToast.showShortBottom('Invalid Store No.');
-                    }
-                    return false;
-                }else{
-                    return true;
-                }
-            } else if(is.equal(type,'BarCode')) {
-                if(!is.equal($scope.Detail.Scan.BarCode,$scope.Detail.Imgi2.BarCode)){
-                    if(ENV.fromWeb){
-                        alertPopup = $ionicPopup.alert({
-                            title: 'Invalid Product Picked.',
-                            okType: 'button-assertive'
-                        });
-                    } else {
-                        $cordovaToast.showShortBottom('Invalid Product Picked.');
-                    }
-                    return false;
-                }else{
-                    return true;
-                }
-            } else{
-                return true;
-            }
-        };
         $scope.showImgi2Prev = function() {
-            var blnHasPrev = false;
             var intRow = $scope.Detail.Imgi2.RowNum - 1;
             if ($scope.Detail.Imgi2s.length > 0 && intRow > 0 && is.equal($scope.Detail.Imgi2s[intRow-1].RowNum,intRow)) {
-                blnHasPrev = true;
-            }
-            if (blnHasPrev) {
                 $scope.clearInput();
                 showImgi2(intRow - 1);
             } else {
-                if(ENV.fromWeb){
-                    alertPopup = $ionicPopup.alert({
-                        title: 'Already the first one.',
-                        okType: 'button-calm'
-                    });
-                } else {
-                    $cordovaToast.showShortBottom('Already the first one.');
-                }
+                showPopup('Already the first one','calm');
             }
         }
         $scope.showImgi2Next = function() {
-            var blnHasNext = false;
             var intRow = $scope.Detail.Imgi2.RowNum + 1;
             if ($scope.Detail.Imgi2s.length > 0 && $scope.Detail.Imgi2s.length >= intRow && is.equal($scope.Detail.Imgi2s[intRow-1].RowNum,intRow)) {
-                blnHasNext = true;
-            }
-            if (blnHasNext) {
                 $scope.clearInput();
                 showImgi2(intRow-1);
             } else {
-                if(ENV.fromWeb){
-                    alertPopup = $ionicPopup.alert({
-                        title: 'Already the last one.',
-                        okType: 'button-calm'
-                    });
-                } else {
-                    $cordovaToast.showShortBottom('Already the last one.');
-                }
+                showPopup('Already the last one','calm');
             }
         }
-        var showImgi2 = function(row) {
-            if (row != null && $scope.Detail.Imgi2s.length >= row) {
-                $scope.Detail.Imgi2.RowNum = $scope.Detail.Imgi2s[row].RowNum;
-                $scope.Detail.Imgi2.TrxNo = $scope.Detail.Imgi2s[row].TrxNo;
-                $scope.Detail.Imgi2.LineItemNo = $scope.Detail.Imgi2s[row].LineItemNo;
-                $scope.Detail.Imgi2.StoreNo = $scope.Detail.Imgi2s[row].StoreNo;
-                $scope.Detail.Imgi2.ProductCode = $scope.Detail.Imgi2s[row].ProductCode;
-                $scope.Detail.Imgi2.ProductDescription = $scope.Detail.Imgi2s[row].ProductDescription;
-                $scope.Detail.Imgi2.SerialNoFlag = $scope.Detail.Imgi2s[row].SerialNoFlag;
-                $scope.Detail.Imgi2.BarCode = $scope.Detail.Imgi2s[row].UserDefine01;
-                switch ($scope.Detail.Imgi2s[row].DimensionFlag) {
-                    case '1':
-                        $scope.Detail.Imgi2.Qty = $scope.Detail.Imgi2s[row].PackingQty;
-                        break;
-                    case '2':
-                        $scope.Detail.Imgi2.Qty = $scope.Detail.Imgi2s[row].WholeQty;
-                        break;
-                    default:
-                        $scope.Detail.Imgi2.Qty = $scope.Detail.Imgi2s[row].LooseQty;
-                }
-                $scope.Detail.Imgi2.QtyBal = $scope.Detail.Imgi2.Qty;
-                if (!hmBarCodeScanQty) {
-                    if (hmBarCodeScanQty.has($scope.Detail.Imgi2.BarCode)) {
-                        $scope.Detail.Scan.Qty = hmBarCodeScanQty.get($scope.Detail.Imgi2.BarCode);
-                    }
-                }
-            }
-        };
-        var GetImgi2ProductCode = function(GoodsIssueNoteNo) {
-            var strUri = '/api/wms/imgi2?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
-            ApiService.GetParam(strUri, true).then(function success(result) {
-                $scope.Detail.Imgi2s = result.data.results;
-                if (dbWms) {
-                    dbWms.transaction(function(tx) {
-                        dbSql = "Delete from Imgi2";
-                        tx.executeSql(dbSql, [], null, dbError)
-                    });
-                }
-                if ($scope.Detail.Imgi2s.length > 0) {
-                    for (var i = 0; i < $scope.Detail.Imgi2s.length; i++) {
-                        hmBarCodeScanQty.set($scope.Detail.Imgi2s[i].BarCode, 0);
-                        insertImgi2s($scope.Detail.Imgi2s[i]);
-                    }
-                    showImgi2(0);
-                } else {
-                    alertPopup = $ionicPopup.alert({
-                        title: 'This GIN has no Products.',
-                        okType: 'button-calm'
-                    });
-                    $timeout(function() {
-                        alertPopup.close();
-                        returnListFun();
-                    }, 2500);
-                }
-            });
-
-        };
-        GetImgi2ProductCode($scope.Detail.GIN);
-        var GetImsn1SerialNo = function(GoodsIssueNoteNo) {
-            var strUri = '/api/wms/imsn1?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
-            ApiService.GetParam(strUri, true).then(function success(result) {
-                $scope.Detail.Imsn1s = result.data.results;
-                if (dbWms) {
-                    dbWms.transaction(function(tx) {
-                        dbSql = "Delete from Imsn1";
-                        tx.executeSql(dbSql, [], null, dbError)
-                    });
-                }
-                if ($scope.Detail.Imsn1s.length > 0) {
-                    for (var i = 0; i < $scope.Detail.Imsn1s.length; i++) {
-                        hmSnSerialNo.set($scope.Detail.Imsn1s[i].IssueNoteNo + "#" + $scope.Detail.Imsn1s[i].IssueLineItemNo, Imsn1.SerialNo);
-                        insertImsn1s($scope.Detail.Imsn1s[i]);
-                    }
-                }
-            });
-        };
-        GetImsn1SerialNo($scope.Detail.GIN);
-        var setBarCodeQty = function(numBarcode) {
-            if ($scope.Detail.BarCodeScan === numBarcode) {
-                var CurrentQty = 0;
-                if (!hmBarCodeScanQty.isEmpty()) {
-                    if (hmBarCodeScanQty.containsKey(numBarcode)) {
-                        CurrentQty = hmBarCodeScanQty.get(numBarcode);
-                    }
-                }
-                if ($scope.Detail.SerialNoFlag != null && $scope.Detail.SerialNoFlag === 'Y') {
-                    $('#txt-sn').removeAttr("readonly");
-                    $('#txt-sn').select();
-                } else {
-                    CurrentQty += 1;
-                    hmBarCodeScanQty.remove(numBarcode);
-                    hmBarCodeScanQty.set(numBarcode, CurrentQty);
-                    $scope.Detail.QtyScan = CurrentQty;
-                    $('#txt-barcode').select();
-                    if (dbWms) {
-                        dbWms.transaction(function(tx) {
-                            dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
-                            tx.executeSql(dbSql, [$scope.Detail.QtyScan, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
-                        });
-                    }
-                }
-            } else {
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Invalid product picked.',
-                    okType: 'button-assertive'
-                });
-                $timeout(function() {
-                    alertPopup.close();
-                }, 2500);
-            }
-        };
-        var ShowProduct = function(barcode, blnScan) {
-            var numBarcode = barcode.replace(/[^0-9/d]/g, '');
-            if (blnScan) {
-                $scope.Detail.Scan.BarCode = numBarcode;
-            }
-            if (numBarcode != null && numBarcode > 0) {
-                setBarCodeQty(numBarcode);
-            }
-        };
-        var checkSn = function(sn, SnArray) {
-            var blnExistSn = false;
-            for (var i = 0; i < SnArray.length; i++) {
-                if (SnArray[i].toString() === sn) {
-                    blnExistSn = true;
-                    break;
-                }
-            }
-            return blnExistSn;
-        };
-        var setSnQty = function(sn, SnArray, CurrentQty) {
-            if (SnArray.length > 1) {
-                if (checkSn(sn, SnArray)) {
-                    return;
-                }
-            }
-            SnArray.push(sn);
-            hmSnScanQty.remove($scope.Detail.BarCodeScan);
-            hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
-            CurrentQty += 1;
-            hmBarCodeScanQty.remove($scope.Detail.BarCodeScan);
-            hmBarCodeScanQty.set($scope.Detail.BarCodeScan, CurrentQty);
-            $scope.Detail.QtyScan = CurrentQty;
-            if (dbWms) {
-                dbWms.transaction(function(tx) {
-                    dbSql = "INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)";
-                    tx.executeSql(dbSql, [$scope.Detail.strGIN, $scope.Detail.LineItemNo, sn], null, null);
-                    dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
-                    tx.executeSql(dbSql, [CurrentQty, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
-                });
-            }
-            $('#txt-sn').select();
-        };
-        var ShowSn = function(sn, blnScan) {
-            if (sn != null && sn > 0) {
-                if (blnScan) {
-                    $scope.Detail.SerialNo = sn;
-                }
-
-                var CurrentQty = hmBarCodeScanQty.get($scope.Detail.BarCodeScan);
-                var SnArray = null;
-                if (!hmSnScanQty.isEmpty()) {
-                    if (hmSnScanQty.containsKey($scope.Detail.BarCodeScan)) {
-                        SnArray = hmSnScanQty.get($scope.Detail.BarCodeScan);
-                    } else {
-                        SnArray = new Array();
-                        SnArray.push(sn);
-                        hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
-                    }
-                } else {
-                    SnArray = new Array();
-                    SnArray.push(sn);
-                    hmSnScanQty.set($scope.Detail.BarCodeScan, SnArray);
-                }
-                setSnQty(sn, SnArray, CurrentQty);
-            }
-        };
         $('#txt-storeno').on('keydown', function(e) {
             if (e.which === 9 || e.which === 13) {
                 if (alertPopup === null) {
@@ -414,7 +381,7 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
             if (e.which === 9 || e.which === 13) {
                 if (alertPopup === null) {
                     if(blnVerifyInput('BarCode')){
-                        ShowProduct($scope.Detail.Scan.BarCode, false);
+                        showImpr($scope.Detail.Scan.BarCode);
                     }
                 } else {
                     alertPopup.close();
@@ -432,81 +399,5 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                 }
             }
         });
-        var updateQty = function() {
-            hmSnScanQty.remove($scope.Detail.BarCodeScan);
-            hmSnScanQty.set($scope.Detail.BarCodeScan, $scope.Detail.QtyScan);
-            if (dbWms) {
-                dbWms.transaction(function(tx) {
-                    dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
-                    tx.executeSql(dbSql, [$scope.Detail.QtyScan, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
-                });
-            }
-        };
-        $scope.changeQty = function() {
-            if ($scope.Detail.QtyScan > 0 && $scope.Detail.BarCodeScan.length > 0) {
-                if (!hmBarCodeScanQty.isEmpty() && hmBarCodeScanQty.containsKey($scope.Detail.BarCodeScan)) {
-                    var promptPopup = $ionicPopup.show({
-                        template: '<input type="number" ng-model="Detail.QtyScan">',
-                        title: 'Enter Qty',
-                        subTitle: 'Are you sure to change Qty manually?',
-                        scope: $scope,
-                        buttons: [{
-                            text: 'Cancel'
-                        }, {
-                            text: '<b>Save</b>',
-                            type: 'button-positive',
-                            onTap: function(e) {
-                                updateQty();
-                            }
-                        }]
-                    });
-                }
-            }
-        };
-        $ionicModal.fromTemplateUrl( 'scan.html', {
-            scope: $scope,
-            animation: 'slide-in-up'
-        } ).then( function( modal ) {
-            $scope.modal = modal;
-        } );
-        $scope.$on( '$destroy', function() {
-            $scope.modal.remove();
-        } );
-        $scope.openModal = function() {
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
-                    dbSql = 'Select * from Imgi2';
-                    tx.executeSql( dbSql, [], function( tx, results ) {
-                        $scope.Detail.Imgi2sDb = new Array();
-                        for ( var i = 0; i < results.rows.length; i++ ) {
-                            var imgi2 = {
-                                TrxNo : results.rows.item( i ).TrxNo,
-                                LineItemNo : results.rows.item( i ).LineItemNo,
-                                StoreNo : results.rows.item( i ).StoreNo,
-                                ProductCode : results.rows.item( i ).ProductCode,
-                                ScanQty : results.rows.item( i ).ScanQty > 0 ? results.rows.item( i ).ScanQty : 0,
-                                BarCode : results.rows.item( i ).BarCode
-                            };
-                            switch ( results.rows.item( i ).DimensionFlag ) {
-                                case '1':
-                                    imgi2.ActualQty = results.rows.item( i ).PackingQty;
-                                    break;
-                                case '2':
-                                    imgi2.ActualQty = results.rows.item( i ).WholeQty;
-                                    break;
-                                default:
-                                    imgi2.ActualQty = results.rows.item( i ).LooseQty;
-                            }
-                            $scope.Detail.Imgi2sDb.push( imgi2 );
-                        }
-                    }, dbError )
-                } );
-            }
-            $scope.modal.show();
-        };
-        $scope.closeModal = function() {
-            $scope.Detail.Imgi2sDb = {};
-            $scope.modal.hide();
-        };
     }
 ]);

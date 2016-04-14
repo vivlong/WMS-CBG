@@ -101,23 +101,15 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
                 db_update_Imgr2_Putaway(imgr2);
             }
         };
-        var getImpr = function( barcode, imgr2 ) {
-            $scope.Detail.Impr1.ProductCode = imgr2.ProductCode;
-            $scope.Detail.Impr1.ProductDescription = imgr2.ProductDescription;
-            setScanQty( barcode, imgr2 );
-			$scope.$apply();
-        }
-        var showImpr = function( barcode, blnScan ) {
-            //barcode = barcode.replace( /[^0-9/d]/g, '' );
+        var showImpr = function( barcode ) {
             if ( hmImgr2.count() > 0 ) {
                 if ( hmImgr2.has( barcode ) ) {
                     var imgr2 = hmImgr2.get( barcode );
-                    getImpr( barcode, imgr2 );
-                } else {
-                    //getImpr( barcode );
+                    $scope.Detail.Impr1.ProductCode = imgr2.ProductCode;
+                    $scope.Detail.Impr1.ProductDescription = imgr2.ProductDescription;
+                    setScanQty( barcode, imgr2 );
+        			$scope.$apply();
                 }
-            } else {
-                //getImpr( barcode );
             }
         };
         var checkSn = function( sn, SnArray ) {
@@ -233,7 +225,7 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
                 db_del_Imgr2_Putaway();
                 arrStoreNo = new Array();
                 arrBarCode = new Array();
-                if(is.array($scope.Detail.Imgr2s)){
+                if(is.array($scope.Detail.Imgr2s) && is.not.empty($scope.Detail.Imgr2s)){
                     for ( var i = 0; i < $scope.Detail.Imgr2s.length; i++ ) {
                         var storeno = $scope.Detail.Imgr2s[ i ].StoreNo;
                         if(!is.inArray(storeno,arrStoreNo)){
@@ -257,7 +249,6 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
                 }
             } );
         };
-
         $scope.openCam = function( type ) {
             if ( is.equal( type, 'StoreNo' ) ) {
                 $cordovaBarcodeScanner.scan().then( function( imageData ) {
@@ -467,7 +458,7 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
             if ( e.which === 9 || e.which === 13 ) {
                 if (alertPopup === null) {
                     if(checkBarCode($scope.Detail.Scan.BarCode)){
-                        showImpr( $scope.Detail.Scan.BarCode , false );
+                        showImpr( $scope.Detail.Scan.BarCode );
                     }else{
                         $('#txt-barcode').focus();
                     }

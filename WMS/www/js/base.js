@@ -16,25 +16,45 @@ if (dbWms) {
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = "CREATE TABLE Imgr2_Receipt (TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
         tx.executeSql(dbSql, [], null, dbError);
-
         dbSql = 'DROP TABLE if exists Imsn1_Receipt';
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = "CREATE TABLE Imsn1_Receipt (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
-        tx.executeSql(dbSql, [], null, dbError);
-
-        dbSql = 'DROP TABLE if exists Imgi2';
-        tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE Imgi2 (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, DimensionFlag TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
         tx.executeSql(dbSql, [], null, dbError);
 
         dbSql = 'DROP TABLE if exists Imgr2_Putaway';
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = "CREATE TABLE Imgr2_Putaway (TrxNo INT, LineItemNo INT, StoreNo TEXT, StagingAreaFlag TEXT, ProductTrxNo INT, ProductCode TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
         tx.executeSql(dbSql, [], null, dbError);
+        dbSql = 'DROP TABLE if exists Imsn1_Putaway';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imsn1_Putaway (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
+        tx.executeSql(dbSql, [], null, dbError);
 
         dbSql = 'DROP TABLE if exists Imgr2_Transfer';
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = "CREATE TABLE Imgr2_Transfer (TrxNo INT, LineItemNo INT, StoreNo TEXT, StoreNoFrom TEXT, StoreNoTo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, ScanQtyFrom INT, ScanQtyTo INT)";
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = 'DROP TABLE if exists Imsn1_Transfer';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imsn1_Transfer (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
+        tx.executeSql(dbSql, [], null, dbError);
+
+        dbSql = 'DROP TABLE if exists Imgi2_Picking';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imgi2_Picking (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, Qty INT, ScanQty INT, QtyBal INT)";
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = 'DROP TABLE if exists Imsn1_Picking';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imsn1_Picking (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
+        tx.executeSql(dbSql, [], null, dbError);
+
+        dbSql = 'DROP TABLE if exists Imgi2_Verify';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imgi2_Verify (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, Qty INT, ScanQty INT, QtyBal INT)";
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = 'DROP TABLE if exists Imsn1_Verify';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Imsn1_Verify (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
         tx.executeSql(dbSql, [], null, dbError);
     });
 }
@@ -125,24 +145,136 @@ var db_update_Imgr2_Transfer = function( imgr2, type ) {
         }
     }
 };
-
-var insertImgi2s = function(imgi2) {
+var db_query_Imgr2_Transfer = function( callback ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Select * from Imgr2_Transfer';
+            tx.executeSql( dbSql, [], function( tx, results ) {
+                var len = results.rows.length;
+                var arr = new Array();
+                for ( var i = 0; i < len; i++ ) {
+                    var imgr2 = {
+                        TrxNo : results.rows.item( i ).TrxNo,
+                        LineItemNo : results.rows.item( i ).LineItemNo,
+                        StoreNo : results.rows.item( i ).StoreNo,
+                        StoreNoFrom : results.rows.item( i ).StoreNoFrom,
+                        StoreNoTo : results.rows.item( i ).StoreNoTo,
+                        ProductTrxNo : results.rows.item( i ).ProductTrxNo,
+                        ProductCode : results.rows.item( i ).ProductCode,
+                        ProductDescription : results.rows.item( i ).ProductDescription,
+                        SerialNoFlag : results.rows.item( i ).SerialNoFlag,
+                        ScanQtyFrom : results.rows.item( i ).ScanQtyFrom > 0 ? results.rows.item( i ).ScanQtyFrom : 0,
+                        ScanQtyTo : results.rows.item( i ).ScanQtyTo > 0 ? results.rows.item( i ).ScanQtyTo : 0,
+                        BarCode : results.rows.item( i ).BarCode
+                    };
+                    arr.push( imgr2 );
+                }
+                if( typeof(callback) == 'function') callback(arr);
+            }, dbError )
+        } );
+    }
+}
+var db_del_Imgi2_Picking = function (){
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Delete from Imgi2_Picking';
+            tx.executeSql( dbSql, [], null, dbError )
+        } );
+    }
+}
+var db_add_Imgi2_Picking = function(imgi2) {
     if (dbWms) {
         dbWms.transaction(function(tx) {
-            dbSql = 'INSERT INTO Imgi2 (RowNum, TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, DimensionFlag, ProductDescription, SerialNoFlag, BarCode, PackingQty, WholeQty, LooseQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?)';
-            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.StoreNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.DimensionFlag, imgi2.ProductDescription, imgi2.SerialNoFlag, imgi2.UserDefine01, imgi2.PackingQty, imgi2.WholeQty, imgi2.LooseQty], null, dbError);
+            dbSql = 'INSERT INTO Imgi2_Picking (RowNum, TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, ProductDescription, SerialNoFlag, BarCode, Qty, ScanQty, QtyBal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
+            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.StoreNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.ProductDescription, imgi2.SerialNoFlag, imgi2.BarCode, imgi2.Qty, 0, imgi2.Qty], null, dbError);
         });
     }
 };
-var insertImsn1s = function(Imsn1) {
+var db_update_Imgi2_Picking = function( imgi2 ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Update Imgi2_Picking set ScanQty=? Where TrxNo=? and LineItemNo=?';
+            tx.executeSql( dbSql, [ imgi2.ScanQty, imgi2.TrxNo, imgi2.LineItemNo ], null, dbError );
+        } );
+    }
+};
+var db_query_Imgi2_Picking = function( callback ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Select * from Imgi2_Picking';
+            tx.executeSql( dbSql, [], function( tx, results ) {
+                var len = results.rows.length;
+                var arr = new Array();
+                for ( var i = 0; i < len; i++ ) {
+                    var imgi2 = {
+                        RowNum : results.rows.item( i ).RowNum,
+                        TrxNo : results.rows.item( i ).TrxNo,
+                        LineItemNo : results.rows.item( i ).LineItemNo,
+                        StoreNo : results.rows.item( i ).StoreNo,
+                        ProductTrxNo : results.rows.item( i ).ProductTrxNo,
+                        ProductCode : results.rows.item( i ).ProductCode,
+                        ProductDescription : results.rows.item( i ).ProductDescription,
+                        SerialNoFlag : results.rows.item( i ).SerialNoFlag,
+                        BarCode : results.rows.item( i ).BarCode,
+                        Qty : results.rows.item( i ).Qty > 0 ? results.rows.item( i ).Qty : 0,
+                        ScanQty : results.rows.item( i ).ScanQty > 0 ? results.rows.item( i ).ScanQty : 0,
+                        QtyBal : results.rows.item( i ).QtyBal > 0 ? results.rows.item( i ).QtyBal : 0
+                    };
+                    arr.push( imgi2 );
+                }
+                if( typeof(callback) == 'function') callback(arr);
+            }, dbError )
+        } );
+    }
+}
+var db_del_Imsn1_Picking = function (){
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Delete from Imsn1_Picking';
+            tx.executeSql( dbSql, [], null, dbError )
+        } );
+    }
+}
+var db_add_Imsn1_Picking = function(imsn1) {
     if (dbWms) {
         dbWms.transaction(function(tx) {
-            dbSql = 'INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)';
-            tx.executeSql(dbSql, [Imsn1.IssueNoteNo, Imsn1.IssueLineItemNo, Imsn1.SerialNo], null, dbError);
+            dbSql = 'INSERT INTO Imsn1_Picking (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)';
+            tx.executeSql(dbSql, [imsn1.IssueNoteNo, imsn1.IssueLineItemNo, imsn1.SerialNo], null, dbError);
         });
     }
 };
-
+var db_del_Imgi2_Verify = function (){
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Delete from Imgi2_Verify';
+            tx.executeSql( dbSql, [], null, dbError )
+        } );
+    }
+}
+var db_add_Imgi2_Verify = function(imgi2) {
+    if (dbWms) {
+        dbWms.transaction(function(tx) {
+            dbSql = 'INSERT INTO Imgi2_Verify (RowNum, TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, ProductDescription, SerialNoFlag, BarCode, Qty, ScanQty, QtyBal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
+            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.StoreNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.ProductDescription, imgi2.SerialNoFlag, imgi2.BarCode, imgi2.Qty, 0, imgi2.Qty], null, dbError);
+        });
+    }
+};
+var db_del_Imsn1_Verify = function (){
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Delete from Imsn1_Verify';
+            tx.executeSql( dbSql, [], null, dbError )
+        } );
+    }
+}
+var db_add_Imsn1_Verify = function(imsn1) {
+    if (dbWms) {
+        dbWms.transaction(function(tx) {
+            dbSql = 'INSERT INTO Imsn1_Verify (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)';
+            tx.executeSql(dbSql, [imsn1.IssueNoteNo, imsn1.IssueLineItemNo, imsn1.SerialNo], null, dbError);
+        });
+    }
+};
 var appendProtocol = function(url, blnSSL, portNo) {
     if (url.length > 0 && url.toUpperCase().indexOf('HTTPS://') < 0 && url.toUpperCase().indexOf('HTTP://') < 0) {
         if(blnSSL){
