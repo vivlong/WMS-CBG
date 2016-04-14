@@ -41,13 +41,13 @@ namespace WebApi.ServiceModel.Wms
 																								if (string.IsNullOrEmpty(request.StatusCode))
 																								{
 																												Result = db.SelectParam<Imgr1>(
-																																i => i.CustomerCode != null && i.CustomerCode != "" && i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode != null && i.StatusCode != "DEL" && i.StatusCode != "EXE" && i.StatusCode != "CMP" && i.CustomerCode == request.CustomerCode
+																																i => i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode != null && i.StatusCode != "DEL" && i.StatusCode != "EXE" && i.StatusCode != "CMP" && i.CustomerCode == request.CustomerCode
 																												).OrderByDescending(i => i.ReceiptDate).ToList<Imgr1>();
 																								}
 																								else
 																								{
 																												Result = db.SelectParam<Imgr1>(
-																																i => i.CustomerCode != null && i.CustomerCode != "" && i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode == request.StatusCode && i.CustomerCode == request.CustomerCode
+																																i => i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode == request.StatusCode && i.CustomerCode == request.CustomerCode
 																												).OrderByDescending(i => i.ReceiptDate).ToList<Imgr1>();
 																								}
                     }
@@ -55,14 +55,26 @@ namespace WebApi.ServiceModel.Wms
                     {
 																								if (string.IsNullOrEmpty(request.StatusCode))
 																								{
-																												Result = db.SelectParam<Imgr1>(
-																																	i => i.CustomerCode != null && i.CustomerCode != "" && i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode != null && i.StatusCode != "DEL" && i.StatusCode != "EXE" && i.StatusCode != "CMP" && i.GoodsReceiptNoteNo.StartsWith(request.GoodsReceiptNoteNo)
+																												//Result = db.SelectParam<Imgr1>(
+																												//					i => i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode != null && i.StatusCode != "DEL" && i.StatusCode != "EXE" && i.StatusCode != "CMP" && i.GoodsReceiptNoteNo.StartsWith(request.GoodsReceiptNoteNo)
+																												//);
+																												Result = db.Select<Imgr1>(
+																																"Select Imgr1.* From Imgr1 " +
+																																"Where IsNUll(StatusCode,'')<>'DEL' And IsNUll(StatusCode,'')<>'EXE' And IsNUll(StatusCode,'')<>'CMP' " +
+																																"And (Select count(*) from Imgr2 Where Imgr2.TrxNo=Imgr1.TrxNo) > 0 " +
+																																"And IsNUll(GoodsReceiptNoteNo,'') LIKE '" + request.GoodsReceiptNoteNo + "%'"
 																												);
 																								}
 																								else
 																								{
-																												Result = db.SelectParam<Imgr1>(
-																																	i => i.CustomerCode != null && i.CustomerCode != "" && i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode == request.StatusCode && i.GoodsReceiptNoteNo.StartsWith(request.GoodsReceiptNoteNo)
+																												//Result = db.SelectParam<Imgr1>(
+																												//					i => i.GoodsReceiptNoteNo != null && i.GoodsReceiptNoteNo != "" && i.StatusCode == request.StatusCode && i.GoodsReceiptNoteNo.StartsWith(request.GoodsReceiptNoteNo)
+																												//);
+																												Result = db.Select<Imgr1>(
+																																"Select Imgr1.* From Imgr1 " +
+																																"Where IsNUll(StatusCode,'')='" + request.StatusCode + "' " +
+																																"And (Select count(*) from Imgr2 Where Imgr2.TrxNo=Imgr1.TrxNo) > 0 " +
+																																"And IsNUll(GoodsReceiptNoteNo,'') LIKE '" + request.GoodsReceiptNoteNo + "%'"
 																												);
 																								}
                     }
@@ -82,7 +94,7 @@ namespace WebApi.ServiceModel.Wms
 																								"Select Imgr2.* From Imgr2 " +
 																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
 																								"Where Imgr1.GoodsReceiptNoteNo='" + request.GoodsReceiptNoteNo + "'"
-																				);																	
+																				);	
 																}
 												}
 												catch { throw; }
@@ -98,7 +110,7 @@ namespace WebApi.ServiceModel.Wms
 																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
 																				string strBarCodeFiled = impa1[0].BarCodeField;
 																				string strSql = "Select Imgr2.*, " +
-																								"(Select Top 1 UserDefine01 From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS BarCode," +
+																								"(Select Top 1 " + strBarCodeFiled + " From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS BarCode," +
 																								"(Select Top 1 SerialNoFlag From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS SerialNoFlag," +
 																								"0 AS ScanQty " +
 																								"From Imgr2 " +

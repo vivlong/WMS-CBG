@@ -105,9 +105,13 @@ namespace WebApi.ServiceInterface.Wms
 																{
 																				ecr.data.results = imgi_Logic.Get_Imgi1_List(request);
 																}
-																else if (uri.IndexOf("/wms/imgi2") > 0)
+																else if (uri.IndexOf("/wms/imgi2/picking") > 0)
 																{
-																				ecr.data.results = imgi_Logic.Get_Imgi2_List(request);
+																				ecr.data.results = imgi_Logic.Get_Imgi2_Picking_List(request);
+																}
+																else if (uri.IndexOf("/wms/imgi2/verify") > 0)
+																{
+																				ecr.data.results = imgi_Logic.Get_Imgi2_Verify_List(request);
 																}
                 ecr.meta.code = 200;
                 ecr.meta.message = "OK";

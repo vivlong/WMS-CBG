@@ -88,6 +88,8 @@
     <Compile Include="Freight\Tracking.cs" />
     <Compile Include="Freight\Rcvy.cs" />
     <Compile Include="Freight\ViewPDF.cs" />
+    <Compile Include="Tables\Imgi2_Verify.cs" />
+    <Compile Include="Tables\Imgi2_Picking.cs" />
     <Compile Include="Tables\Imgr2_Receipt.cs" />
     <Compile Include="Tables\Imit.cs" />
     <Compile Include="Tables\Imgi2.cs" />
