@@ -196,7 +196,7 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$rootScope', '$scope', '$sta
             }
         };
         $scope.reset = function() {
-            $scope.Setting.WebApiURL = 'www.sysfreight.net/WebApi';
+            $scope.Setting.WebApiURL = 'www.sysfreight.net/WebApi-wh';
             $scope.Setting.WebSiteUrl = 'www.sysfreight.net/mobileapp-wh';
             $scope.Setting.SSL = { checked: false };
             if ( !ENV.fromWeb ) {

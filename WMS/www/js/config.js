@@ -13,5 +13,5 @@ appConfig.constant('ENV', {
     'updateFile':   'update.json',
     'rootPath':     'WMS',
     'configFile':   'config.txt',
-    'version':      '1.0.3'
+    'version':      '1.0.4'
 });
