@@ -11,26 +11,18 @@
                     <p style="font-size: small;">Customer : <span style="font-size: medium;" ng-bind="Detail.Customer"></span></p>
                     <p style="font-size: small;">GIN No    : <span style="font-size: medium;" ng-bind="Detail.GIN"></span></p>
                 </div>
-                <!--div class="pull-right">
-                    <label class="toggle toggle-calm">
-                        <input type="checkbox" ng-model="Notification.checked" ng-change="NotificationChange()">
-                        <div class="track">
-                            <div class="handle"></div>
-                        </div>
-                    </label>
-                </div-->
             </div>
             <div class="item item-body" style="padding:8px;">
                 <div class="list">
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Product Code&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;" ng-bind="Detail.ProductCode"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Product Code&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductCode"></span></span>
                     </label>
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;" ng-bind="Detail.ProductDescription"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductDescription"></span></span>
                     </label>
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small; min-width:60%;">Qty To Issue&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;" ng-bind="Detail.Scan.Qty"></span></span>
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">BAL&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;color:red;" ng-bind="Detail.Scan.QtyBal"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small; min-width:60%;">Qty To Issue&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;" ng-bind="Detail.Imgi2.Qty"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">BAL&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;color:red;" ng-bind="Detail.Imgi2.QtyBal"></span></span>
                     </label>
                     <div class="row">
                         <div class="col col-80" style="padding:0px;">
@@ -40,10 +32,10 @@
                             </label>
                         </div>
                         <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="CamScanBarCode()"><i class="icon ion-qr-scanner"></i></button>
+                            <button class="button button-clear button-small" ng-click="openCam('BarCode')"><i class="icon ion-qr-scanner"></i></button>
                         </div>
                         <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearBarCode()"><i class="icon ion-android-close"></i></button>
+                            <button class="button button-clear button-small" ng-click="clearInput('BarCode')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
                     <hr style="margin: 0;"/>
@@ -55,10 +47,10 @@
                             </label>
                         </div>
                         <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="CamScanBarCode()"><i class="icon ion-qr-scanner"></i></button>
+                            <button class="button button-clear button-small" ng-click="openCam('SerialNo')"><i class="icon ion-qr-scanner"></i></button>
                         </div>
                         <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearSerialNo()"><i class="icon ion-android-close"></i></button>
+                            <button class="button button-clear button-small" ng-click="clearInput('SerialNo')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
                     <label class="item item-input">
@@ -82,4 +74,46 @@
             </button>
         </div>
     </ion-footer-bar>
+    <script id="scan.html" type="text/ng-template">
+        <ion-modal-view>
+            <ion-header-bar class="bar-positive" align-title="center">
+                <div class="h1 title">Verify GIN Detail</div>
+            </ion-header-bar>
+            <ion-content>
+                <ion-list>
+                    <ion-item ng-repeat="Imgi2 in Detail.Imgi2sDb">
+                        <div class="row">
+                            <div class="col col-50">
+                                <p style="font-size:0.8em;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgi2.BarCode" style="font-size:1.2em;"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-50">
+                                <p style="font-size:0.8em;">Product Code&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgi2.ProductCode" style="font-size:1.2em;"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-50">
+                                <p style="font-size:0.8em;">Scan Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgi2.ScanQty" style="font-size:1.2em; color:red;"></span>
+                            </div>
+                        </div>
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+            <ion-footer-bar class="bar-positive">
+                <div class="button-bar">
+                    <button class="button icon ion-arrow-return-right" ng-click="closeModal()">&nbsp;Return</button>
+                </div>
+            </ion-footer-bar>
+        </ion-modal-view>
+    </script>
 </ion-view>

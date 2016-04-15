@@ -74,56 +74,6 @@
                 </div>
             </div>
         </div>
-        <script id="scan.html" type="text/ng-template">
-            <ion-modal-view>
-                <ion-header-bar class="bar-positive" align-title="center">
-                    <div class="h1 title">Scanning Detail</div>
-                </ion-header-bar>
-                <ion-content>
-                    <ion-list>
-                        <ion-item ng-repeat="Imgr2 in Detail.Imgr2sDb">
-                            <div class="row">
-                                <div class="col col-33">
-                                    <p style="font-size:0.8em;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</p>
-                                </div>
-                                <div class="col">
-                                    <span ng-bind="Imgr2.BarCode" style="font-size:1.2em;"></span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col col-33">
-                                    <p style="font-size:0.8em;">Product&nbsp;&nbsp;:&nbsp;&nbsp;</p>
-                                </div>
-                                <div class="col">
-                                    <span ng-bind="Imgr2.ProductCode" style="font-size:1.2em;"></span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col col-33">
-                                    <p style="font-size:0.8em;">Scan Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
-                                </div>
-                                <div class="col">
-                                    <span ng-bind="Imgr2.ScanQty" style="font-size:1.2em; color:red;"></span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col col-33">
-                                    <p style="font-size:0.8em;">Actual Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
-                                </div>
-                                <div class="col">
-                                    <span ng-bind="Imgr2.ActualQty" style="font-size:1.2em;"></span>
-                                </div>
-                            </div>
-                        </ion-item>
-                    </ion-list>
-                </ion-content>
-                <ion-footer-bar class="bar-positive">
-                    <div class="button-bar">
-                        <button class="button icon ion-arrow-return-right" ng-click="closeModal()">&nbsp;Return</button>
-                    </div>
-                </ion-footer-bar>
-            </ion-modal-view>
-        </script>
     </ion-content>
     <ion-footer-bar class="bar-positive hide-on-keyboard-open">
         <div class="button-bar">
@@ -135,4 +85,54 @@
             </button>
         </div>
     </ion-footer-bar>
+    <script id="scan.html" type="text/ng-template">
+        <ion-modal-view>
+            <ion-header-bar class="bar-positive" align-title="center">
+                <div class="h1 title">Scanning Detail</div>
+            </ion-header-bar>
+            <ion-content>
+                <ion-list>
+                    <ion-item ng-repeat="Imgr2 in Detail.Imgr2sDb">
+                        <div class="row">
+                            <div class="col col-33">
+                                <p style="font-size:0.8em;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgr2.BarCode" style="font-size:1.2em;"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-33">
+                                <p style="font-size:0.8em;">Product&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgr2.ProductCode" style="font-size:1.2em;"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-33">
+                                <p style="font-size:0.8em;">Scan Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgr2.ScanQty" style="font-size:1.2em; color:red;"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-33">
+                                <p style="font-size:0.8em;">Actual Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgr2.ActualQty" style="font-size:1.2em;"></span>
+                            </div>
+                        </div>
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+            <ion-footer-bar class="bar-positive">
+                <div class="button-bar">
+                    <button class="button icon ion-arrow-return-right" ng-click="closeModal()">&nbsp;Return</button>
+                </div>
+            </ion-footer-bar>
+        </ion-modal-view>
+    </script>
 </ion-view>

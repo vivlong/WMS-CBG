@@ -128,14 +128,14 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
             hmImgr2.set( $scope.Detail.Scan.BarCode , mapValue );
             $scope.Detail.Scan.Qty = mapValue.ScanQty;
 			$scope.$apply();
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
-                    dbSql = 'INSERT INTO Imsn1 (ReceiptNoteNo, ReceiptLineItemNo, SerialNo) values(?, ?, ?)';
-                    tx.executeSql( dbSql, [ $scope.Detail.GRN, mapValue.LineItemNo, sn ], null, null );
-                    dbSql = 'Update Imgr2_Transfer set ScanQty=? Where TrxNo=? and LineItemNo=?';
-                    tx.executeSql( dbSql, [ mapValue.ScanQty, mapValue.TrxNo, mapValue.LineItemNo ], null, dbError );
-                } );
-            }
+            //if ( dbWms ) {
+            //    dbWms.transaction( function( tx ) {
+            //        dbSql = 'INSERT INTO Imsn1 (ReceiptNoteNo, ReceiptLineItemNo, SerialNo) values(?, ?, ?)';
+            //        tx.executeSql( dbSql, [ $scope.Detail.GRN, mapValue.LineItemNo, sn ], null, null );
+            //        dbSql = 'Update Imgr2_Transfer set ScanQty=? Where TrxNo=? and LineItemNo=?';
+            //        tx.executeSql( dbSql, [ mapValue.ScanQty, mapValue.TrxNo, mapValue.LineItemNo ], null, dbError );
+            //    } );
+            //}
             $( '#txt-sn' ).select();
         };
         var ShowSn = function( sn, blnScan ) {
@@ -188,10 +188,12 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
             }
         };
         $scope.openModal = function() {
+            $scope.modal.show();
+            $ionicLoading.show();
             db_query_Imgr2_Transfer(function(results){
                 $scope.Detail.Imgr2sDb = results;
+                $ionicLoading.hide();
             });
-            $scope.modal.show();
         };
         $scope.closeModal = function() {
             $scope.Detail.Imgr2sDb = {};
@@ -219,7 +221,7 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
             }
         };
         $scope.changeQty = function() {
-            if ( $scope.Detail.Scan.Qty > 0 && $scope.Detail.Scan.BarCode .length > 0 ) {
+            if ( is.not.empty($scope.Detail.Scan.BarCode) ) {
                 if ( hmImgr2.count() > 0 && hmImgr2.has( $scope.Detail.Scan.BarCode ) ) {
                     var imgr2 = hmImgr2.get( $scope.Detail.Scan.BarCode );
                     var promptPopup = $ionicPopup.show( {
@@ -233,6 +235,7 @@ appControllers.controller( 'GtFromCtrl', [ '$scope', '$stateParams', '$state', '
                             text: '<b>Save</b>',
                             type: 'button-positive',
                             onTap: function( e ) {
+                                imgr2.ScanQty = $scope.Detail.Scan.Qty;
                                 db_update_Imgr2_Transfer( imgr2, 'from' );
                             }
                         } ]
@@ -371,14 +374,14 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
             hmImgr2.set( $scope.Detail.Scan.BarCode , mapValue );
             $scope.Detail.Scan.Qty = mapValue.ScanQty;
 			$scope.$apply();
-            if ( dbWms ) {
-                dbWms.transaction( function( tx ) {
-                    dbSql = 'INSERT INTO Imsn1 (ReceiptNoteNo, ReceiptLineItemNo, SerialNo) values(?, ?, ?)';
-                    tx.executeSql( dbSql, [ $scope.Detail.GRN, mapValue.LineItemNo, sn ], null, null );
-                    dbSql = 'Update Imgr2_Transfer set ScanQty=? Where TrxNo=? and LineItemNo=?';
-                    tx.executeSql( dbSql, [ mapValue.ScanQty, mapValue.TrxNo, mapValue.LineItemNo ], null, dbError );
-                } );
-            }
+            //if ( dbWms ) {
+            //    dbWms.transaction( function( tx ) {
+            //        dbSql = 'INSERT INTO Imsn1 (ReceiptNoteNo, ReceiptLineItemNo, SerialNo) values(?, ?, ?)';
+            //        tx.executeSql( dbSql, [ $scope.Detail.GRN, mapValue.LineItemNo, sn ], null, null );
+            //        dbSql = 'Update Imgr2_Transfer set ScanQty=? Where TrxNo=? and LineItemNo=?';
+            //        tx.executeSql( dbSql, [ mapValue.ScanQty, mapValue.TrxNo, mapValue.LineItemNo ], null, dbError );
+            //    } );
+            //}
             $( '#txt-sn' ).select();
         };
         var ShowSn = function( sn, blnScan ) {
@@ -476,10 +479,12 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
             }
         };
         $scope.openModal = function() {
+            $scope.modal.show();
+            $ionicLoading.show();
             db_query_Imgr2_Transfer(function(results){
                 $scope.Detail.Imgr2sDb = results;
+                $ionicLoading.hide();
             });
-            $scope.modal.show();
         };
         $scope.closeModal = function() {
             $scope.Detail.Imgr2sDb = {};
@@ -502,7 +507,7 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
             }
         };
         $scope.changeQty = function() {
-            if ( $scope.Detail.Scan.Qty > 0 && $scope.Detail.Scan.BarCode .length > 0 ) {
+            if ( $scope.Detail.Scan.BarCode .length > 0 ) {
                 if ( hmImgr2.count() > 0 && hmImgr2.has( $scope.Detail.Scan.BarCode ) ) {
                     var imgr2 = hmImgr2.get( $scope.Detail.Scan.BarCode );
                     var promptPopup = $ionicPopup.show( {
@@ -516,6 +521,7 @@ appControllers.controller( 'GtToCtrl', [ '$scope', '$stateParams', '$state', '$h
                             text: '<b>Save</b>',
                             type: 'button-positive',
                             onTap: function( e ) {
+                                imgr2.ScanQty = $scope.Detail.Scan.Qty;
                                 db_update_Imgr2_Transfer( imgr2, 'to' );
                             }
                         } ]

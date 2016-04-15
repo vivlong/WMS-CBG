@@ -166,14 +166,14 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
             hmImgi2.remove($scope.Detail.BarCodeScan);
             hmImgi2.set($scope.Detail.BarCodeScan, CurrentQty);
             $scope.Detail.QtyScan = CurrentQty;
-            if (dbWms) {
-                dbWms.transaction(function(tx) {
-                    dbSql = "INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)";
-                    tx.executeSql(dbSql, [$scope.Detail.strGIN, $scope.Detail.LineItemNo, sn], null, null);
-                    dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
-                    tx.executeSql(dbSql, [CurrentQty, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
-                });
-            }
+            //if (dbWms) {
+            //    dbWms.transaction(function(tx) {
+            //        dbSql = "INSERT INTO Imsn1 (IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?)";
+            //        tx.executeSql(dbSql, [$scope.Detail.strGIN, $scope.Detail.LineItemNo, sn], null, null);
+            //        dbSql = "Update Imgi2 set ScanQty=? Where TrxNo=? and LineItemNo=?";
+            //        tx.executeSql(dbSql, [CurrentQty, $scope.Detail.TrxNo, $scope.Detail.LineItemNo], null, dbError);
+            //    });
+            //}
             $('#txt-sn').select();
         };
         var ShowSn = function(sn, blnScan) {
@@ -255,10 +255,12 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
         };
         GetImsn1SerialNo($scope.Detail.GIN);
         $scope.openModal = function() {
+            $scope.modal.show();
+            $ionicLoading.show();
             db_query_Imgi2_Picking(function(results){
                 $scope.Detail.Imgi2sDb = results;
+                $ionicLoading.hide();
             });
-            $scope.modal.show();
         };
         $scope.closeModal = function() {
             $scope.Detail.Imgi2sDb = {};
@@ -276,6 +278,7 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
         $scope.changeQty = function() {
             if ($scope.Detail.Scan.Qty > 0 && $scope.Detail.Scan.BarCode.length > 0) {
                 if (hmImgi2.count()>0 && hmImgi2.has($scope.Detail.Scan.BarCode)) {
+                    var imgi2 = hmImgi2.get($scope.Detail.Scan.BarCode);
                     var promptPopup = $ionicPopup.show({
                         template: '<input type="number" ng-model="Detail.QtyScan">',
                         title: 'Enter Qty',
@@ -287,7 +290,8 @@ appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams',
                             text: '<b>Save</b>',
                             type: 'button-positive',
                             onTap: function(e) {
-                                db_update_Imgi2_Picking($scope.Detail.Imgi2);
+                                imgi2.ScanQty = $scope.Detail.Scan.Qty;
+                                db_update_Imgi2_Picking(imgi2);
                             }
                         }]
                     });
