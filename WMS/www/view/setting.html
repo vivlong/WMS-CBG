@@ -24,7 +24,7 @@
                 <span class="input-label">Web Site URL</span>
                 <input type="text" placeholder="www.sysfreight.net/mobileapp-wh-cbg" ng-model="Setting.WebSiteUrl">
             </label>
-            <ion-toggle ng-model="Setting.SSL.checked">
+            <ion-toggle ng-model="Setting.SSL.checked" ng-if="Setting.blnWeb">
                SSL Encryption
            </ion-toggle>
         </div>

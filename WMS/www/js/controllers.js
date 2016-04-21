@@ -15,8 +15,8 @@ var appControllers = angular.module( 'WMSAPP.controllers', [
 ] );
 
 appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state', '$http',
-    '$ionicPopup', '$ionicSideMenuDelegate',
-    function( ENV, $rootScope, $scope, $state, $http, $ionicPopup, $ionicSideMenuDelegate ) {
+    '$ionicPopup', '$ionicSideMenuDelegate', '$cordovaAppVersion',
+    function( ENV, $rootScope, $scope, $state, $http, $ionicPopup, $ionicSideMenuDelegate, $cordovaAppVersion ) {
         var alertPopup = null;
         var alertPopupTitle = '';
         $scope.Status = {
@@ -149,7 +149,8 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$rootScope', '$scope', '$sta
             Version:    ENV.version,
             WebApiURL:  rmProtocol(ENV.api),
             WebSiteUrl: rmProtocol(ENV.website),
-            SSL:        { checked: ENV.ssl === '0' ? false : true }
+            SSL:        { checked: ENV.ssl === '0' ? false : true },
+            blnWeb:    ENV.fromWeb
         };
         $scope.return = function() {
             if ( $ionicHistory.backView() ) {
