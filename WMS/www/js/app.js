@@ -12,7 +12,7 @@ var app = angular.module( 'WMSAPP', [
     'WMSAPP.controllers'
 ] );
 app.run( [ 'ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeout', '$ionicPopup', '$ionicHistory', '$ionicLoading', '$cordovaKeyboard', '$cordovaToast', '$cordovaFile',
-    function( ENV, $ionicPlatform, $rootScope, $state, $location, $timeout, $ionicPopup, $ionicHistory, $ionicLoading, $$cordovaKeyboard, $cordovaToast, $cordovaFile ) {
+    function( ENV, $ionicPlatform, $rootScope, $state, $location, $timeout, $ionicPopup, $ionicHistory, $ionicLoading, $cordovaKeyboard, $cordovaToast, $cordovaFile ) {
         $ionicPlatform.ready( function() {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -29,7 +29,9 @@ app.run( [ 'ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeo
                     .then( function( success ) {
                         $cordovaFile.writeFile( path, file, data, true )
                             .then( function( success ) {
-                                //
+                                var blnSSL = ENV.ssl === 0 ? false : true;
+                                ENV.website = appendProtocol( ENV.website, blnSSL, ENV.port );
+                                ENV.api = appendProtocol( ENV.api, blnSSL, ENV.port );
                             }, function( error ) {
                                 $cordovaToast.showShortBottom( error );
                             } );
@@ -68,7 +70,9 @@ app.run( [ 'ENV', '$ionicPlatform', '$rootScope', '$state', '$location', '$timeo
                                 // If file not exists
                                 $cordovaFile.writeFile( path, file, data, true )
                                     .then( function( success ) {
-                                        //
+                                        var blnSSL = ENV.ssl === 0 ? false : true;
+                                        ENV.website = appendProtocol( ENV.website, blnSSL, ENV.port );
+                                        ENV.api = appendProtocol( ENV.api, blnSSL, ENV.port );
                                     }, function( error ) {
                                         $cordovaToast.showShortBottom( error );
                                     } );

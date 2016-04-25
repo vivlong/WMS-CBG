@@ -37,5 +37,8 @@
     "cordova-plugin-actionsheet",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-whitelist"
+  ],
+  "cordovaPlatforms": [
+    "android"
   ]
 }
