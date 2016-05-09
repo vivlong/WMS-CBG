@@ -53,8 +53,8 @@ appControllers.controller('PickingListCtrl', ['$scope', '$stateParams', '$state'
     }
 ]);
 
-appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams', '$state', '$timeout', '$ionicHistory', '$ionicPopup', '$ionicModal', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
-    function(ENV, $scope, $stateParams, $state, $timeout, $ionicHistory, $ionicPopup, $ionicModal, $cordovaToast, $cordovaBarcodeScanner, ApiService) {
+appControllers.controller('PickingDetailCtrl', ['ENV', '$scope', '$stateParams', '$state', '$timeout', '$ionicHistory', '$ionicPopup', '$ionicModal', '$ionicLoading', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
+    function(ENV, $scope, $stateParams, $state, $timeout, $ionicHistory, $ionicPopup, $ionicModal, $ionicLoading, $cordovaToast, $cordovaBarcodeScanner, ApiService) {
         var alertPopup = null;
         var alertTitle = '';
         var hmImgi2 = new HashMap();

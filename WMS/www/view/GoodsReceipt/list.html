@@ -40,7 +40,7 @@
     <ion-content style="margin-top:100px;">
         <ion-list id="div-grt-list" tabindex="-1">
             <ion-item ng-repeat="Imgr1 in Imgr1s" id="Imgr1-{{ Imgr1.Index }}" class="item-remove-animate item-icon-right" ng-click="GoToDetail(Imgr1)">
-                <p style="font-size:0.8em;">Customer&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgr1.CustomerCode" style="font-size:1.2em;"></span></p>
+                <!--p style="font-size:0.8em;">Customer&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgr1.CustomerCode" style="font-size:1.2em;"></span></p-->
                 <p style="font-size:0.8em;">GRN&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgr1.GoodsReceiptNoteNo" style="font-size:1.3em;"></span></p>
                 <p style="font-size:0.8em;">Receipt Date&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="showDate(Imgr1.ReceiptDate)" style="font-size:1.1em;"></span></p>
                 <p style="font-size:0.8em;">Ref No&nbsp;&nbsp;:&nbsp;&nbsp;<span ng-bind="Imgr1.RefNo" style="font-size:1.1em;"></span></p>

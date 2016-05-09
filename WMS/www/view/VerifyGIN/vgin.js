@@ -255,7 +255,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
         };
         GetImgi2( $scope.Detail.GIN );
         var GetImsn1 = function( GoodsIssueNoteNo ) {
-            var strUri = '/api/wms/imsn1?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
+            var strUri = '/api/wms/imsn1?IssueNoteNo=' + GoodsIssueNoteNo;
             ApiService.GetParam( strUri, true ).then( function success( result ) {
                 $scope.Detail.Imsn1s = result.data.results;
                 db_del_Imsn1_Verify();

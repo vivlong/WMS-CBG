@@ -58,6 +58,7 @@ if (dbWms) {
         tx.executeSql(dbSql, [], null, dbError);
     });
 }
+
 var db_del_Imgr2_Receipt = function (){
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
@@ -90,6 +91,15 @@ var db_del_Imsn1_Receipt = function (){
         } );
     }
 }
+var db_add_Imsn1_Receipt = function( imsn1 ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'INSERT INTO Imsn1_Receipt (ReceiptNoteNo, ReceiptLineItemNo, IssueNoteNo, IssueLineItemNo, SerialNo) values(?, ?, ?, ?, ?)';
+            tx.executeSql( dbSql, [ imsn1.ReceiptNoteNo, imsn1.ReceiptLineItemNo, imsn1.IssueNoteNo, imsn1.IssueLineItemNo, imsn1.SerialNo], null, dbError );
+        } );
+    }
+};
+
 var db_del_Imgr2_Putaway = function (){
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
@@ -114,6 +124,7 @@ var db_update_Imgr2_Putaway = function( imgr2 ) {
         } );
     }
 };
+
 var db_del_Imgr2_Transfer = function (){
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
@@ -174,6 +185,7 @@ var db_query_Imgr2_Transfer = function( callback ) {
         } );
     }
 }
+
 var db_del_Imgi2_Picking = function (){
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
@@ -243,6 +255,7 @@ var db_add_Imsn1_Picking = function(imsn1) {
         });
     }
 };
+
 var db_del_Imgi2_Verify = function (){
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
@@ -311,6 +324,7 @@ var db_add_Imsn1_Verify = function(imsn1) {
         });
     }
 };
+
 var appendProtocol = function(url, blnSSL, portNo) {
     if (url.length > 0 && url.toUpperCase().indexOf('HTTPS://') < 0 && url.toUpperCase().indexOf('HTTP://') < 0) {
         if(blnSSL){
