@@ -388,25 +388,26 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
             } );
         };
         var sendConfirm = function() {
-            var userID = sessionStorage.getItem( 'UserId' ).toString();
-            var strUri = '/api/wms/imgr1/confirm?TrxNo=' + $scope.Detail.TrxNo + '&UserId=' + userID;
-            ApiService.GetParam( strUri, true ).then( function success( result ) {
-                hmImgr2.forEach(function(value, key){
-                    var barcode = key, imgr2=value, SnArray=null, SerialNos='';
-                    if(is.equal(imgr2.SerialNoFlag,'Y')){
-                        if ( hmImsn1.count() > 0 && hmImsn1.has( barcode ) ) {
-                            SnArray = hmImsn1.get( barcode );
-                        }
-                        for(var i in SnArray){
-                            SerialNos = SerialNos + ',' + SnArray[i];
-                        }
-                        SerialNos = SerialNos.substr(1,SerialNos.length);
-                        strUri = '/api/wms/imsn1/create?ReceiptNoteNo=' + $scope.detail.GRN + '&ReceiptLineItemNo=' + imgr2.LineItemNo + '&SerialNos=' + SerialNos;
-                        ApiService.GetParam( strUri, true ).then( function success( result ) {
-                        } );
+            var userID = sessionStorage.getItem( 'UserId' ).toString(),
+                strUri = '';
+            hmImgr2.forEach(function(value, key){
+                var barcode = key, imgr2=value, SnArray=null, SerialNos='';
+                if(is.equal(imgr2.SerialNoFlag,'Y')){
+                    if ( hmImsn1.count() > 0 && hmImsn1.has( barcode ) ) {
+                        SnArray = hmImsn1.get( barcode );
                     }
-                });
-                var alertPopup = $ionicPopup.alert( {
+                    for(var i in SnArray){
+                        SerialNos = SerialNos + ',' + SnArray[i];
+                    }
+                    SerialNos = SerialNos.substr(1,SerialNos.length);
+                    strUri = '/api/wms/imsn1/create?ReceiptNoteNo=' + $scope.Detail.GRN + '&ReceiptLineItemNo=' + imgr2.LineItemNo + '&SerialNos=' + SerialNos + '&Imgr2TrxNo=' + imgr2.TrxNo;
+                    ApiService.GetParam( strUri, true ).then( function success( result ) {
+                    } );
+                }
+            });
+            strUri = '/api/wms/imgr1/confirm?TrxNo=' + $scope.Detail.TrxNo + '&UserId=' + userID;
+            ApiService.GetParam( strUri, true ).then( function success( result ) {
+                alertPopup = $ionicPopup.alert( {
                     title: 'Comfirm success.',
                     okType: 'button-calm'
                 } );

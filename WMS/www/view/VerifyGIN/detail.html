@@ -18,7 +18,7 @@
                         <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Product Code&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductCode"></span></span>
                     </label>
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductDescription"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductDescription | limitTo:18"></span></span>
                     </label>
                     <label class="item item-input">
                         <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small; min-width:60%;">Qty To Issue&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;" ng-bind="Detail.Imgi2.Qty"></span></span>

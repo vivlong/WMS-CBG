@@ -10,18 +10,10 @@
                     <label>Customer</label>
                 </div>
                 <div class="col col-67">
-                    <ui-select theme="bootstrap"
-                                ng-model="rcbp1.selected"
-                                reset-search-input="true"
-                                on-select="ShowImgi1(rcbp1.selected.BusinessPartyCode)">
-                        <ui-select-match allow-clear="true" placeholder="Enter to search..." style="overflow:hidden;">
-                            {{$select.selected.BusinessPartyName}}
-                        </ui-select-match>
-                        <ui-select-choices repeat="rcbp1 in rcbp1s track by $index"
-                                           refresh="refreshRcbp1s($select.search)"
-                                           refresh-delay="0"
-                                           position="down">
-                            <div ng-bind="rcbp1.BusinessPartyName"></div>
+                    <ui-select ng-model="Rcbp1.selected" theme="bootstrap" reset-search-input="true" on-select="ShowImgi1(Rcbp1.selected.BusinessPartyCode)">
+                        <ui-select-match allow-clear="true" placeholder="Enter to search..." style="overflow:hidden;">{{$select.selected.BusinessPartyName | limitTo:16}}</ui-select-match>
+                        <ui-select-choices repeat="Rcbp1 in Rcbp1s track by $index" refresh="refreshRcbp1($select.search)" refresh-delay="0" position="down">
+                            <div ng-bind-html="Rcbp1.BusinessPartyName"></div>
                         </ui-select-choices>
                     </ui-select>
                 </div>

@@ -3,11 +3,13 @@ appControllers.controller( 'VginListCtrl', [ '$scope', '$stateParams', '$state',
         $scope.rcbp1 = {};
         $scope.GinNo = {};
         $scope.imgi1s = {};
-        $scope.refreshRcbp1s = function( BusinessPartyName ) {
-            var strUri = '/api/wms/rcbp1BusinessPartyName=?' + BusinessPartyName;
-            ApiService.GetParam( strUri, true ).then( function success( result ) {
-                $scope.rcbp1s = result.data.results;
-            } );
+        $scope.refreshRcbp1 = function( BusinessPartyName ) {
+            if(is.not.undefined(BusinessPartyName) && is.not.empty(BusinessPartyName)){
+                var strUri = '/api/wms/rcbp1?BusinessPartyName=' + BusinessPartyName;
+                ApiService.GetParam( strUri, false ).then( function success( result ) {
+                    $scope.Rcbp1s = result.data.results;
+                } );
+            }
         };
         $scope.refreshGinNos = function( Grn ) {
             var strUri = '/api/wms/imgi1?GoodsIssueNoteNo=' + Grn;
@@ -261,7 +263,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 db_del_Imsn1_Verify();
                 if ( is.array($scope.Detail.Imsn1s) && is.not.empty($scope.Detail.Imsn1s)) {
                     for ( var i = 0; i < $scope.Detail.Imsn1s.length; i++ ) {
-                        hmImsn1.set( Imsn1s[i].IssueNoteNo + "#" + Imsn1s[i].IssueLineItemNo, Imsn1s[i].SerialNo );
+                        hmImsn1.set( Imsn1s[i].IssueNoteNo + '#' + Imsn1s[i].IssueLineItemNo, Imsn1s[i].SerialNo );
                         db_add_Imsn1_Verify( $scope.Detail.Imsn1s[ i ] );
                     }
                 }
@@ -281,29 +283,27 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
             $scope.modal.hide();
         };
         $scope.changeQty = function() {
-            if ( $scope.Detail.Scan.Qty > 0 && $scope.Detail.Scan.BarCode.length > 0 ) {
-                if ( hmImgi2.count()>0 && hmImgi2.has( $scope.Detail.Scan.BarCode ) ) {
-                    var imgi2 = hmImgi2.get( $scope.Detail.Scan.BarCode );
-                    var promptPopup = $ionicPopup.show( {
-                        template: '<input type="number" ng-model="vginDetail.QtyScan">',
-                        title: 'Enter Qty',
-                        subTitle: 'Are you sure to change Qty manually?',
-                        scope: $scope,
-                        buttons: [
-                            {
-                                text: 'Cancel'
-                            },
-                            {
-                                text: '<b>Save</b>',
-                                type: 'button-positive',
-                                onTap: function( e ) {
-                                    imgi2.ScanQty = $scope.Detail.Scan.Qty;
-                                    db_update_Imgi2_Verify(imgi2);
-                                }
-                          }
-                        ]
-                    } );
-                }
+            if ( hmImgi2.count()>0 && hmImgi2.has( $scope.Detail.Scan.BarCode ) ) {
+                var imgi2 = hmImgi2.get( $scope.Detail.Scan.BarCode );
+                var promptPopup = $ionicPopup.show( {
+                    template: '<input type="number" ng-model="vginDetail.QtyScan">',
+                    title: 'Enter Qty',
+                    subTitle: 'Are you sure to change Qty manually?',
+                    scope: $scope,
+                    buttons: [
+                        {
+                            text: 'Cancel'
+                        },
+                        {
+                            text: '<b>Save</b>',
+                            type: 'button-positive',
+                            onTap: function( e ) {
+                                imgi2.ScanQty = $scope.Detail.Scan.Qty;
+                                db_update_Imgi2_Verify(imgi2);
+                            }
+                      }
+                    ]
+                } );
             }
         };
         $scope.returnList = function() {
