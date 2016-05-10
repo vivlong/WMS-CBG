@@ -57,7 +57,8 @@ namespace WebApi.ServiceModel.Wms
 																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
 																				string strBarCodeFiled = impa1[0].BarCodeField;
 																				string strSql = "Select RowNum = ROW_NUMBER() OVER (ORDER BY Imgi2.StoreNo ASC), " +
-																								"Imgi2.*, " +																								
+																								"Imgi2.*, " +
+																								"(Select Top 1 UserDefine1 From Impm1 Where TrxNo=Imgi2.ReceiptMovementTrxNo) AS SerialNo," + 
 																								"(Select Top 1 " + strBarCodeFiled + " From Impr1 Where TrxNo=Imgi2.ProductTrxNo) AS BarCode," +
 																								"(Select Top 1 SerialNoFlag From Impr1 Where TrxNo=Imgi2.ProductTrxNo) AS SerialNoFlag," +
 																								"(CASE Imgi2.DimensionFlag When '1' THEN Imgi2.PackingQty When '2' THEN Imgi2.WholeQty ELSE Imgi2.LooseQty END) AS Qty, " +

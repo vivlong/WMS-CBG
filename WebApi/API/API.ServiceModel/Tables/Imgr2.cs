@@ -21,5 +21,6 @@ namespace WebApi.ServiceModel.Tables
 								public decimal Volume { get; set; }
 								public decimal Weight { get; set; }
 								public decimal SpaceArea { get; set; }
+								public string UserDefine1 { get; set; }
     }
 }

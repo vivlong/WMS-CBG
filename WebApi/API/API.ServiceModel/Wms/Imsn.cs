@@ -12,7 +12,7 @@ namespace WebApi.ServiceModel.Wms
 {
 				[Route("/wms/imsn1", "Get")]				//imsn1?
 				[Route("/wms/imsn1/create", "Post")]
-				[Route("/wms/imsn1/create", "Get")]	//create?GoodsIssueNoteNo= &ReceiptLineItemNo= &SerialNos=
+				[Route("/wms/imsn1/create", "Get")]	//create?GoodsIssueNoteNo= &ReceiptLineItemNo= &SerialNos= &Imgr2TrxNo=
     public class Imsn : IReturn<CommonResponse>
 				{
 								public string ReceiptNoteNo { get; set; }
@@ -20,6 +20,7 @@ namespace WebApi.ServiceModel.Wms
 								public string IssueNoteNo { get; set; }
 								public string IssueLineItemNo { get; set; }
 								public string SerialNos { get; set; }
+								public string Imgr2TrxNo { get; set; }
 								public Imsn1 imsn1 { get; set; }
     }
     public class Imsn_Logic
@@ -62,38 +63,30 @@ namespace WebApi.ServiceModel.Wms
 												{
 																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
 																{
-																				if (!string.IsNullOrEmpty(request.IssueNoteNo))
+																				Result = db.Update<Imgr2>(
+																								new
+																								{
+																												UserDefine1 = request.SerialNos
+																								},
+																								p => p.TrxNo == int.Parse(request.Imgr2TrxNo) && p.LineItemNo == int.Parse(request.ReceiptLineItemNo)
+																				);
+																				string[] sns = request.SerialNos.Split(',');
+																				foreach (string sn in sns)
 																				{
 																								intResult = db.Scalar<int>(
-																												"Select count(*) From Imsn1 Where IssueNoteNo={0} And IssueLineItemNo={1} And SerialNo={2}",
-																												request.imsn1.IssueNoteNo, request.imsn1.IssueLineItemNo, request.imsn1.SerialNo
+																												"Select count(*) From Imsn1 Where ReceiptNoteNo={0} And ReceiptLineItemNo={1} And SerialNo={2}",
+																												request.ReceiptNoteNo, request.ReceiptLineItemNo, sn
 																								);
 																								if (intResult < 1)
 																								{
-																												db.Insert(new Imsn1 { IssueNoteNo = request.imsn1.IssueNoteNo, IssueLineItemNo = request.imsn1.IssueLineItemNo, SerialNo = request.imsn1.SerialNo });
+																												db.Insert(new Imsn1 { ReceiptNoteNo = request.ReceiptNoteNo, ReceiptLineItemNo = request.ReceiptLineItemNo, SerialNo = sn });
 																												Result = 1;
 																								}
-																				}
-																				else
-																				{
-																								string[] sns = request.SerialNos.Split(',');
-																								foreach (string sn in sns)
-																								{
-																												intResult = db.Scalar<int>(
-																																"Select count(*) From Imsn1 Where ReceiptNoteNo={0} And ReceiptLineItemNo={1} And SerialNo={2}",
-																																request.ReceiptNoteNo, request.ReceiptLineItemNo, sn
-																												);
-																												if (intResult < 1)
-																												{
-																																db.Insert(new Imsn1 { ReceiptNoteNo = request.ReceiptNoteNo, ReceiptLineItemNo = request.ReceiptLineItemNo, SerialNo = sn });
-																																Result = 1;
-																												}
-																								}																								
-																				}
+																				}																								
 																}
 												}
 												catch { throw; }
 												return Result;
-								}
+								}							
     }
 }
