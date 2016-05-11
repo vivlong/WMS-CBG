@@ -16,6 +16,7 @@ namespace WebApi.ServiceModel.Tables
 								public string ProductDescription { get; set; }
 								public string SerialNoFlag { get; set; }
 								public string BarCode { get; set; }
+								public string SerialNo { get; set; }
 								public int Qty { get; set; }
 								public int QtyBal { get; set; }
 								public int ScanQty { get; set; }
