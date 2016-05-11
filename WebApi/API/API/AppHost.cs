@@ -192,7 +192,7 @@ namespace WebApi
                         strConnection = IniConnection.Replace("#DataSource", strDatabaseInfo[0]);
                         strConnection = strConnection.Replace("#Catalog", strDatabaseInfo[1]);
                         strConnection = strConnection.Replace("#UserName", strDatabaseInfo[2]);
-                        strConnection = strConnection.Replace("#Password", DesDecrypt(strDatabaseInfo[3]));
+																								strConnection = strConnection.Replace("#Password", strDatabaseInfo[3].Equals("") ? "" : DesDecrypt(strDatabaseInfo[3]));
                         return strConnection;
                     }
                     //}
