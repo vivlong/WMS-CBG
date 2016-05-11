@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <hr style="margin: 0;"/>
-                    <div class="row" ng-if="Detail.Imgi2.SerialNoFlag != ''">
+                    <div class="row" ng-show="Detail.Imgi2.SerialNoFlag != ''">
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Serial No&nbsp;&nbsp;:&nbsp;&nbsp;</span>
@@ -93,11 +93,14 @@
     </ion-pane>
     <ion-footer-bar class="bar-positive">
         <div class="button-bar">
-            <button class="button icon ion-android-arrow-dropleft" ng-click="showImgi2Prev()">
+            <button class="button icon ion-android-arrow-dropleft" ng-click="showPrev()">
                 &nbsp;Previous
             </button>
-            <button class="button icon ion-android-arrow-dropright" ng-click="showImgi2Next()">
+            <button class="button icon ion-android-arrow-dropright" ng-show="Detail.blnNext" ng-click="showNext()">
                 &nbsp;Next
+            </button>
+            <button class="button icon ion-android-done" ng-show="!Detail.blnNext" ng-click="checkConfirm()">
+                Confirm
             </button>
             <button class="button icon ion-arrow-return-right" ng-click="returnList()">
                 &nbsp;Cancel

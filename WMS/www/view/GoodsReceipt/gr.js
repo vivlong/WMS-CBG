@@ -408,7 +408,7 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
             strUri = '/api/wms/imgr1/confirm?TrxNo=' + $scope.Detail.TrxNo + '&UserId=' + userID;
             ApiService.GetParam( strUri, true ).then( function success( result ) {
                 alertPopup = $ionicPopup.alert( {
-                    title: 'Comfirm success.',
+                    title: 'Confirm success.',
                     okType: 'button-calm'
                 } );
                 $timeout( function() {
