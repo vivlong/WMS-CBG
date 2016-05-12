@@ -1,5 +1,5 @@
 {
-  "name": "WMS-CBG",
+  "name": "WMS-SingleSN",
   "tagline": "A WMS APP For Motorola Handheld Device TC55 ",
   "body": "# WMS APP\r\nSysFreight WMS APP For Motorola TC55\r\n\r\n# Environment\r\nApache Cordova\r\nIonic Framework\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
