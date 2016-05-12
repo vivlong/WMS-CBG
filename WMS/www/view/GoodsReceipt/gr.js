@@ -219,7 +219,7 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
             if ( is.equal( type, 'BarCode' ) ) {
                 $cordovaBarcodeScanner.scan().then( function( imageData ) {
                     $scope.Detail.Scan.BarCode = imageData.text;
-                    ShowProduct( $scope.Detail.Scan.BarCode, true );
+                    showImpr( $scope.Detail.Scan.BarCode );
                 }, function( error ) {
                     $cordovaToast.showShortBottom( error );
                 } );
@@ -227,7 +227,7 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
                 if ( $( '#txt-sn' ).attr( 'readonly' ) != 'readonly' ) {
                     $cordovaBarcodeScanner.scan().then( function( imageData ) {
                         $scope.Detail.Scan.SerialNo = imageData.text;
-                        ShowSn( $scope.Detail.Scan.SerialNo, false );
+                        ShowSn( $scope.Detail.Scan.SerialNo );
                     }, function( error ) {
                         $cordovaToast.showShortBottom( error );
                     } );

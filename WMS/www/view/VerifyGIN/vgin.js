@@ -151,7 +151,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
             }
             $scope.$apply();
         };
-        var showSn = function( sn, blnScan ) {
+        var showSn = function( sn ) {
             if ( is.not.empty(sn) ) {
                 var barcode = $scope.Detail.Scan.BarCode,
                     SnArray = null,

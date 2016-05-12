@@ -9,9 +9,9 @@ appConfig.constant('ENV', {
     'mock':         false,
     'fromWeb':      true,
     'appId':        '9CBA0A78-7D1D-49D3-BA71-C72E93F9E48F',
-    'apkName':      'WMS-CBG',
+    'apkName':      'WMS-SingleSN',
     'updateFile':   'update.json',
     'rootPath':     'WMS',
     'configFile':   'config.txt',
-    'version':      '1.0.6'
+    'version':      '1.0.7'
 });
