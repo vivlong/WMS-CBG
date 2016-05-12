@@ -101,7 +101,11 @@ namespace WebApi.ServiceInterface.Wms
         {
             if (auth.AuthResult(token, uri))
             {
-																if (uri.IndexOf("/wms/imgi1") > 0)
+																if (uri.IndexOf("/wms/imgi1/complete") > 0)
+																{
+																				ecr.data.results = imgi_Logic.Complete_Imgi1(request);
+																}
+																else if (uri.IndexOf("/wms/imgi1") > 0)
 																{
 																				ecr.data.results = imgi_Logic.Get_Imgi1_List(request);
 																}

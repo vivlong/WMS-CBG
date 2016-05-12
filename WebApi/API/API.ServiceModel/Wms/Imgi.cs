@@ -12,6 +12,7 @@ namespace WebApi.ServiceModel.Wms
 {
 
 				[Route("/wms/imgi1", "Get")]				//imgi1?GoodsIssueNoteNo= & CustomerCode=
+				[Route("/wms/imgi1/complete", "Get")]				//complete?GoodsIssueNoteNo= &UserID=
 				[Route("/wms/imgi2", "Get")]				//imgi2?GoodsIssueNoteNo=
 				[Route("/wms/imgi2/picking", "Get")]				//picking?GoodsIssueNoteNo=
 				[Route("/wms/imgi2/verify", "Get")]					//verify?GoodsIssueNoteNo=
@@ -19,6 +20,7 @@ namespace WebApi.ServiceModel.Wms
     {
         public string CustomerCode { get; set; }
         public string GoodsIssueNoteNo { get; set; }
+								public string UserID { get; set; }
     }
     public class Imgi_Logic
     {
@@ -92,6 +94,27 @@ namespace WebApi.ServiceModel.Wms
 																								"Left Join Imgi1 On Imgi2.TrxNo=Imgi1.TrxNo " +
 																								"Where Imgi1.GoodsIssueNoteNo='" + request.GoodsIssueNoteNo + "'";
 																				Result = db.Select<Imgi2_Verify>(strSql);
+																}
+												}
+												catch { throw; }
+												return Result;
+								}
+								public int Complete_Imgi1(Imgi request)
+								{
+												int Result = -1;
+												try
+												{
+																using (var db = DbConnectionFactory.OpenDbConnection())
+																{
+																				Result = db.Update<Imgi1>(
+																								new
+																								{
+																												StatusCode = "CMP",
+																												CompleteBy = request.UserID,
+																												CompleteDate = DateTime.Now
+																								},
+																								p => p.GoodsIssueNoteNo == request.GoodsIssueNoteNo
+																				);
 																}
 												}
 												catch { throw; }
