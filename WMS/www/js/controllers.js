@@ -88,13 +88,47 @@ appControllers.controller( 'SplashCtrl', [ '$state', '$timeout',
 
 appControllers.controller( 'LoginCtrl', [ '$rootScope', '$scope', '$state', '$stateParams', '$ionicPopup', '$timeout', 'ApiService',
     function( $rootScope, $scope, $state, $stateParams, $ionicPopup, $timeout, ApiService ) {
-        $scope.logininfo = {};
-        if ( undefined == $scope.logininfo.strUserName ) {
-            $scope.logininfo.strUserName = '';
-        }
-        if ( undefined == $scope.logininfo.strPassword ) {
-            $scope.logininfo.strPassword = '';
-        }
+        $scope.logininfo = {
+            strUserName: '',
+            strPassword: ''
+        };
+        var alertPopup = null, alertTitle = '';
+        $scope.login = function() {
+            if ( window.cordova && window.cordova.plugins.Keyboard ) {
+                cordova.plugins.Keyboard.close();
+            }
+            if ( is.empty($scope.logininfo.strUserName) ) {
+                alertTitle = 'Please Enter User Name.';
+                alertPopup = $ionicPopup.alert({
+                    title: alertTitle,
+                    okType: 'button-assertive'
+                });
+                alertPopup.then(function(res) {
+                    console.log(alertTitle);
+                });
+            }else{
+                var strUri = '/api/wms/login/check?UserId=' + $scope.logininfo.strUserName + '&Md5Stamp=' + hex_md5( $scope.logininfo.strPassword );
+                ApiService.GetParam( strUri, true ).then( function success( result ) {
+                    if (result.data.results > 0) {
+                        $rootScope.$broadcast( 'login' );
+                        sessionStorage.clear();
+                        sessionStorage.setItem( 'UserId', $scope.logininfo.strUserName );
+                        $state.go( 'index.main', {}, {
+                            reload: true
+                        } );
+                    }  else {
+                        alertTitle = 'Invaild User';
+                        alertPopup = $ionicPopup.alert({
+                            title: alertTitle,
+                            okType: 'button-assertive'
+                        });
+                        alertPopup.then(function(res) {
+                            console.log(alertTitle);
+                        });
+                    }
+                } );
+            }
+        };
         $( '#iUserName' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 $( '#iPassword' ).focus();
@@ -102,45 +136,14 @@ appControllers.controller( 'LoginCtrl', [ '$rootScope', '$scope', '$state', '$st
         } );
         $( '#iPassword' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
-                $scope.login();
+                if (alertPopup === null) {
+                    $scope.login();
+                } else {
+                    alertPopup.close();
+                    alertPopup = null;
+                }
             }
         } );
-        $scope.login = function() {
-            if ( window.cordova && window.cordova.plugins.Keyboard ) {
-                cordova.plugins.Keyboard.close();
-            }
-            if ( $scope.logininfo.strUserName == '' ) {
-                var alertPopup = $ionicPopup.alert( {
-                    title: 'Please Enter User Name.',
-                    okType: 'button-assertive'
-                } );
-                $timeout( function() {
-                    alertPopup.close();
-                }, 2500 );
-                return;
-            }
-            /*
-            if ($scope.logininfo.strPassword == '') {
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Please Enter Password.',
-                    okType: 'button-assertive'
-                });
-                $timeout(function () {
-                    alertPopup.close();
-                }, 2500);
-                return;
-            }
-            */
-            var strUri = '/api/wms/login/check?UserId=' + $scope.logininfo.strUserName + '&Password=' + hex_md5( $scope.logininfo.strPassword );
-            ApiService.GetParam( strUri, true ).then( function success( result ) {
-                $rootScope.$broadcast( 'login' );
-                sessionStorage.clear();
-                sessionStorage.setItem( 'UserId', $scope.logininfo.strUserName );
-                $state.go( 'index.main', {}, {
-                    reload: true
-                } );
-            } );
-        };
     } ] );
 
 appControllers.controller( 'SettingCtrl', [ 'ENV', '$rootScope', '$scope', '$state', '$ionicHistory', '$ionicPopup', '$cordovaToast', '$cordovaFile',
