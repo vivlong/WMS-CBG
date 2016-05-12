@@ -225,7 +225,6 @@
 	<table name="AppSearch">
 		<col key="yes" def="s72">Property</col>
 		<col key="yes" def="s72">Signature_</col>
-		<row><td>DOTNETVERSION35</td><td>DotNet35</td></row>
 		<row><td>IISROOTFOLDER</td><td>_IISROOTFOLDER</td></row>
 	</table>
 
@@ -3487,6 +3486,7 @@
 		<row><td>IDS_SETUPEXE_EXPIRE_MSG</td><td>1033</td><td>This setup works until %s. The setup will now exit.</td><td>0</td><td/><td>1285770221</td></row>
 		<row><td>IDS_SETUPEXE_LAUNCH_COND_E</td><td>1033</td><td>This setup was built with an evaluation version of InstallShield and can only be launched from setup.exe.</td><td>0</td><td/><td>1285770221</td></row>
 		<row><td>IDS_SOFTWARE_REQUIREMENT_MESSAGE1</td><td>1033</td><td>IIS Must Be Installed First!</td><td>0</td><td/><td>-1239164086</td></row>
+		<row><td>IDS_SOFTWARE_REQUIREMENT_MESSAGE2</td><td>1033</td><td>CLICK HERE to enter the message to display to your end user when this item does not exist on the target machine.</td><td>0</td><td/><td>1654926957</td></row>
 		<row><td>IDS_SQLBROWSE_INTRO</td><td>1033</td><td>From the list of servers below, select the database server you would like to target.</td><td>0</td><td/><td>1285770221</td></row>
 		<row><td>IDS_SQLBROWSE_INTRO_DB</td><td>1033</td><td>From the list of catalog names below, select the database catalog you would like to target.</td><td>0</td><td/><td>1285770221</td></row>
 		<row><td>IDS_SQLBROWSE_INTRO_TEMPLATE</td><td>1033</td><td>[IS_SQLBROWSE_INTRO]</td><td>0</td><td/><td>1285770221</td></row>
@@ -4089,9 +4089,8 @@ QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 	<table name="LaunchCondition">
 		<col key="yes" def="s255">Condition</col>
 		<col def="l255">Description</col>
-		<row><td>(Not Version9X) And (Not (VersionNT&gt;=400 And VersionNT&lt;=600))</td><td>##IDPROP_EXPRESS_LAUNCH_CONDITION_OS##</td></row>
-		<row><td>DOTNETVERSION35&lt;&gt;""</td><td>##IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION35##</td></row>
-		<row><td>IISROOTFOLDER</td><td>##IDS_SOFTWARE_REQUIREMENT_MESSAGE1##</td></row>
+		<row><td>(Not Version9X) And (Not ((VersionNT&gt;=400 And VersionNT&lt;=502) Or (VersionNT=600 And MsiNTProductType=1)))</td><td>##IDPROP_EXPRESS_LAUNCH_CONDITION_OS##</td></row>
+		<row><td>IISROOTFOLDER</td><td>##IDS_SOFTWARE_REQUIREMENT_MESSAGE2##</td></row>
 	</table>
 
 	<table name="ListBox">
@@ -4420,7 +4419,7 @@ QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 		<row><td>SERIALNUMBER</td><td/><td/></row>
 		<row><td>SERIALNUMVALSUCCESSRETVAL</td><td>1</td><td/></row>
 		<row><td>SHOWLAUNCHPROGRAM</td><td>0</td><td/></row>
-		<row><td>SecureCustomProperties</td><td>ISFOUNDNEWERPRODUCTVERSION;USERNAME;COMPANYNAME;ISX_SERIALNUM;SUPPORTDIR;IISROOTFOLDER;DOTNETVERSION35</td><td/></row>
+		<row><td>SecureCustomProperties</td><td>ISFOUNDNEWERPRODUCTVERSION;USERNAME;COMPANYNAME;ISX_SERIALNUM;SUPPORTDIR;IISROOTFOLDER</td><td/></row>
 		<row><td>SelectedSetupType</td><td>##IDS__DisplayName_Typical##</td><td/></row>
 		<row><td>SetupType</td><td>Typical</td><td/></row>
 		<row><td>UpgradeCode</td><td>{C7E44925-A200-45D2-B1EC-CEAADE8D519D}</td><td/></row>
@@ -4465,7 +4464,6 @@ QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 		<col def="s255">Key</col>
 		<col def="S255">Name</col>
 		<col def="I2">Type</col>
-		<row><td>DotNet35</td><td>2</td><td>SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5</td><td>Version</td><td>2</td></row>
 		<row><td>_IISROOTFOLDER</td><td>2</td><td>Software\Microsoft\InetStp</td><td>PathWWWRoot</td><td>0</td></row>
 	</table>
 

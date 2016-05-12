@@ -26,7 +26,7 @@ namespace WebApi.ServiceModel.Wms
             List<Rcbp1> Result = null;
             try
             {
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
                 {
                     if (!string.IsNullOrEmpty(request.BusinessPartyName))
                     {
@@ -53,7 +53,7 @@ namespace WebApi.ServiceModel.Wms
 												List<Rcbp1> Result = null;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				int count = int.Parse(request.RecordCount);
 																				string strWhere = "";

@@ -33,7 +33,7 @@ namespace WebApi.ServiceModel.Wms
 												int intResult = -1;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				string strSql = "EXEC spi_Imit1 @CustomerCode,@Description1,@Description2,@GoodsTransferNoteNo,@RefNo,@TransferBy,@TransferDateTime,@TrxNo,@WorkStation,@CreateBy,@UpdateBy";
 																				intResult = db.SqlScalar<int>(strSql,
@@ -65,7 +65,7 @@ namespace WebApi.ServiceModel.Wms
 												int Result = -1;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				string strSql = "EXEC spi_Imit_Confirm @TrxNo,@UpdateBy";
 																				Result = db.SqlScalar<int>(strSql,

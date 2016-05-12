@@ -34,7 +34,7 @@ namespace WebApi.ServiceModel.Wms
             List<Imgr1> Result = null;
             try
             {
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
                 {
                     if (!string.IsNullOrEmpty(request.CustomerCode))
                     {                       
@@ -88,7 +88,7 @@ namespace WebApi.ServiceModel.Wms
 												List<Imgr2> Result = null;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				Result = db.Select<Imgr2>(
 																								"Select Imgr2.* From Imgr2 " +
@@ -105,7 +105,7 @@ namespace WebApi.ServiceModel.Wms
 												List<Imgr2_Receipt> Result = null;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
 																				string strBarCodeFiled = impa1[0].BarCodeField;
@@ -127,7 +127,7 @@ namespace WebApi.ServiceModel.Wms
 												List<Imgr2_Putaway> Result = null;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
 																				string strBarCodeFiled = impa1[0].BarCodeField;
@@ -148,7 +148,7 @@ namespace WebApi.ServiceModel.Wms
 												List<Imgr2_Transfer> Result = null;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				string strSql = "Select Imgr2.*, " +
 																								"(Select Top 1 SerialNoFlag From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS SerialNoFlag " +
@@ -165,7 +165,7 @@ namespace WebApi.ServiceModel.Wms
 												int Result = -1;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				Result = db.SqlScalar<int>("EXEC spi_Imgr_Confirm @TrxNo,@UpdateBy", new { TrxNo = int.Parse(request.TrxNo), UpdateBy = request.UserID });
 																				//List<int> results = db.SqlList<int>("EXEC spi_Imgr_Confirm @TrxNo @UpdateBy", new { TrxNo = request.TrxNo, UpdateBy = request.UserID });
@@ -183,7 +183,7 @@ namespace WebApi.ServiceModel.Wms
 												int Result = -1;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				Result = db.Update<Imgr2>(
 																								new

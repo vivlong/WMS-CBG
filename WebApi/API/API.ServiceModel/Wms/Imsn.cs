@@ -41,7 +41,7 @@ namespace WebApi.ServiceModel.Wms
             List<Imsn1> Result = null;
             try
             {
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
                 {
                     Result = db.Select<Imsn1>(
                         "Select * From Imsn1 " +
@@ -61,7 +61,7 @@ namespace WebApi.ServiceModel.Wms
 												int intResult = -1;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				Result = db.Update<Imgr2>(
 																								new

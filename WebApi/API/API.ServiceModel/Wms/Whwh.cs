@@ -25,7 +25,7 @@ namespace WebApi.ServiceModel.Wms
 												string strSQL = "";
             try
             {
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
                 {
 																				if (string.IsNullOrEmpty(request.StagingAreaFlag))
 																				{

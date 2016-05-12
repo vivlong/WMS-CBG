@@ -78,14 +78,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Freight\PdfService.cs" />
-    <Compile Include="Freight\TableService.cs" />
-    <Compile Include="Freight\LoginService.cs" />
-    <Compile Include="Event\DoneService.cs" />
-    <Compile Include="Event\ListService.cs" />
-    <Compile Include="Event\LoginService.cs" />
-    <Compile Include="Tms\LoginService.cs" />
-    <Compile Include="Tms\TableService.cs" />
     <Compile Include="Wms\TableService.cs" />
     <Compile Include="ApiServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -28,7 +28,7 @@ namespace WebApi.ServiceModel.Wms
             List<Imgi1> Result = null;
             try
             {
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
                 {
                     if (!string.IsNullOrEmpty(request.CustomerCode))
                     {
@@ -52,7 +52,7 @@ namespace WebApi.ServiceModel.Wms
 												List<Imgi2_Picking> Result = null;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
 																				string strBarCodeFiled = impa1[0].BarCodeField;
@@ -77,7 +77,7 @@ namespace WebApi.ServiceModel.Wms
 												List<Imgi2_Verify> Result = null;
 												try
 												{
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
 																				string strBarCodeFiled = impa1[0].BarCodeField;

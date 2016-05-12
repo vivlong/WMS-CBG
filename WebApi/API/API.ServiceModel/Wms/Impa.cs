@@ -22,7 +22,7 @@ namespace WebApi.ServiceModel.Wms
 												List<Impa1> Result = null;
             try
             {
-																using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				string strSQL = "Select * from Impa1";
 																				Result = db.Select<Impa1>(strSQL);

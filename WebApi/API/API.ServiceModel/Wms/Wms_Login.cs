@@ -23,7 +23,7 @@ namespace WebApi.ServiceModel.Wms
             int Result = -1;
             try
             {
-                using (var db = DbConnectionFactory.OpenDbConnection("WMS"))
+                using (var db = DbConnectionFactory.OpenDbConnection())
                 {
                     Result = db.Scalar<int>(
                         "Select count(*) From Saus1 Where UserId={0} And Password={1}",

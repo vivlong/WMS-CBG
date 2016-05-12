@@ -48,14 +48,12 @@ namespace WebApi
             this.Plugins.Add(cf);
             this.Plugins.Add(new SwaggerFeature());
             //DB
-												var dbConnectionFactory = new OrmLiteConnectionFactory(GetConnectionString("Freight"), SqlServerDialect.Provider)
+												var dbConnectionFactory = new OrmLiteConnectionFactory(GetConnectionString(), SqlServerDialect.Provider)
             {
                 ConnectionFilter =
                     x =>
                     new ProfiledDbConnection(x, Profiler.Current)
             };
-												dbConnectionFactory.RegisterConnection("TMS", GetConnectionString("TMS"), SqlServerDialect.Provider);
-												dbConnectionFactory.RegisterConnection("WMS", GetConnectionString("WMS"), SqlServerDialect.Provider);
             container.Register<IDbConnectionFactory>(dbConnectionFactory);
 												//
             var secretKey = new WebApi.ServiceModel.SecretKeyFactory(strSecretKey);
@@ -70,26 +68,7 @@ namespace WebApi
             container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imgi_Logic>();
 												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imsn_Logic>();
 												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Imit_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Whwh_Logic>();
-												//TMS
-												container.RegisterAutoWired<WebApi.ServiceModel.Tms.Jmjm_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Tms.Sibl_Logic>();
-            //Event
-            container.RegisterAutoWired<WebApi.ServiceModel.Event.Event_Login_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Event.List_Jmjm6_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Event.List_JobNo_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Event.Update_Done_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Event.List_Container_Logic>();
-            //Freight
-												container.RegisterAutoWired<WebApi.ServiceModel.Freight.Freight_Login_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Freight.Saus_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Freight.Rcbp_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Freight.Smsa_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Freight.Smct_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Freight.Plvi_Logic>();
-            container.RegisterAutoWired<WebApi.ServiceModel.Freight.Rcvy_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Freight.Tracking_Logic>();
-												container.RegisterAutoWired<WebApi.ServiceModel.Freight.ViewPDF_Logic>();
+												container.RegisterAutoWired<WebApi.ServiceModel.Wms.Whwh_Logic>();											
         }
         #region DES
         //private string DESKey = "F322186F";
@@ -157,24 +136,14 @@ namespace WebApi
             return DesDecrypt;
         }
         #endregion
-        private static string GetConnectionString(string type)
+        private static string GetConnectionString()
         {
             string IniConnection = "";
             string strAppSetting = "";
             string[] strDataBase = new string[3];
             if (string.IsNullOrEmpty(strAppSetting))
             {
-																if (string.Equals(type, "TMS"))
-																{
-																				strAppSetting = System.Configuration.ConfigurationManager.AppSettings["TMS_DB"];
-																}else if(string.Equals(type,"WMS"))
-																{
-																				strAppSetting = System.Configuration.ConfigurationManager.AppSettings["WMS_DB"];
-																}
-																else if (string.Equals(type, "Freight"))
-																{
-																				strAppSetting = System.Configuration.ConfigurationManager.AppSettings["Mobile_DB"];
-																}
+																strAppSetting = System.Configuration.ConfigurationManager.AppSettings["WMS_DB"];
 																strSecretKey = System.Configuration.ConfigurationManager.AppSettings["SecretKey"];
                 strDataBase = strAppSetting.Split(',');
                 int intCnt;
