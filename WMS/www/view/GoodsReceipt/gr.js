@@ -124,6 +124,15 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
                 SerialNo: '',
                 Qty: 0
             },
+            Imgr2: {
+                TrxNo: 0,
+                LineItemNo: 0,
+                StoreNo: '',
+                ProductCode: '',
+                ProductDescription: '',
+                SerialNoFlag: '',
+                BarCode: ''
+            },
             Impr1: {},
             Imgr2s: {},
             Imgr2sDb:{}
@@ -166,8 +175,11 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
         var showImpr = function( barcode ) {
             if ( hmImgr2.has( barcode ) ) {
                 var imgr2 = hmImgr2.get( barcode );
-                $scope.Detail.Impr1.ProductCode = imgr2.ProductCode;
-                $scope.Detail.Impr1.ProductDescription = imgr2.ProductDescription;
+                $scope.Detail.Impr1 = {
+                    ProductCode : imgr2.ProductCode,
+                    ProductDescription : imgr2.ProductDescription,
+                    BarCode : barcode
+                };
                 setScanQty( barcode, imgr2 );
             } else {
                 showPopup('Wrong BarCode', 'assertive');
@@ -288,7 +300,11 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
                     $scope.Detail.Scan.BarCode = '';
                     $scope.Detail.Scan.SerialNo = '';
                     $scope.Detail.Scan.Qty = 0;
-                    $scope.Detail.Impr1 = {};
+                    $scope.Detail.Impr1 = {
+                        ProductCode : '',
+                        ProductDescription : '',
+                        BarCode : ''
+                    };
                     $( '#txt-sn' ).attr( 'readonly', true );
                     $( '#txt-barcode' ).select();
                 }
@@ -300,26 +316,24 @@ appControllers.controller( 'GrDetailCtrl', [ '$rootScope', '$scope', '$statePara
             }
         };
         $scope.changeQty = function() {
-            if ( is.not.empty($scope.Detail.Scan.BarCode) ) {
-                if ( hmImgr2.count() > 0 && hmImgr2.has( $scope.Detail.Scan.BarCode ) ) {
-                    var imgr2 = hmImgr2.get( $scope.Detail.Scan.BarCode );
-                    var promptPopup = $ionicPopup.show( {
-                        template: '<input type="number" ng-model="Detail.Scan.Qty">',
-                        title: 'Enter Qty',
-                        subTitle: 'Are you sure to change Qty manually?',
-                        scope: $scope,
-                        buttons: [ {
-                            text: 'Cancel'
-                        }, {
-                            text: '<b>Save</b>',
-                            type: 'button-positive',
-                            onTap: function( e ) {
-                                imgr2.ScanQty = $scope.Detail.Scan.Qty;
-                                db_update_Imgr2_Receipt( imgr2 );
-                            }
-                        } ]
-                    } );
-                }
+            if ( hmImgr2.count() > 0 ) {
+                var imgr2 = hmImgr2.get( $scope.Detail.Impr1.BarCode );
+                var promptPopup = $ionicPopup.show( {
+                    template: '<input type="number" ng-model="Detail.Scan.Qty">',
+                    title: 'Enter Qty',
+                    subTitle: 'Are you sure to change Qty manually?',
+                    scope: $scope,
+                    buttons: [ {
+                        text: 'Cancel'
+                    }, {
+                        text: '<b>Save</b>',
+                        type: 'button-positive',
+                        onTap: function( e ) {
+                            imgr2.ScanQty = $scope.Detail.Scan.Qty;
+                            db_update_Imgr2_Receipt( imgr2 );
+                        }
+                    } ]
+                } );
             }
         };
         $scope.checkConfirm = function() {

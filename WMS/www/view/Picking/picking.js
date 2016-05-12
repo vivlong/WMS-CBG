@@ -96,8 +96,8 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
         $scope.$on( '$destroy', function() {
             $scope.modal.remove();
         } );
-        var showPopup = function( title, type, callback ) {
-            if ( alertPopup != null ) {
+        var showPopup = function( title, type, callback ){
+            if (alertPopup != null) {
                 alertPopup.close();
                 alertPopup = null;
             }
@@ -105,7 +105,7 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                 title: title,
                 okType: 'button-' + type
             } );
-            if ( typeof( callback ) == 'function' ) callback( alertPopup );
+            if( typeof(callback) == 'function') callback(alertPopup);
         };
         var blnVerifyInput = function( type ) {
             var blnPass = true;
@@ -138,6 +138,18 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                         $scope.openModal();
                     }
                 } ]
+            } );
+        };
+        var sendConfirm = function() {
+            var userID = sessionStorage.getItem( 'UserId' ).toString(),
+                strUri = '/api/wms/imgi1/complete?GoodsIssueNoteNo=' + $scope.Detail.GIN + '&UserID=' + userID;
+            ApiService.GetParam( strUri, true ).then( function success( result ) {
+                showPopup('Confirm success','calm',function(popup){
+                    $timeout( function() {
+                        popup.close();
+                        $scope.returnList();
+                    }, 2500 );
+                });
             } );
         };
         var setScanQty = function( barcode, imgi2 ) {
@@ -408,14 +420,7 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                             if ( blnDiscrepancies ) {
                                 onErrorConfirm();
                             } else {
-                                alertPopup = $ionicPopup.alert( {
-                                    title: 'Confirm success.',
-                                    okType: 'button-calm'
-                                } );
-                                $timeout( function() {
-                                    alertPopup.close();
-                                    $scope.returnList();
-                                }, 2500 );
+                                sendConfirm();
                             }
                         } else {
                             $ionicLoading.hide();
