@@ -13,17 +13,9 @@ namespace WebApi.ServiceInterface.Wms
         {
             if (auth.AuthResult(token, uri))
             {
-                if (loginLogic.LoginCheck(request) > 0)
-                {
-                    ecr.meta.code = 200;
-                    ecr.meta.message = "OK";
-                    ecr.data.results = request.UserId;
-                }
-                else
-                {
-                    ecr.meta.code = 612;
-                    ecr.meta.message = "Invalid User";
-                }
+																ecr.data.results = loginLogic.LoginCheck(request);
+																ecr.meta.code = 200;
+																ecr.meta.message = "OK";
             }
             else
             {

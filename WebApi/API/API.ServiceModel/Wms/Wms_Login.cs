@@ -8,12 +8,13 @@ using ServiceStack.OrmLite;
 
 namespace WebApi.ServiceModel.Wms
 {
-    [Route("/wms/action/list/login", "Post")]
+    [Route("/wms/login", "Post")]
 				[Route("/wms/login/check", "Get")]
     public class Wms_Login : IReturn<CommonResponse>
     {
         public string UserId { get; set; }
-        public string Password { get; set; }
+								public string Password { get; set; }
+								public string Md5Stamp { get; set; }
     }
     public class Wms_Login_Logic
     {
@@ -25,10 +26,16 @@ namespace WebApi.ServiceModel.Wms
             {
                 using (var db = DbConnectionFactory.OpenDbConnection())
                 {
-                    Result = db.Scalar<int>(
-                        "Select count(*) From Saus1 Where UserId={0} And Password={1}",
-                        request.UserId,request.Password
-                    );
+                    string strSql = "Select count(*) From Saus1 Where UserId='" + request.UserId + "' And Password=";
+																				if (string.IsNullOrEmpty(request.Md5Stamp))
+																				{
+																								strSql = strSql + "'" + request.Password + "'";
+																				}
+																				else
+																				{
+																								strSql = strSql + "'" + request.Md5Stamp + "'";
+																				}
+																				Result = db.Scalar<int>(strSql);
                 }
             }
             catch { throw; }
