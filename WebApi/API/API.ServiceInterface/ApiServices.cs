@@ -35,6 +35,19 @@ namespace WebApi.ServiceInterface
 												catch (Exception ex) { cr(ecr, ex); }
 												return ecr;
 								}
+								public ServiceModel.Wms.Impa_Logic wms_Impa_Logic { get; set; }
+								public object Any(ServiceModel.Wms.Impa request)
+								{
+												CommonResponse ecr = new CommonResponse();
+												ecr.initial();
+												try
+												{
+																ServiceInterface.Wms.TableService ls = new ServiceInterface.Wms.TableService();
+																ls.TS_Impa(auth, request, wms_Impa_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
+												}
+												catch (Exception ex) { cr(ecr, ex); }
+												return ecr;
+								}
 								public ServiceModel.Wms.Imgr_Logic wms_Imgr_Logic { get; set; }
 								public object Any(ServiceModel.Wms.Imgr request)
 								{

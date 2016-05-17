@@ -8,7 +8,24 @@ using WebApi.ServiceModel.Wms;
 namespace WebApi.ServiceInterface.Wms
 {
     public class TableService
-    {
+				{
+								public void TS_Impa(Auth auth, Impa request, Impa_Logic impa_Logic, CommonResponse ecr, string[] token, string uri)
+								{
+												if (auth.AuthResult(token, uri))
+												{
+																if (uri.IndexOf("/wms/impa1") > 0)
+																{
+																				ecr.data.results = impa_Logic.Get_Impa1_List(request);
+																}
+																ecr.meta.code = 200;
+																ecr.meta.message = "OK";
+												}
+												else
+												{
+																ecr.meta.code = 401;
+																ecr.meta.message = "Unauthorized";
+												}
+								}								
 								public void TS_Rcbp(Auth auth, Rcbp request, Rcbp_Logic rcbp_Logic, CommonResponse ecr, string[] token, string uri)
 								{
 												if (auth.AuthResult(token, uri))

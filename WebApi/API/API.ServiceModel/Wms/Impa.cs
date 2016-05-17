@@ -17,14 +17,14 @@ namespace WebApi.ServiceModel.Wms
 				public class Impa_Logic
     {        
         public IDbConnectionFactory DbConnectionFactory { get; set; }
-								public List<Impa1> Get_Impa1_List()
+								public List<Impa1> Get_Impa1_List(Impa request)
         {
 												List<Impa1> Result = null;
             try
             {
 																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
-																				string strSQL = "Select * from Impa1";
+																				string strSQL = "Select IsNUll(BarCodeField,'') AS BarCodeField, IsNull(AppHideStoreNoFlag,'') AS AppHideStoreNoFlag from Impa1";
 																				Result = db.Select<Impa1>(strSQL);
                 }
             }
