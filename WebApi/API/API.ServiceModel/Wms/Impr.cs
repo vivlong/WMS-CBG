@@ -26,10 +26,7 @@ namespace WebApi.ServiceModel.Wms
             {
 																using (var db = DbConnectionFactory.OpenDbConnection())
                 {
-																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
-																				string strBarCodeFiled = impa1[0].BarCodeField;
-																				string strSql = "Select * From Impr1 Where IsNull(ProductCode,'')<>'' And IsNull(StatusCode,'')<>'DEL' And " + strBarCodeFiled + "='" + request.BarCode + "'";
-																				Result = db.QuerySingle<Impr1>(strSql);
+																				Result = null;//db.QuerySingle<Impr1>(strSql);
                 }
             }
             catch { throw; }

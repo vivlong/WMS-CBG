@@ -91,7 +91,15 @@ namespace WebApi.ServiceModel.Wms
 																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
 																				Result = db.Select<Imgr2>(
-																								"Select Imgr2.* From Imgr2 " +
+																								"Select " +
+																								"Imgr2.TrxNo, Imgr2.LineItemNo," +
+																								"IsNull(Imgr2.StoreNo,'') AS StoreNo, IsNull(Imgr2.WarehouseCode,'') AS WarehouseCode," +
+																								"Imgr2.MovementTrxNo, Imgr2.ProductTrxNo," +
+																								"Imgr2.ProductCode, Imgr2.DimensionFlag," +
+																								"Imgr2.PackingQty, Imgr2.WholeQty, Imgr2.LooseQty," +
+																								"Imgr2.Volume, Imgr2.Weight, Imgr2.SpaceArea," +
+																								"Imgr2.UserDefine1 " +
+																								"From Imgr2 " +
 																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
 																								"Where Imgr1.GoodsReceiptNoteNo='" + request.GoodsReceiptNoteNo + "'"
 																				);	
@@ -107,11 +115,12 @@ namespace WebApi.ServiceModel.Wms
 												{
 																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
-																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
-																				string strBarCodeFiled = impa1[0].BarCodeField;
-																				string strSql = "Select Imgr2.*, " +
-																								"(Select Top 1 " + strBarCodeFiled + " From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS BarCode," +
-																								"(Select Top 1 SerialNoFlag From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS SerialNoFlag," +
+																				string strSql =
+																								"Select " +
+																								"Imgr2.TrxNo, Imgr2.LineItemNo, Imgr2.ProductTrxNo," +
+																								"IsNull(Imgr2.ProductCode,'') AS ProductCode, IsNull(Imgr2.ProductDescription,'') AS ProductDescription," +
+																								"IsNull(Imgr2.SerialNo,'') AS SerialNo, IsNull(Imgr2.DimensionFlag,'') AS DimensionFlag," +
+																								"Imgr2.PackingQty, Imgr2.WholeQty, Imgr2.LooseQty," +
 																								"0 AS ScanQty " +
 																								"From Imgr2 " +
 																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
@@ -129,10 +138,7 @@ namespace WebApi.ServiceModel.Wms
 												{
 																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
-																				List<Impa1> impa1 = db.Select<Impa1>("Select * from Impa1");
-																				string strBarCodeFiled = impa1[0].BarCodeField;
 																				string strSql = "Select Imgr2.*, " +
-																								"(Select Top 1 " + strBarCodeFiled + " From Impr1 Where TrxNo=Imgr2.ProductTrxNo) AS BarCode," +
 																								"(Select StagingAreaFlag From Whwh2 Where WarehouseCode=Imgr2.WarehouseCode And StoreNo=Imgr2.StoreNo) AS StagingAreaFlag " +
 																								"From Imgr2 " +
 																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
@@ -173,6 +179,21 @@ namespace WebApi.ServiceModel.Wms
 																				//{
 																				//    Result = cmd.ConvertTo<int>();
 																				//}
+																				if(Result > -1){
+																								string GoodsReceiptNoteNo = db.Scalar<string>("Select GoodsReceiptNoteNo From Imgr1 Where TrxNo=" + int.Parse(request.TrxNo));
+																								db.Insert(
+																												new Imsl1
+																												{
+																																DocNo = GoodsReceiptNoteNo,
+																																Description = "TALLY",
+																																StatusLogDateTime = DateTime.Now,
+																																UserId = request.UserID,
+																																StatusCode = "USE",
+																																UpdateBy = request.UserID,
+																																UpdateDateTime =  DateTime.Now
+																												}
+																								);
+																				}
 																}
 												}
 												catch { throw; }

@@ -24,7 +24,7 @@ namespace WebApi.ServiceModel.Wms
             {
 																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
-																				string strSQL = "Select IsNUll(BarCodeField,'') AS BarCodeField, IsNull(AppHideStoreNoFlag,'') AS AppHideStoreNoFlag from Impa1";
+																				string strSQL = "Select IsNull(AppHideStoreNoFlag,'') AS AppHideStoreNoFlag from Impa1";
 																				Result = db.Select<Impa1>(strSQL);
                 }
             }
