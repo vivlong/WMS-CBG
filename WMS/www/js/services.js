@@ -87,52 +87,38 @@ appService.service( 'DownloadFileService', [ 'ENV', '$http', '$timeout', '$ionic
             } );
             var blnError = false;
             if ( !ENV.fromWeb ) {
-                $cordovaFile.checkFile( cordova.file.externalRootDirectory + '/' + ENV.rootPath, fileName )
-                    .then( function( success ) {
-                        //
-                    }, function( error ) {
-                        blnError = true;
-                    } ).catch( function( ex ) {
-                        console.log( ex );
-                    } );
                 var targetPath = cordova.file.externalRootDirectory + '/' + ENV.rootPath + '/' + fileName;
                 var trustHosts = true;
                 var options = {};
-                if ( !blnError ) {
-                    $cordovaFileTransfer.download( url, targetPath, trustHosts, options ).then( function( result ) {
-                        $ionicLoading.hide();
-                        $cordovaFileOpener2.open( targetPath, fileType ).then( function() {
-                            // success
-                        }, function( err ) {
-                            // error
-                        } ).catch( function( ex ) {
-                            console.log( ex );
-                        } );
+                $cordovaFileTransfer.download( url, targetPath, trustHosts, options ).then( function( result ) {
+                    $ionicLoading.hide();
+                    $cordovaFileOpener2.open( targetPath, fileType ).then( function() {
+                        // success
                     }, function( err ) {
-                        $cordovaToast.showShortCenter( 'Download faild.' );
-                        $ionicLoading.hide();
-                        if ( onDownloadError ) onDownloadError();
-                    }, function( progress ) {
-                        $timeout( function() {
-                            var downloadProgress = ( progress.loaded / progress.total ) * 100;
-                            $ionicLoading.show( {
-                                template: "Download  " + Math.floor( downloadProgress ) + "%"
-                            } );
-                            if ( downloadProgress > 99 ) {
-                                $ionicLoading.hide();
-                            }
-                        } )
+                        // error
                     } ).catch( function( ex ) {
                         console.log( ex );
                     } );
-                } else {
+                }, function( err ) {
+                    $cordovaToast.showShortCenter( 'Download faild.' );
                     $ionicLoading.hide();
-                    $cordovaToast.showShortCenter( 'Check file faild.' );
-                    if ( onCheckError ) onCheckError();
-                }
+                    if ( onDownloadError ) onDownloadError();
+                }, function( progress ) {
+                    $timeout( function() {
+                        var downloadProgress = ( progress.loaded / progress.total ) * 100;
+                        $ionicLoading.show( {
+                            template: 'Download  ' + Math.floor( downloadProgress ) + '%'
+                        } );
+                        if ( downloadProgress > 99 ) {
+                            $ionicLoading.hide();
+                        }
+                    } )
+                } ).catch( function( ex ) {
+                    console.log( ex );
+                } );
             } else {
                 $ionicLoading.hide();
-                if ( onPlatformError ) onPlatformError( url );
+                if( typeof(onPlatformError) == 'function') onPlatformError(url);
             }
         };
     } ] );

@@ -32,17 +32,17 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state
             } );
         };
         $scope.gotoUpdate = function() {
-            if ( !ENV.fromWeb ) {
+            if (!ENV.fromWeb) {
                 var url = ENV.website + '/' + ENV.updateFile;
-                $http.get( url )
-                    .success( function( res ) {
+                $http.get(url)
+                    .success(function(res) {
                         var serverAppVersion = res.version;
-                        $cordovaAppVersion.getVersionNumber().then( function( version ) {
-                            if ( version != serverAppVersion ) {
+                        $cordovaAppVersion.getVersionNumber().then(function(version) {
+                            if (version != serverAppVersion) {
                                 $ionicSideMenuDelegate.toggleLeft();
-                                $state.go( 'index.update', {
+                                $state.go('index.update', {
                                     'Version': serverAppVersion
-                                } );
+                                });
                             } else {
                                 alertPopupTitle = 'Already the Latest Version!';
                                 alertPopup = $ionicPopup.alert( {
@@ -50,15 +50,15 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state
                                     okType: 'button-assertive'
                                 } );
                             }
-                        } );
-                    } )
-                    .error( function( res ) {
+                        });
+                    })
+                    .error(function(res) {
                         alertPopupTitle = 'Connect Update Server Error!';
                         alertPopup = $ionicPopup.alert( {
                             title: alertPopupTitle,
                             okType: 'button-assertive'
                         } );
-                    } );
+                    });
             } else {
                 alertPopupTitle = 'No Updates!';
                 alertPopup = $ionicPopup.alert( {
@@ -228,7 +228,7 @@ appControllers.controller( 'UpdateCtrl', [ 'ENV', '$scope', '$state', '$statePar
             } );
         };
         $scope.upgrade = function() {
-            DownloadFileService.Download( ENV.website + '/' + ENV.apkName + '.apk', 'application/vnd.android.package-archive', null, onError, onError );
+            DownloadFileService.Download( ENV.website + '/' + ENV.apkName + '.apk', ENV.apkName + '.apk', 'application/vnd.android.package-archive', null, onError, onError );
         };
     } ] );
 
@@ -246,14 +246,22 @@ appControllers.controller( 'MainCtrl', [ '$scope', '$state', '$ionicPopup',
             } );
         };
         $scope.func_Putaway = function() {
-            $state.go( 'putawayList', {}, {
-                reload: true
+            $ionicPopup.alert( {
+                title: 'Stay Tuned.',
+                okType: 'button-calm'
             } );
+            //$state.go( 'putawayList', {}, {
+            //    reload: true
+            //} );
         };
         $scope.func_GT = function() {
-            $state.go( 'gtFrom', {}, {
-                reload: true
+            $ionicPopup.alert( {
+                title: 'Stay Tuned.',
+                okType: 'button-calm'
             } );
+            //$state.go( 'gtFrom', {}, {
+            //    reload: true
+            //} );
         };
         $scope.func_Vgin = function() {
             $state.go( 'vginList', {}, {

@@ -1,11 +1,11 @@
 
 var dbInfo = {
-    dbName: "WmsDB",
-    dbVersion: "1.0",
-    dbDisplayName: "WMS Database",
+    dbName: 'WmsDB',
+    dbVersion: '1.0',
+    dbDisplayName: 'WMS Database',
     dbEstimatedSize: 10 * 11024 * 1024
 };
-var dbSql = "";
+var dbSql = '';
 function dbError(tx, error) {
     console.log(error.message);
 }
@@ -14,7 +14,7 @@ if (dbWms) {
     dbWms.transaction(function (tx) {
         dbSql = 'DROP TABLE if exists Imgr2_Receipt';
         tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE Imgr2_Receipt (TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, BarCode TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
+        dbSql = "CREATE TABLE Imgr2_Receipt (TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNo TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = 'DROP TABLE if exists Imsn1_Receipt';
         tx.executeSql(dbSql, [], null, dbError);
@@ -41,7 +41,7 @@ if (dbWms) {
 
         dbSql = 'DROP TABLE if exists Imgi2_Picking';
         tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE Imgi2_Picking (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, SerialNo TEXT, BarCode TEXT, Qty INT, ScanQty INT, QtyBal INT)";
+        dbSql = "CREATE TABLE Imgi2_Picking (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNo TEXT, Qty INT, ScanQty INT, QtyBal INT)";
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = 'DROP TABLE if exists Imsn1_Picking';
         tx.executeSql(dbSql, [], null, dbError);
@@ -50,7 +50,7 @@ if (dbWms) {
 
         dbSql = 'DROP TABLE if exists Imgi2_Verify';
         tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE Imgi2_Verify (RowNum, TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNoFlag TEXT, SerialNo TEXT, BarCode TEXT, Qty INT, ScanQty INT, QtyBal INT)";
+        dbSql = "CREATE TABLE Imgi2_Verify (RowNum, TrxNo INT, LineItemNo INT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNo TEXT, Qty INT, ScanQty INT, QtyBal INT)";
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = 'DROP TABLE if exists Imsn1_Verify';
         tx.executeSql(dbSql, [], null, dbError);
@@ -70,8 +70,8 @@ var db_del_Imgr2_Receipt = function (){
 var db_add_Imgr2_Receipt = function( imgr2 ) {
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
-            dbSql = 'INSERT INTO Imgr2_Receipt (TrxNo, LineItemNo, ProductTrxNo, ProductCode, ProductDescription, SerialNoFlag, BarCode, DimensionFlag, PackingQty, WholeQty, LooseQty, ScanQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            tx.executeSql( dbSql, [ imgr2.TrxNo, imgr2.LineItemNo, imgr2.ProductTrxNo, imgr2.ProductCode, imgr2.ProductDescription, imgr2.SerialNoFlag, imgr2.BarCode, imgr2.DimensionFlag, imgr2.PackingQty, imgr2.WholeQty, imgr2.LooseQty, 0], null, dbError );
+            dbSql = 'INSERT INTO Imgr2_Receipt (TrxNo, LineItemNo, ProductTrxNo, ProductCode, ProductDescription, SerialNo, DimensionFlag, PackingQty, WholeQty, LooseQty, ScanQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            tx.executeSql( dbSql, [ imgr2.TrxNo, imgr2.LineItemNo, imgr2.ProductTrxNo, imgr2.ProductCode, imgr2.ProductDescription, imgr2.SerialNo, imgr2.DimensionFlag, imgr2.PackingQty, imgr2.WholeQty, imgr2.LooseQty, 0], null, dbError );
         } );
     }
 };
@@ -197,8 +197,8 @@ var db_del_Imgi2_Picking = function (){
 var db_add_Imgi2_Picking = function(imgi2) {
     if (dbWms) {
         dbWms.transaction(function(tx) {
-            dbSql = 'INSERT INTO Imgi2_Picking (RowNum, TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, ProductDescription, SerialNoFlag, SerialNo, BarCode, Qty, ScanQty, QtyBal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
-            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.StoreNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.ProductDescription, imgi2.SerialNoFlag, imgi2.SerialNo, imgi2.BarCode, imgi2.Qty, 0, imgi2.Qty], null, dbError);
+            dbSql = 'INSERT INTO Imgi2_Picking (RowNum, TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, ProductDescription, SerialNo, Qty, ScanQty, QtyBal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
+            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.StoreNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.ProductDescription, imgi2.SerialNo, imgi2.Qty, 0, imgi2.Qty], null, dbError);
         });
     }
 };
@@ -257,8 +257,8 @@ var db_del_Imgi2_Verify = function (){
 var db_add_Imgi2_Verify = function(imgi2) {
     if (dbWms) {
         dbWms.transaction(function(tx) {
-            dbSql = 'INSERT INTO Imgi2_Verify (RowNum, TrxNo, LineItemNo, ProductTrxNo, ProductCode, ProductDescription, SerialNoFlag, SerialNo, BarCode, Qty, ScanQty, QtyBal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?)';
-            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.ProductDescription, imgi2.SerialNoFlag, imgi2.SerialNo, imgi2.BarCode, imgi2.Qty, 0, imgi2.Qty], null, dbError);
+            dbSql = 'INSERT INTO Imgi2_Verify (RowNum, TrxNo, LineItemNo, ProductTrxNo, ProductCode, ProductDescription, SerialNo, Qty, ScanQty, QtyBal) values(?, ?, ?, ?, ?, ?, ?, ? ,?, ?)';
+            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.ProductDescription, imgi2.SerialNo, imgi2.Qty, 0, imgi2.Qty], null, dbError);
         });
     }
 };

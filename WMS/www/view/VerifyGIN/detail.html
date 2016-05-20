@@ -36,21 +36,6 @@
                         <span class="input-label col-50" style="padding-top:2px; padding-bottom: 2px; font-size: x-small; min-width:60%;">Qty To Issue&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;" ng-bind="Detail.Imgi2.Qty"></span></span>
                         <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">BAL&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;color:red;" ng-bind="Detail.Imgi2.QtyBal"></span></span>
                     </label>
-                    <div class="row">
-                        <div class="col col-80" style="padding:0px;">
-                            <label class="item item-input">
-                                <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</span>
-                                <input type="text" id="txt-barcode" ng-model="Detail.Scan.BarCode">
-                            </label>
-                        </div>
-                        <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="openCam('BarCode')"><i class="icon ion-qr-scanner"></i></button>
-                        </div>
-                        <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearInput('BarCode')"><i class="icon ion-android-close"></i></button>
-                        </div>
-                    </div>
-                    <hr style="margin: 0;"/>
                     <div class="row" ng-show="Detail.Imgi2.SerialNoFlag != ''">
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
@@ -99,18 +84,10 @@
                     <ion-item ng-repeat="Imgi2 in Detail.Imgi2sDb">
                         <div class="row">
                             <div class="col col-50">
-                                <p style="font-size:0.8em;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</p>
-                            </div>
-                            <div class="col">
-                                <span ng-bind="Imgi2.BarCode" style="font-size:1.2em;"></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col col-50">
                                 <p style="font-size:0.8em;">Product Code&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgi2.ProductCode" style="font-size:1.2em;"></span>
+                                <span ng-bind="Imgi2.ProductCode"></span>
                             </div>
                         </div>
                         <div class="row" ng-if="Imgi2.SerialNoFlag != ''">
@@ -118,7 +95,7 @@
                                 <p style="font-size:0.8em;">Serial No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgi2.SerialNo" style="font-size:1.2em;"></span>
+                                <span ng-bind="Imgi2.SerialNo"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -126,7 +103,7 @@
                                 <p style="font-size:0.8em;">Scan Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgi2.ScanQty" style="font-size:1.2em; color:red;"></span>
+                                <span ng-bind="Imgi2.ScanQty"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -134,7 +111,7 @@
                                 <p style="font-size:0.8em;">Actual Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgi2.Qty" style="font-size:1.2em;"></span>
+                                <span ng-bind="Imgi2.Qty"></span>
                             </div>
                         </div>
                     </ion-item>
