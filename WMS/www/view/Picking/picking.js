@@ -84,7 +84,8 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
             Imgi2s: {},
             Imgi2sDb: {},
             Imsn1s: {},
-            blnNext: true
+            blnNext: true,
+            blnUpdatePakcingNo: false
         };
         $ionicModal.fromTemplateUrl( 'scan.html', {
             scope: $scope,
@@ -134,6 +135,17 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                 } ]
             } );
         };
+        var updatePackingNo = function(callback){
+            db_query_Imgi2_Picking( function( imgi2s ) {
+                var strUri = '/api/wms/imgi2/update/packingno',
+                    jsonData = { 'Imgi2s': imgi2s };
+                ApiService.Post( strUri, jsonData, true ).then( function success( result ) {
+                    if(result.data.results > -1){
+                        if(is.function(callback)) callback();
+                    }
+                } );
+            } );
+        };
         var sendConfirm = function() {
             var userID = sessionStorage.getItem( 'UserId' ).toString(),
                 strUri = '/api/wms/imgi1/complete?GoodsIssueNoteNo=' + $scope.Detail.GIN + '&UserID=' + userID;
@@ -178,6 +190,7 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                     ProductCode: $scope.Detail.Imgi2s[ row ].ProductCode,
                     ProductDescription: $scope.Detail.Imgi2s[ row ].ProductDescription,
                     SerialNo: $scope.Detail.Imgi2s[ row ].SerialNo,
+                    PackingNo: $scope.Detail.Imgi2s[ row ].PackingNo,
                     Qty: $scope.Detail.Imgi2s[ row ].Qty,
                     QtyBal: $scope.Detail.Imgi2s[ row ].Qty - $scope.Detail.Imgi2s[ row ].ScanQty
                 };
@@ -250,13 +263,12 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
             } );
         };
         $scope.changePackingNo = function(){
-            /*
             if ( hmImgi2.count() > 0 ) {
                 var imgi2 = hmImgi2.get( $scope.Detail.Imgi2.SerialNo.toLowerCase() );
                 var promptPopup = $ionicPopup.show( {
-                    template: '<input type="text" ng-model="Detail.Scan.PackingNo">',
-                    title: 'Enter Qty',
-                    subTitle: 'Are you sure to change Qty manually?',
+                    template: '<input type="text" ng-model="Detail.Imgi2.PackingNo">',
+                    title: 'Enter Packing No',
+                    subTitle: 'Are you sure to change Packing No manually?',
                     scope: $scope,
                     buttons: [ {
                         text: 'Cancel'
@@ -264,17 +276,13 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                         text: '<b>Save</b>',
                         type: 'button-positive',
                         onTap: function( e ) {
-                            imgi2.ScanQty = $scope.Detail.Scan.Qty;
-                            $scope.Detail.Imgi2.QtyBal = imgi2.Qty - imgi2.ScanQty;
+                            blnUpdatePakcingNo = true;
+                            imgi2.PackingNo = $scope.Detail.Imgi2.PackingNo;
                             db_update_Imgi2_Picking( imgi2 );
-                            if ( is.equal( imgi2.Qty, imgi2.ScanQty ) ) {
-                                $scope.showNext();
-                            }
                         }
                     } ]
                 } );
             }
-            */
         };
         $scope.changeQty = function() {
             if ( hmImgi2.count() > 0 ) {
@@ -408,7 +416,11 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                             if ( blnDiscrepancies ) {
                                 onErrorConfirm();
                             } else {
-                                sendConfirm();
+                                if(blnUpdatePakcingNo){
+                                    updatePackingNo(sendConfirm());
+                                }else{
+                                    sendConfirm();
+                                }
                             }
                         } else {
                             $ionicLoading.hide();

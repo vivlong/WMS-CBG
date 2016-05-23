@@ -61,7 +61,7 @@
                     </div>
                     <label class="item item-input">
                         <span class="input-label" style="padding-top:2px; padding-bottom: 2px; min-width:85%;">Packing No&nbsp;&nbsp;:&nbsp;&nbsp;
-                            <span id="txt-packingno" style="font-weight:bold;" ng-bind="Detail.Scan.PackingNo"></span>
+                            <span id="txt-packingno" style="font-weight:bold;" ng-bind="Detail.Imgi2.PackingNo"></span>
                         </span>
                         <button class="button button-clear button-small" ng-click="changePackingNo()"><i class="icon ion-android-create"></i></button>
                     </label>
@@ -116,12 +116,20 @@
                                 <span ng-bind="Imgi2.ProductCode"></span>
                             </div>
                         </div>
-                        <div class="row" ng-if="Imgi2.SerialNoFlag != ''">
+                        <div class="row">
                             <div class="col col-50">
                                 <p style="font-size:0.8em;">Serial No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
                                 <span ng-bind="Imgi2.SerialNo"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-50">
+                                <p style="font-size:0.8em;">Packing No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                            </div>
+                            <div class="col">
+                                <span ng-bind="Imgi2.PackingNo"></span>
                             </div>
                         </div>
                         <div class="row">

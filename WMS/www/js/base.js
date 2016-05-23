@@ -41,7 +41,7 @@ if (dbWms) {
 
         dbSql = 'DROP TABLE if exists Imgi2_Picking';
         tx.executeSql(dbSql, [], null, dbError);
-        dbSql = "CREATE TABLE Imgi2_Picking (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNo TEXT, Qty INT, ScanQty INT, QtyBal INT)";
+        dbSql = "CREATE TABLE Imgi2_Picking (RowNum, TrxNo INT, LineItemNo INT, StoreNo TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNo TEXT, PackingNo TEXT, Qty INT, ScanQty INT, QtyBal INT)";
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = 'DROP TABLE if exists Imsn1_Picking';
         tx.executeSql(dbSql, [], null, dbError);
@@ -197,16 +197,16 @@ var db_del_Imgi2_Picking = function (){
 var db_add_Imgi2_Picking = function(imgi2) {
     if (dbWms) {
         dbWms.transaction(function(tx) {
-            dbSql = 'INSERT INTO Imgi2_Picking (RowNum, TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, ProductDescription, SerialNo, Qty, ScanQty, QtyBal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
-            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.StoreNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.ProductDescription, imgi2.SerialNo, imgi2.Qty, 0, imgi2.Qty], null, dbError);
+            dbSql = 'INSERT INTO Imgi2_Picking (RowNum, TrxNo, LineItemNo, StoreNo, ProductTrxNo, ProductCode, ProductDescription, SerialNo, PackingNo, Qty, ScanQty, QtyBal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
+            tx.executeSql(dbSql, [imgi2.RowNum, imgi2.TrxNo, imgi2.LineItemNo, imgi2.StoreNo, imgi2.ProductTrxNo, imgi2.ProductCode, imgi2.ProductDescription, imgi2.SerialNo, imgi2.PackingNo, imgi2.Qty, 0, imgi2.Qty], null, dbError);
         });
     }
 };
 var db_update_Imgi2_Picking = function( imgi2 ) {
     if ( dbWms ) {
         dbWms.transaction( function( tx ) {
-            dbSql = 'Update Imgi2_Picking set ScanQty=? Where TrxNo=? and LineItemNo=?';
-            tx.executeSql( dbSql, [ imgi2.ScanQty, imgi2.TrxNo, imgi2.LineItemNo ], null, dbError );
+            dbSql = 'Update Imgi2_Picking set ScanQty=?, PackingNo=? Where TrxNo=? and LineItemNo=?';
+            tx.executeSql( dbSql, [ imgi2.ScanQty, imgi2.PackingNo, imgi2.TrxNo, imgi2.LineItemNo ], null, dbError );
         } );
     }
 };
