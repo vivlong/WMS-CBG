@@ -11,17 +11,19 @@ using WebApi.ServiceModel.Tables;
 namespace WebApi.ServiceModel.Wms
 {
 
-				[Route("/wms/imgi1", "Get")]				//imgi1?GoodsIssueNoteNo= & CustomerCode=
-				[Route("/wms/imgi1/complete", "Get")]				//complete?GoodsIssueNoteNo= &UserID=
-				[Route("/wms/imgi1/confirm", "Get")]				//confirm?GoodsIssueNoteNo= &UserID=
-				[Route("/wms/imgi2", "Get")]				//imgi2?GoodsIssueNoteNo=
-				[Route("/wms/imgi2/picking", "Get")]				//picking?GoodsIssueNoteNo=
-				[Route("/wms/imgi2/verify", "Get")]					//verify?GoodsIssueNoteNo=
+				[Route("/wms/imgi1", "Get")]																				//imgi1?GoodsIssueNoteNo= & CustomerCode=
+				[Route("/wms/imgi1/complete", "Get")]											//complete?GoodsIssueNoteNo= &UserID=
+				[Route("/wms/imgi1/confirm", "Get")]												//confirm?GoodsIssueNoteNo= &UserID=
+				[Route("/wms/imgi2", "Get")]																				//imgi2?GoodsIssueNoteNo=
+				[Route("/wms/imgi2/picking", "Get")]												//picking?GoodsIssueNoteNo=
+				[Route("/wms/imgi2/verify", "Get")]													//verify?GoodsIssueNoteNo=
+				[Route("/wms/imgi2/update/packingno", "Post")]		//packingno
     public class Imgi : IReturn<CommonResponse>
     {
         public string CustomerCode { get; set; }
         public string GoodsIssueNoteNo { get; set; }
 								public string UserID { get; set; }
+								public List<Imgi2_Picking> Imgi2s { get; set; }
     }
     public class Imgi_Logic
     {
@@ -155,6 +157,28 @@ namespace WebApi.ServiceModel.Wms
 																								}
 																				);
 																				Result = 0;
+																}
+												}
+												catch { throw; }
+												return Result;
+								}
+								public int Update_Imgi2_PackingNo(Imgi request)
+								{
+												int Result = -1;
+												try
+												{
+																using (var db = DbConnectionFactory.OpenDbConnection())
+																{
+																				foreach (Imgi2_Picking i2 in request.Imgi2s)
+																				{
+																								Result = db.Update<Imgi2>(
+																												new
+																												{
+																																PackingNo = i2.PackingNo
+																												},
+																												p => p.TrxNo == i2.TrxNo && p.LineItemNo == i2.LineItemNo
+																								);
+																				}																				
 																}
 												}
 												catch { throw; }
