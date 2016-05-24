@@ -1,5 +1,5 @@
 # WMS APP
-SysFreight WMS APP For CBG
+SysFreight WMS APP For Interglobo
 
 # Environment
 Apache Cordova
