@@ -1,7 +1,7 @@
 'use strict';
 var appConfig = angular.module('WMSAPP.config',[]);
 appConfig.constant('ENV', {
-    'website':      'www.sysfreight.net/mobileapp-wh',
+    'website':      'www.sysfreight.net/app/wms/interglobo',
     'api':          'www.sysfreight.net/apis/wms/interglobo',
     'ssl':          '0', // 0 : false, 1 : true
     'port':         '8081', // http port no
@@ -13,5 +13,5 @@ appConfig.constant('ENV', {
     'updateFile':   'update.json',
     'rootPath':     'WMS',
     'configFile':   'config.txt',
-    'version':      '1.0.9'
+    'version':      '1.0.10'
 });

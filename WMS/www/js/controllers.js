@@ -246,13 +246,9 @@ appControllers.controller( 'MainCtrl', [ '$scope', '$state', '$ionicPopup',
             } );
         };
         $scope.func_Putaway = function() {
-            $ionicPopup.alert( {
-                title: 'Stay Tuned.',
-                okType: 'button-calm'
+            $state.go( 'putawayList', {}, {
+                reload: true
             } );
-            //$state.go( 'putawayList', {}, {
-            //    reload: true
-            //} );
         };
         $scope.func_GT = function() {
             $ionicPopup.alert( {

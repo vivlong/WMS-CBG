@@ -22,37 +22,17 @@
                             </label>
                         </div>
                         <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="openCam('SerialNo')"><i class="icon ion-qr-scanner"></i></button>
+                            <button class="button button-clear button-small" ng-click="openCam('StoreNo')"><i class="icon ion-qr-scanner"></i></button>
                         </div>
                         <div class="col">
                             <button class="button button-clear button-small" ng-click="clearInput('StoreNo')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
-                    <div class="row" id="div-barcode">
-                        <div class="col col-80" style="padding:0px;">
-                            <label class="item item-input">
-                                <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">BarCode&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-barcode" ng-model="Detail.Scan.BarCode" style="padding-right: 14px;">
-                            </label>
-                        </div>
-                        <div class="col col-10">
-                            <button class="button button-clear button-small" ng-click="openCam('BarCode')"><i class="icon ion-qr-scanner"></i></button>
-                        </div>
-                        <div class="col">
-                            <button class="button button-clear button-small" ng-click="clearInput('BarCode')"><i class="icon ion-android-close"></i></button>
-                        </div>
-                    </div>
-                    <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Product Code : <span ng-bind="Detail.Impr1.ProductCode"></span></span>
-                    </label>
-                    <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description : <span ng-bind="Detail.Impr1.ProductDescription"></span></span>
-                    </label>
                     <div class="row">
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Serial No&nbsp;&nbsp;:</span>
-                                <input type="text" id="txt-sn" ng-model="Detail.Scan.SerialNo" style="padding-right: 14px;" readonly>
+                                <input type="text" id="txt-sn" ng-model="Detail.Scan.SerialNo" style="padding-right: 14px;">
                             </label>
                         </div>
                         <div class="col col-10">
@@ -62,6 +42,12 @@
                             <button class="button button-clear button-small" ng-click="clearInput('SerialNo')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
+                    <label class="item item-input">
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Product Code : <span ng-bind="Detail.Impr1.ProductCode"></span></span>
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: small;">Description : <span ng-bind="Detail.Impr1.ProductDescription"></span></span>
+                    </label>
                     <div class="row">
                         <div class="col col-90" style="padding:0px;">
                             <label class="item item-input">
@@ -100,15 +86,15 @@
                                 <p style="font-size:0.8em;">Store No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.StoreNo" style="font-size:1.2em;"></span>
+                                <span ng-bind="Imgr2.StoreNo"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col col-50">
-                                <p style="font-size:0.8em;">BarCode&nbsp;&nbsp;:&nbsp;&nbsp;</p>
+                                <p style="font-size:0.8em;">Serial No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.BarCode" style="font-size:1.2em;"></span>
+                                <span ng-bind="Imgr2.SerialNo"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -116,7 +102,7 @@
                                 <p style="font-size:0.8em;">Product Code&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.ProductCode" style="font-size:1.2em;"></span>
+                                <span ng-bind="Imgr2.ProductCode"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -124,7 +110,7 @@
                                 <p style="font-size:0.8em;">Scan Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.ScanQty" style="font-size:1.2em; color:red;"></span>
+                                <span ng-bind="Imgr2.ScanQty"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -132,7 +118,7 @@
                                 <p style="font-size:0.8em;">Actual Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.ActualQty" style="font-size:1.2em;"></span>
+                                <span ng-bind="Imgr2.ActualQty"></span>
                             </div>
                         </div>
                     </ion-item>

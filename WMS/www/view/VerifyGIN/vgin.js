@@ -56,9 +56,10 @@ appControllers.controller( 'VginListCtrl', [ '$scope', '$stateParams', '$state',
 
 appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state', '$timeout', '$ionicHistory', '$ionicLoading', '$ionicModal', '$ionicPopup', '$cordovaToast', '$cordovaBarcodeScanner', 'ApiService',
     function( $scope, $stateParams, $state, $timeout, $ionicHistory, $ionicLoading, $ionicModal, $ionicPopup, $cordovaToast, $cordovaBarcodeScanner, ApiService ) {
-        var alertPopup = null, alertTitle = '';
-        var hmImgi2 = new HashMap();
-        var hmImsn1 = new HashMap();
+        var alertPopup = null,
+            alertTitle = '',
+            hmImgi2 = new HashMap(),
+            hmImsn1 = new HashMap();
         $scope.Detail = {
             Customer:$stateParams.CustomerCode,
             GIN:$stateParams.GoodsIssueNoteNo,
@@ -72,6 +73,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 TrxNo: 0,
                 LineItemNo: 0,
                 StoreNo: '',
+                SerialNo: '',
                 ProductCode: '',
                 ProductDescription: '',
                 Qty: 0,
@@ -79,8 +81,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
             },
             Imgi2s:{},
             Imgi2sDb:{},
-            Imsn1s:{},
-            blnNext : true
+            Imsn1s:{}
         };
         $ionicModal.fromTemplateUrl( 'scan.html', {
             scope: $scope,
@@ -100,27 +101,16 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 title: title,
                 okType: 'button-' + type
             } );
-            if( typeof(callback) == 'function') callback(alertPopup);
-        };
-        var blnVerifyInput = function(type){
-            var blnPass = true;
-            if(is.equal(type,'SerialNo')) {
-                if(!is.equal($scope.Detail.Scan.SerialNo.toLowerCase(),$scope.Detail.Imgi2.SerialNo.toLowerCase())){
-                    showPopup('Wrong Serial No','assertive');
-                    blnPass = false;
-                }
-            }
-            return blnPass;
+            alertPopup.then(function(res){
+                if( typeof(callback) == 'function') callback(res);
+            });
         };
         var sendConfirm = function() {
             var userID = sessionStorage.getItem( 'UserId' ).toString(),
                 strUri = '/api/wms/imgi1/confirm?GoodsIssueNoteNo=' + $scope.Detail.GIN + '&UserID=' + userID;
             ApiService.GetParam( strUri, true ).then( function success( result ) {
-                showPopup('Confirm success','calm',function(popup){
-                    $timeout( function() {
-                        popup.close();
-                        $scope.returnList();
-                    }, 2500 );
+                showPopup('Confirm success', 'calm', function(res){
+                    $scope.returnList();
                 });
             } );
         };
@@ -132,9 +122,6 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
             $scope.Detail.Scan.Qty = imgi2.ScanQty;
             $scope.Detail.Scan.SerialNo = '';
             $scope.Detail.Imgi2.QtyBal = imgi2.Qty - imgi2.ScanQty;
-            if(is.equal(imgi2.Qty,imgi2.ScanQty) ){
-                $scope.showNext();
-            }
         };
         var showImpr = function( serialno ) {
             if ( hmImgi2.has( serialno ) ) {
@@ -144,28 +131,6 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 showPopup('Wrong Serial No','assertive');
             }
             $scope.$apply();
-        };
-        var showImgi2 = function( row ) {
-            if ( row != null && $scope.Detail.Imgi2s.length >= row ) {
-                $scope.Detail.Imgi2 = {
-                    RowNum: $scope.Detail.Imgi2s[ row ].RowNum,
-                    TrxNo: $scope.Detail.Imgi2s[ row ].TrxNo,
-                    LineItemNo: $scope.Detail.Imgi2s[ row ].LineItemNo,
-                    StoreNo: $scope.Detail.Imgi2s[ row ].StoreNo,
-                    ProductTrxNo: $scope.Detail.Imgi2s[ row ].ProductTrxNo,
-                    ProductCode: $scope.Detail.Imgi2s[ row ].ProductCode,
-                    ProductDescription: $scope.Detail.Imgi2s[ row ].ProductDescription,
-                    SerialNo: $scope.Detail.Imgi2s[ row ].SerialNo,
-                    Qty: $scope.Detail.Imgi2s[ row ].Qty,
-                    QtyBal: $scope.Detail.Imgi2s[ row ].Qty - $scope.Detail.Imgi2s[ row ].ScanQty
-                };
-                $scope.Detail.Scan.Qty = $scope.Detail.Imgi2s[ row ].ScanQty;
-            }
-            if ( is.equal( row, $scope.Detail.Imgi2s.length - 1 ) ) {
-                $scope.Detail.blnNext = false;
-            } else {
-                $scope.Detail.blnNext = true;
-            }
         };
         var GetImgi2 = function( GoodsIssueNoteNo ) {
             var strUri = '/api/wms/imgi2/verify?GoodsIssueNoteNo=' + GoodsIssueNoteNo;
@@ -177,13 +142,9 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                         hmImgi2.set($scope.Detail.Imgi2s[i].SerialNo.toLowerCase(), $scope.Detail.Imgi2s[i]);
                         db_add_Imgi2_Verify( $scope.Detail.Imgi2s[ i ] );
                     }
-                    showImgi2( 0 );
                 } else {
-                    showPopup('This GIN has no Products','calm',function(popup){
-                        $timeout( function() {
-                            popup.close();
-                            $scope.returnList();
-                        }, 2500 );
+                    showPopup('This GIN has no Products','calm',function(res){
+                        $scope.returnList();
                     });
                 }
             } );
@@ -257,24 +218,6 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
                 $('#txt-storeno').select();
             }
         };
-        $scope.showPrev = function() {
-            var intRow = $scope.Detail.Imgi2.RowNum - 1;
-            if ($scope.Detail.Imgi2s.length > 0 && intRow > 0 && is.equal($scope.Detail.Imgi2s[intRow-1].RowNum,intRow)) {
-                $scope.clearInput();
-                showImgi2(intRow - 1);
-            } else {
-                showPopup('Already the first one','calm');
-            }
-        }
-        $scope.showNext = function() {
-            var intRow = $scope.Detail.Imgi2.RowNum + 1;
-            if ($scope.Detail.Imgi2s.length > 0 && $scope.Detail.Imgi2s.length >= intRow && is.equal($scope.Detail.Imgi2s[intRow-1].RowNum,intRow)) {
-                $scope.clearInput();
-                showImgi2(intRow-1);
-            } else {
-                showPopup('Already the last one','calm');
-            }
-        }
         $scope.checkConfirm = function() {
             $ionicLoading.show();
             if ( dbWms ) {
@@ -323,9 +266,7 @@ appControllers.controller( 'VginDetailCtrl', [ '$scope', '$stateParams', '$state
         $( '#txt-sn' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
                 if (alertPopup === null) {
-                    if(blnVerifyInput('SerialNo')){
-                        showImpr( $scope.Detail.Scan.SerialNo.toLowerCase() );
-                    }
+                    showImpr( $scope.Detail.Scan.SerialNo.toLowerCase() );
                 } else {
                     alertPopup.close();
                     alertPopup = null;

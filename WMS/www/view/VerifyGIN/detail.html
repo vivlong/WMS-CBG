@@ -14,29 +14,7 @@
             </div>
             <div class="item item-body" style="padding:8px;">
                 <div class="list">
-                    <label class="item item-input" style="padding-left:6px;">
-                        <span class="input-label col-33" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
-                            Product Code
-                        </span>&nbsp;:&nbsp;
-                        <span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductCode"></span>
-                    </label>
-                    <label class="item item-input" style="padding-left:6px;">
-                        <span class="input-label col-33" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
-                            Description
-                        </span>&nbsp;:&nbsp;
-                        <span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductDescription | limitTo:18"></span>
-                    </label>
-                    <label class="item item-input" style="padding-left:6px;" ng-if="Detail.Imgi2.SerialNoFlag != ''">
-                        <span class="input-label col-33" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
-                            Serial No
-                        </span>&nbsp;:&nbsp;
-                        <span style="font-size: medium;" ng-bind="Detail.Imgi2.SerialNo | limitTo:18"></span>
-                    </label>
-                    <label class="item item-input" style="padding-left:6px;">
-                        <span class="input-label col-50" style="padding-top:2px; padding-bottom: 2px; font-size: x-small; min-width:60%;">Qty To Issue&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;" ng-bind="Detail.Imgi2.Qty"></span></span>
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">BAL&nbsp;&nbsp;:&nbsp;&nbsp;<span style="font-size: medium;font-weight:bold;color:red;" ng-bind="Detail.Imgi2.QtyBal"></span></span>
-                    </label>
-                    <div class="row" ng-show="Detail.Imgi2.SerialNoFlag != ''">
+                    <div class="row">
                         <div class="col col-80" style="padding:0px;">
                             <label class="item item-input">
                                 <span class="input-label" style="padding-top:2px; padding-bottom: 2px;">Serial No&nbsp;&nbsp;:&nbsp;&nbsp;</span>
@@ -50,8 +28,33 @@
                             <button class="button button-clear button-small" ng-click="clearInput('SerialNo')"><i class="icon ion-android-close"></i></button>
                         </div>
                     </div>
+                    <label class="item item-input" style="padding-left:6px;">
+                        <span class="input-label col-33" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
+                            Product Code
+                        </span>&nbsp;:&nbsp;
+                        <span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductCode"></span>
+                    </label>
+                    <label class="item item-input" style="padding-left:6px;">
+                        <span class="input-label col-33" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
+                            Description
+                        </span>&nbsp;:&nbsp;
+                        <span style="font-size: medium;" ng-bind="Detail.Imgi2.ProductDescription | limitTo:18"></span>
+                    </label>
+                    <label class="item item-input" style="padding-left:6px;">
+                        <span class="input-label col-50" style="padding-top:2px; padding-bottom: 2px; font-size: x-small; min-width:60%;">
+                            Qty To Issue&nbsp;&nbsp;:&nbsp;&nbsp;
+                            <span style="font-size: medium;font-weight:bold;" ng-bind="Detail.Imgi2.Qty"></span>
+                        </span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; font-size: x-small;">
+                            BAL&nbsp;&nbsp;:&nbsp;&nbsp;
+                            <span style="font-size: medium;font-weight:bold;color:red;" ng-bind="Detail.Imgi2.QtyBal"></span>
+                        </span>
+                    </label>
                     <label class="item item-input">
-                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; min-width:85%;">Qty&nbsp;&nbsp;:&nbsp;&nbsp;<span id="txt-qty" style="font-weight:bold;" ng-bind="Detail.Scan.Qty"></span></span>
+                        <span class="input-label" style="padding-top:2px; padding-bottom: 2px; min-width:85%;">
+                            Qty&nbsp;&nbsp;:&nbsp;&nbsp;
+                            <span id="txt-qty" style="font-weight:bold;" ng-bind="Detail.Scan.Qty"></span>
+                        </span>
                         <button class="button button-clear button-small" ng-click="changeQty()"><i class="icon ion-android-create"></i></button>
                     </label>
                 </div>
@@ -60,13 +63,7 @@
     </ion-content>
     <ion-footer-bar class="bar-positive hide-on-keyboard-open">
         <div class="button-bar">
-            <button class="button icon ion-android-arrow-dropleft" ng-click="showPrev()">
-                &nbsp;Previous
-            </button>
-            <button class="button icon ion-android-arrow-dropright" ng-show="Detail.blnNext" ng-click="showNext()">
-                &nbsp;Next
-            </button>
-            <button class="button icon ion-android-done" ng-show="!Detail.blnNext" ng-click="checkConfirm()">
+            <button class="button icon ion-android-done" ng-click="checkConfirm()">
                 Confirm
             </button>
             <button class="button icon ion-arrow-return-right" ng-click="returnList()">

@@ -1,7 +1,6 @@
 appControllers.controller( 'GrListCtrl', [ 'ENV', '$scope', '$stateParams', '$state', 'ApiService',
     function( ENV, $scope, $stateParams, $state, ApiService ) {
-        var alertPopup = null;
-        var alertPopupTitle = '';
+        var alertPopup = null, alertPopupTitle = '';
         $scope.Rcbp1 = {};
         $scope.GrnNo = {};
         $scope.Imgr1s = {};
