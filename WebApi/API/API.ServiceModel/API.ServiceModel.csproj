@@ -90,6 +90,7 @@
     <Compile Include="Tables\Imgr2_Transfer.cs" />
     <Compile Include="Tables\Imgr2_Putaway.cs" />
     <Compile Include="Tables\Impa1.cs" />
+    <Compile Include="Tables\Impm1.cs" />
     <Compile Include="Tables\Imsl1.cs" />
     <Compile Include="Tables\Whwh2.cs" />
     <Compile Include="Tables\Imgr2.cs" />

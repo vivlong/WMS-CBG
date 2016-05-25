@@ -87,7 +87,7 @@ namespace WebApi.ServiceModel.Wms
 																								"Imgi2.TrxNo, Imgi2.LineItemNo, Imgi2.ProductTrxNo," +
 																								"IsNull(Imgi2.StoreNo,'') AS StoreNo, IsNull(Imgi2.ProductCode,'') AS ProductCode," +
 																								"IsNull(Imgi2.ProductDescription,'') AS ProductDescription," +
-																								"(Select Top 1 SerialNo From Impm1 Where TrxNo=Imgi2.ReceiptMovementTrxNo) AS SerialNo," +
+																								"ISNull((Select Top 1 SerialNo From Impm1 Where TrxNo=Imgi2.ReceiptMovementTrxNo),'') AS SerialNo," +
 																								"(CASE Imgi2.DimensionFlag When '1' THEN Imgi2.PackingQty When '2' THEN Imgi2.WholeQty ELSE Imgi2.LooseQty END) AS Qty, " +
 																								"0 AS QtyBal, 0 AS ScanQty " +
 																								"From Imgi2 " +
@@ -151,7 +151,7 @@ namespace WebApi.ServiceModel.Wms
 																												Description = "VERIFIED",
 																												StatusLogDateTime = DateTime.Now,
 																												UserId = request.UserID,
-																												StatusCode = "CMP",
+																												StatusCode = "EXE",
 																												UpdateBy = request.UserID,
 																												UpdateDateTime = DateTime.Now
 																								}

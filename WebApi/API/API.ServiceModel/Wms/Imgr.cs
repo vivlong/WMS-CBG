@@ -14,7 +14,7 @@ namespace WebApi.ServiceModel.Wms
 				[Route("/wms/imgr1/confirm", "Get")]				//confirm?TrxNo= &UserID=
 				[Route("/wms/imgr2/receipt", "Get")]				//receipt?GoodsReceiptNoteNo=
 				[Route("/wms/imgr2/putaway", "Get")]				//putaway?GoodsReceiptNoteNo=
-				[Route("/wms/imgr2/putaway/update", "Get")]				//update?StoreNo= & TrxNo= & LineItemNo=
+				[Route("/wms/imgr2/putaway/update", "Get")]				//update?GoodsReceiptNoteNo= & TrxNo= & LineItemNo= & StoreNo= 
 				[Route("/wms/imgr2/transfer", "Get")]			//transfer?TrxNo= & LineItemNo=
     public class Imgr : IReturn<CommonResponse>
     {
@@ -138,8 +138,14 @@ namespace WebApi.ServiceModel.Wms
 												{
 																using (var db = DbConnectionFactory.OpenDbConnection())
 																{
-																				string strSql = "Select Imgr2.*, " +
-																								"(Select StagingAreaFlag From Whwh2 Where WarehouseCode=Imgr2.WarehouseCode And StoreNo=Imgr2.StoreNo) AS StagingAreaFlag " +
+																				string strSql = "Select " +
+																								"Imgr2.TrxNo, Imgr2.LineItemNo, Imgr2.ProductTrxNo," +
+																								"IsNull(Imgr2.ProductCode,'') AS ProductCode, IsNull(Imgr2.ProductDescription,'') AS ProductDescription," +
+																								"IsNull(Imgr2.SerialNo,'') AS SerialNo, IsNull(Imgr2.DimensionFlag,'') AS DimensionFlag," +
+																								"IsNull(Imgr2.StoreNo,'') AS StoreNo," +
+																								"(Select StagingAreaFlag From Whwh2 Where WarehouseCode=Imgr2.WarehouseCode And StoreNo=Imgr2.StoreNo) AS StagingAreaFlag," +
+																								"Imgr2.PackingQty, Imgr2.WholeQty, Imgr2.LooseQty," +
+																								"0 AS ScanQty " +
 																								"From Imgr2 " +
 																								"Left Join Imgr1 On Imgr2.TrxNo = Imgr1.TrxNo " +
 																								"Where Imgr1.GoodsReceiptNoteNo='" + request.GoodsReceiptNoteNo + "'";
@@ -188,7 +194,7 @@ namespace WebApi.ServiceModel.Wms
 																																Description = "TALLY",
 																																StatusLogDateTime = DateTime.Now,
 																																UserId = request.UserID,
-																																StatusCode = "USE",
+																																StatusCode = "EXE",
 																																UpdateBy = request.UserID,
 																																UpdateDateTime =  DateTime.Now
 																												}
@@ -212,6 +218,13 @@ namespace WebApi.ServiceModel.Wms
 																												StoreNo = request.StoreNo
 																								},
 																								p => p.TrxNo == int.Parse(request.TrxNo) && p.LineItemNo == int.Parse(request.LineItemNo)
+																				);
+																				Result = db.Update<Impm1>(
+																								new
+																								{
+																												StoreNo = request.StoreNo
+																								},
+																								p => p.BatchNo == request.GoodsReceiptNoteNo && p.BatchLineItemNo == int.Parse(request.LineItemNo)
 																				);
 																}
 												}
