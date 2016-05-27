@@ -32,17 +32,17 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state
             } );
         };
         $scope.gotoUpdate = function() {
-            if (!ENV.fromWeb) {
+            if ( !ENV.fromWeb ) {
                 var url = ENV.website + '/' + ENV.updateFile;
-                $http.get(url)
-                    .success(function(res) {
+                $http.get( url )
+                    .success( function( res ) {
                         var serverAppVersion = res.version;
-                        $cordovaAppVersion.getVersionNumber().then(function(version) {
-                            if (version != serverAppVersion) {
+                        $cordovaAppVersion.getVersionNumber().then( function( version ) {
+                            if ( version != serverAppVersion ) {
                                 $ionicSideMenuDelegate.toggleLeft();
-                                $state.go('index.update', {
+                                $state.go( 'index.update', {
                                     'Version': serverAppVersion
-                                });
+                                } );
                             } else {
                                 alertPopupTitle = 'Already the Latest Version!';
                                 alertPopup = $ionicPopup.alert( {
@@ -50,17 +50,17 @@ appControllers.controller( 'IndexCtrl', [ 'ENV', '$rootScope', '$scope', '$state
                                     okType: 'button-assertive'
                                 } );
                             }
-                        });
-                    })
-                    .error(function(res) {
+                        } );
+                    } )
+                    .error( function( res ) {
                         alertPopupTitle = 'Connect Update Server Error!';
                         alertPopup = $ionicPopup.alert( {
                             title: alertPopupTitle,
                             okType: 'button-assertive'
                         } );
-                    });
+                    } );
             } else {
-                alertPopupTitle = 'No Updates!';
+                alertPopupTitle = 'No Updates';
                 alertPopup = $ionicPopup.alert( {
                     title: alertPopupTitle,
                     okType: 'button-calm'
@@ -92,39 +92,40 @@ appControllers.controller( 'LoginCtrl', [ '$rootScope', '$scope', '$state', '$st
             strUserName: '',
             strPassword: ''
         };
-        var alertPopup = null, alertTitle = '';
+        var alertPopup = null,
+            alertTitle = '';
         $scope.login = function() {
             if ( window.cordova && window.cordova.plugins.Keyboard ) {
                 cordova.plugins.Keyboard.close();
             }
-            if ( is.empty($scope.logininfo.strUserName) ) {
+            if ( is.empty( $scope.logininfo.strUserName ) ) {
                 alertTitle = 'Please Enter User Name.';
-                alertPopup = $ionicPopup.alert({
+                alertPopup = $ionicPopup.alert( {
                     title: alertTitle,
                     okType: 'button-assertive'
-                });
-                alertPopup.then(function(res) {
-                    console.log(alertTitle);
-                });
-            }else{
+                } );
+                alertPopup.then( function( res ) {
+                    console.log( alertTitle );
+                } );
+            } else {
                 var strUri = '/api/wms/login/check?UserId=' + $scope.logininfo.strUserName + '&Md5Stamp=' + hex_md5( $scope.logininfo.strPassword );
                 ApiService.GetParam( strUri, true ).then( function success( result ) {
-                    if (result.data.results > 0) {
+                    if ( result.data.results > 0 ) {
                         $rootScope.$broadcast( 'login' );
                         sessionStorage.clear();
                         sessionStorage.setItem( 'UserId', $scope.logininfo.strUserName );
                         $state.go( 'index.main', {}, {
                             reload: true
                         } );
-                    }  else {
+                    } else {
                         alertTitle = 'Invaild User';
-                        alertPopup = $ionicPopup.alert({
+                        alertPopup = $ionicPopup.alert( {
                             title: alertTitle,
                             okType: 'button-assertive'
-                        });
-                        alertPopup.then(function(res) {
-                            console.log(alertTitle);
-                        });
+                        } );
+                        alertPopup.then( function( res ) {
+                            console.log( alertTitle );
+                        } );
                     }
                 } );
             }
@@ -136,7 +137,7 @@ appControllers.controller( 'LoginCtrl', [ '$rootScope', '$scope', '$state', '$st
         } );
         $( '#iPassword' ).on( 'keydown', function( e ) {
             if ( e.which === 9 || e.which === 13 ) {
-                if (alertPopup === null) {
+                if ( alertPopup === null ) {
                     $scope.login();
                 } else {
                     alertPopup.close();
@@ -147,13 +148,15 @@ appControllers.controller( 'LoginCtrl', [ '$rootScope', '$scope', '$state', '$st
     } ] );
 
 appControllers.controller( 'SettingCtrl', [ 'ENV', '$rootScope', '$scope', '$state', '$ionicHistory', '$ionicPopup', '$cordovaToast', '$cordovaFile',
-    function( ENV, $rootScope,  $scope, $state, $ionicHistory, $ionicPopup, $cordovaToast, $cordovaFile ) {
+    function( ENV, $rootScope, $scope, $state, $ionicHistory, $ionicPopup, $cordovaToast, $cordovaFile ) {
         $scope.Setting = {
-            Version:    ENV.version,
-            WebApiURL:  rmProtocol(ENV.api),
-            WebSiteUrl: rmProtocol(ENV.website),
-            SSL:        { checked: ENV.ssl === '0' ? false : true },
-            blnWeb:    ENV.fromWeb
+            Version: ENV.version,
+            WebApiURL: rmProtocol( ENV.api ),
+            WebSiteUrl: rmProtocol( ENV.website ),
+            SSL: {
+                checked: ENV.ssl === '0' ? false : true
+            },
+            blnWeb: ENV.fromWeb
         };
         $scope.return = function() {
             if ( $ionicHistory.backView() ) {
@@ -168,17 +171,17 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$rootScope', '$scope', '$sta
             if ( is.not.empty( $scope.Setting.WebApiURL ) ) {
                 ENV.api = $scope.Setting.WebApiURL;
             } else {
-                $scope.Setting.WebApiURL = rmProtocol(ENV.api);
+                $scope.Setting.WebApiURL = rmProtocol( ENV.api );
             }
             if ( is.not.empty( $scope.Setting.WebSiteUrl ) ) {
                 ENV.website = $scope.Setting.WebSiteUrl;
             } else {
-                $scope.Setting.WebSiteUrl = rmProtocol(ENV.website);
+                $scope.Setting.WebSiteUrl = rmProtocol( ENV.website );
             }
             ENV.ssl = $scope.Setting.SSL.checked ? '1' : '0';
             var blnSSL = $scope.Setting.SSL.checked ? true : false;
-            ENV.website = appendProtocol(ENV.website, blnSSL, ENV.port);
-            ENV.api     = appendProtocol(ENV.api, blnSSL, ENV.port);
+            ENV.website = appendProtocol( ENV.website, blnSSL, ENV.port );
+            ENV.api = appendProtocol( ENV.api, blnSSL, ENV.port );
             if ( !ENV.fromWeb ) {
                 var data = 'website=' + ENV.website + '##api=' + ENV.api + '##ssl=' + ENV.ssl;
                 var path = cordova.file.externalRootDirectory;
@@ -202,7 +205,9 @@ appControllers.controller( 'SettingCtrl', [ 'ENV', '$rootScope', '$scope', '$sta
         $scope.reset = function() {
             $scope.Setting.WebApiURL = 'www.sysfreight.net/WebApi-wh';
             $scope.Setting.WebSiteUrl = 'www.sysfreight.net/mobileapp-wh';
-            $scope.Setting.SSL = { checked: false };
+            $scope.Setting.SSL = {
+                checked: false
+            };
             if ( !ENV.fromWeb ) {
                 var path = cordova.file.externalRootDirectory;
                 var file = ENV.rootPath + '/' + ENV.configFile;
@@ -251,13 +256,9 @@ appControllers.controller( 'MainCtrl', [ '$scope', '$state', '$ionicPopup',
             } );
         };
         $scope.func_GT = function() {
-            $ionicPopup.alert( {
-                title: 'Stay Tuned.',
-                okType: 'button-calm'
+            $state.go( 'gtFrom', {}, {
+                reload: true
             } );
-            //$state.go( 'gtFrom', {}, {
-            //    reload: true
-            //} );
         };
         $scope.func_Vgin = function() {
             $state.go( 'vginList', {}, {

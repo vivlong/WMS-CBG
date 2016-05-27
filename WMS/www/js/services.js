@@ -67,7 +67,11 @@ appService.service( 'ApiService', [ '$q', 'ENV', '$http', '$ionicLoading', '$ion
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                deferred.resolve( data );
+                if(is.equal( data.errors.code, 0) && is.equal( data.meta.code, 200)){
+                    deferred.resolve( data );
+                }else{
+                    deferred.reject( data );
+                }
             } ).error( function( data, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();

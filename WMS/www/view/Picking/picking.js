@@ -96,8 +96,8 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
         $scope.$on( '$destroy', function() {
             $scope.modal.remove();
         } );
-        var showPopup = function( title, type, callback ){
-            if (alertPopup != null) {
+        var showPopup = function( title, type, callback ) {
+            if ( alertPopup != null ) {
                 alertPopup.close();
                 alertPopup = null;
             }
@@ -105,7 +105,7 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                 title: title,
                 okType: 'button-' + type
             } );
-            if( typeof(callback) == 'function') callback(alertPopup);
+            if ( typeof( callback ) == 'function' ) callback( alertPopup );
         };
         var blnVerifyInput = function( type ) {
             var blnPass = true;
@@ -135,13 +135,15 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                 } ]
             } );
         };
-        var updatePackingNo = function(callback){
+        var updatePackingNo = function( callback ) {
             db_query_Imgi2_Picking( function( imgi2s ) {
                 var strUri = '/api/wms/imgi2/update/packingno',
-                    jsonData = { 'Imgi2s': imgi2s };
+                    jsonData = {
+                        'Imgi2s': imgi2s
+                    };
                 ApiService.Post( strUri, jsonData, true ).then( function success( result ) {
-                    if(result.data.results > -1){
-                        if(is.function(callback)) callback();
+                    if ( result.data.results > -1 ) {
+                        if ( is.function( callback ) ) callback();
                     }
                 } );
             } );
@@ -150,12 +152,12 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
             var userID = sessionStorage.getItem( 'UserId' ).toString(),
                 strUri = '/api/wms/imgi1/complete?GoodsIssueNoteNo=' + $scope.Detail.GIN + '&UserID=' + userID;
             ApiService.GetParam( strUri, true ).then( function success( result ) {
-                showPopup('Confirm success','calm',function(popup){
+                showPopup( 'Confirm success', 'calm', function( popup ) {
                     $timeout( function() {
                         popup.close();
                         $scope.returnList();
                     }, 2500 );
-                });
+                } );
             } );
         };
         var setScanQty = function( serialno, imgi2 ) {
@@ -205,7 +207,7 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
         var GetImpa1 = function( GoodsIssueNoteNo ) {
             var strUri = '/api/wms/impa1';
             ApiService.Get( strUri, true ).then( function success( result ) {
-                $scope.Detail.Impa1 = result.data.results[0];
+                $scope.Detail.Impa1 = result.data.results[ 0 ];
                 GetImgi2s( $scope.Detail.GIN );
             } );
         };
@@ -262,7 +264,7 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                 reload: true
             } );
         };
-        $scope.changePackingNo = function(){
+        $scope.changePackingNo = function() {
             if ( hmImgi2.count() > 0 ) {
                 var imgi2 = hmImgi2.get( $scope.Detail.Imgi2.SerialNo.toLowerCase() );
                 var promptPopup = $ionicPopup.show( {
@@ -341,36 +343,28 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
             }
         };
         $scope.clearInput = function( type ) {
-            if ( is.equal( type, 'BarCode' ) ) {
-                if ( $scope.Detail.Scan.BarCode.length > 0 ) {
-                    $scope.Detail.Scan.BarCode = '';
+            if ( is.equal( type, 'SerialNo' ) ) {
+                if ( is.not.empty( $scope.Detail.Scan.SerialNo ) ) {
                     $scope.Detail.Scan.SerialNo = '';
-                    $scope.Detail.Scan.Qty = 0;
-                    //$('#txt-sn').attr('readonly', true);
-                    $( '#txt-barcode' ).select();
-                }
-            } else if ( is.equal( type, 'SerialNo' ) ) {
-                if ( $scope.Detail.Scan.SerialNo.length > 0 ) {
-                    $scope.Detail.Scan.SerialNo = "";
                     $( '#txt-sn' ).select();
                 }
             } else if ( is.equal( type, 'StoreNo' ) ) {
-                if ( $scope.Detail.Scan.StoreNo.length > 0 ) {
+                if ( is.not.empty( $scope.Detail.Scan.StoreNo ) ) {
                     $scope.Detail.Scan.StoreNo = '';
                     $( '#txt-storeno' ).select();
                 }
             } else if ( is.equal( type, 'PackingNo' ) ) {
-                if ( $scope.Detail.Scan.PackingNo.length > 0 ) {
+                if ( is.not.empty( $scope.Detail.Scan.PackingNo ) ) {
                     $scope.Detail.Scan.PackingNo = '';
                     $( '#txt-packingno' ).select();
                 }
             } else {
-                $scope.Detail.Scan.StoreNo = '';
-                $scope.Detail.Scan.PackingNo = '';
-                $scope.Detail.Scan.BarCode = '';
-                $scope.Detail.Scan.SerialNo = '';
-                $scope.Detail.Scan.Qty = 0;
-                //$('#txt-sn').attr('readonly', true);
+                $scope.Detail.Scan = {
+                    StoreNo: '',
+                    PackingNo: '',
+                    SerialNo: '',
+                    Qty: 0
+                };
                 $( '#txt-storeno' ).select();
             }
         };
@@ -416,9 +410,9 @@ appControllers.controller( 'PickingDetailCtrl', [ 'ENV', '$scope', '$stateParams
                             if ( blnDiscrepancies ) {
                                 onErrorConfirm();
                             } else {
-                                if(blnUpdatePakcingNo){
-                                    updatePackingNo(sendConfirm());
-                                }else{
+                                if ( blnUpdatePakcingNo ) {
+                                    updatePackingNo( sendConfirm() );
+                                } else {
                                     sendConfirm();
                                 }
                             }

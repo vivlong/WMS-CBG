@@ -6,7 +6,7 @@ pause
 
 copy /y index.html %target%
 copy /y update.json %target%
-copy /y WMS.apk %target%\WMS-SingleSN.apk
-del WMS.apk /f /q
+copy /y WMS-SingleSN.apk %target%\WMS-SingleSN.apk
+del WMS-SingleSN.apk /f /q
 
 pause 
