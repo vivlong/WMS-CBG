@@ -251,7 +251,7 @@ appControllers.controller( 'MainCtrl', [ '$scope', '$state', '$ionicPopup',
             } );
         };
         $scope.func_Putaway = function() {
-            $state.go( 'putawayList', {}, {
+            $state.go( 'putawayDetail', {}, {
                 reload: true
             } );
         };

@@ -21,6 +21,11 @@ if (dbWms) {
         dbSql = "CREATE TABLE Imsn1_Receipt (ReceiptNoteNo TEXT, ReceiptLineItemNo INT, IssueNoteNo TEXT, IssueLineItemNo INT, SerialNo TEXT)";
         tx.executeSql(dbSql, [], null, dbError);
 
+        dbSql = 'DROP TABLE if exists Impm1_Putaway';
+        tx.executeSql(dbSql, [], null, dbError);
+        dbSql = "CREATE TABLE Impm1_Putaway (TrxNo INT, BatchNo TEXT, BatchLineItemNo INT, StoreNo TEXT, StagingAreaFlag TEXT, ProductTrxNo INT, ProductCode TEXT, ProductDescription TEXT, SerialNo TEXT, ScanQty INT)";
+        tx.executeSql(dbSql, [], null, dbError);
+
         dbSql = 'DROP TABLE if exists Imgr2_Putaway';
         tx.executeSql(dbSql, [], null, dbError);
         dbSql = "CREATE TABLE Imgr2_Putaway (TrxNo INT, LineItemNo INT, StoreNo TEXT, StagingAreaFlag TEXT, ProductTrxNo INT, ProductCode TEXT, SerialNo TEXT, DimensionFlag TEXT, PackingQty INT, WholeQty INT, LooseQty INT, ScanQty INT)";
@@ -96,6 +101,31 @@ var db_add_Imsn1_Receipt = function( imsn1 ) {
         dbWms.transaction( function( tx ) {
             dbSql = 'INSERT INTO Imsn1_Receipt (ReceiptNoteNo, ReceiptLineItemNo, SerialNo) values(?, ?, ?)';
             tx.executeSql( dbSql, [ imsn1.ReceiptNoteNo, imsn1.ReceiptLineItemNo, imsn1.SerialNo], null, dbError );
+        } );
+    }
+};
+
+var db_del_Impm1_Putaway = function (){
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Delete from Impm1_Putaway';
+            tx.executeSql( dbSql, [], null, dbError )
+        } );
+    }
+}
+var db_add_Impm1_Putaway = function( impm1 ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'INSERT INTO Impm1_Putaway (TrxNo, BatchNo, BatchLineItemNo, StoreNo, StagingAreaFlag, ProductTrxNo, ProductCode, ProductDescription, SerialNo, ScanQty) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            tx.executeSql( dbSql, [ impm1.TrxNo, impm1.BatchNo, impm1.BatchLineItemNo, impm1.StoreNo, impm1.StagingAreaFlag, impm1.ProductTrxNo, impm1.ProductCode, impm1.ProductDescription, impm1.SerialNo, 0], null, dbError );
+        } );
+    }
+};
+var db_update_Impm1_Putaway = function( impm1 ) {
+    if ( dbWms ) {
+        dbWms.transaction( function( tx ) {
+            dbSql = 'Update Impm1_Putaway set ScanQty=?,StoreNo=? Where TrxNo=?';
+            tx.executeSql( dbSql, [ impm1.ScanQty, impm1.StoreNo, impm1.TrxNo], null, dbError );
         } );
     }
 };

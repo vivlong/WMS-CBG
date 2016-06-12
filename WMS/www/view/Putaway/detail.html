@@ -1,18 +1,12 @@
 ﻿<ion-view title="Putaway-Detail">
 	<ion-header-bar class="bar-positive" align-title="center">
-		<button class="button button-icon icon ion-android-arrow-back" ng-click="returnList()"></button>
+		<button class="button button-icon icon ion-android-arrow-back" ng-click="returnMain()"></button>
 		<div class="h1 title">Putaway</div>
         <button class="button button-icon icon ion-android-open" ng-click="openModal()"></button>
 	</ion-header-bar>
     <ion-content>
         <div class="list card">
             <div class="item">
-                <div class="pull-left">
-                    <h2>Customer : <span ng-bind="Detail.Customer"></span></h2>
-                    <p>GRN : <span ng-bind="Detail.GRN"></span></p>
-                </div>
-            </div>
-            <div class="item item-body">
                 <div class="list">
                     <div class="row">
                         <div class="col col-80" style="padding:0px;">
@@ -68,7 +62,7 @@
             <button class="button icon ion-android-done" ng-click="checkConfirm()">
                 &nbsp;Confirm
             </button>
-            <button class="button icon ion-arrow-return-right" ng-click="returnList()">
+            <button class="button icon ion-arrow-return-right" ng-click="returnMain()">
                 &nbsp;Cancel
             </button>
         </div>
@@ -80,13 +74,13 @@
             </ion-header-bar>
             <ion-content>
                 <ion-list>
-                    <ion-item ng-repeat="Imgr2 in Detail.Imgr2sDb">
+                    <ion-item ng-repeat="Impm1 in Detail.Impm1sDb">
                         <div class="row">
                             <div class="col col-50">
                                 <p style="font-size:0.8em;">Store No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.StoreNo"></span>
+                                <span ng-bind="Impm1.StoreNo"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -94,7 +88,7 @@
                                 <p style="font-size:0.8em;">Serial No&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.SerialNo"></span>
+                                <span ng-bind="Impm1.SerialNo"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -102,7 +96,7 @@
                                 <p style="font-size:0.8em;">Product Code&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.ProductCode"></span>
+                                <span ng-bind="Impm1.ProductCode"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -110,15 +104,7 @@
                                 <p style="font-size:0.8em;">Scan Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
                             </div>
                             <div class="col">
-                                <span ng-bind="Imgr2.ScanQty"></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col col-50">
-                                <p style="font-size:0.8em;">Actual Qty&nbsp;&nbsp;:&nbsp;&nbsp;</p>
-                            </div>
-                            <div class="col">
-                                <span ng-bind="Imgr2.ActualQty"></span>
+                                <span ng-bind="Impm1.ScanQty"></span>
                             </div>
                         </div>
                     </ion-item>

@@ -245,7 +245,7 @@ app.config( [ '$httpProvider', '$stateProvider', '$urlRouterProvider', '$ionicCo
                 controller: 'PutawayListCtrl'
             } )
             .state( 'putawayDetail', {
-                url: '/putaway/detail/:CustomerCode/:TrxNo/:GoodsReceiptNoteNo',
+                url: '/putaway/detail',
                 cache: 'false',
                 templateUrl: 'view/Putaway/detail.html',
                 controller: 'PutawayDetailCtrl'
