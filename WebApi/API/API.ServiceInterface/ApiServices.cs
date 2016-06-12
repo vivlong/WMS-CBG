@@ -74,6 +74,19 @@ namespace WebApi.ServiceInterface
 												catch (Exception ex) { cr(ecr, ex); }
 												return ecr;
 								}
+								public ServiceModel.Wms.Impm_Logic wms_Impm_Logic { get; set; }
+								public object Any(ServiceModel.Wms.Impm request)
+								{
+												CommonResponse ecr = new CommonResponse();
+												ecr.initial();
+												try
+												{
+																ServiceInterface.Wms.TableService ts = new ServiceInterface.Wms.TableService();
+																ts.TS_Impm(auth, request, wms_Impm_Logic, ecr, this.Request.Headers.GetValues("Signature"), this.Request.RawUrl);
+												}
+												catch (Exception ex) { cr(ecr, ex); }
+												return ecr;
+								}
 								public ServiceModel.Wms.Whwh_Logic wms_Whwh_Logic { get; set; }
 								public object Any(ServiceModel.Wms.Whwh request)
 								{

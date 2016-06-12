@@ -82,6 +82,7 @@
     <Compile Include="ConfigInterface.cs" />
     <Compile Include="Tables\Imgi2_Verify.cs" />
     <Compile Include="Tables\Imgi2_Picking.cs" />
+    <Compile Include="Tables\Impm1_Putaway.cs" />
     <Compile Include="Tables\Imgr2_Receipt.cs" />
     <Compile Include="Tables\Imit.cs" />
     <Compile Include="Tables\Imgi2.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Tables\Rcbp1.cs" />
     <Compile Include="Utils\Download.cs" />
     <Compile Include="Utils\Uploading.cs" />
+    <Compile Include="Wms\Impm.cs" />
     <Compile Include="Wms\Imit.cs" />
     <Compile Include="Wms\Imgi.cs" />
     <Compile Include="Wms\Impa.cs" />

@@ -97,6 +97,23 @@ namespace WebApi.ServiceInterface.Wms
                 ecr.meta.message = "Unauthorized";
             }
         }
+								public void TS_Impm(Auth auth, Impm request, Impm_Logic logic, CommonResponse ecr, string[] token, string uri)
+								{
+												if (auth.AuthResult(token, uri))
+												{
+																if (uri.IndexOf("/wms/impm1/putaway") > 0)
+																{
+																				ecr.data.results = logic.Get_Impm1_Putaway_List(request);
+																}
+																ecr.meta.code = 200;
+																ecr.meta.message = "OK";
+												}
+												else
+												{
+																ecr.meta.code = 401;
+																ecr.meta.message = "Unauthorized";
+												}
+								}
 								public void TS_Whwh(Auth auth, Whwh request, Whwh_Logic whwh_Logic, CommonResponse ecr, string[] token, string uri)
 								{
 												if (auth.AuthResult(token, uri))
