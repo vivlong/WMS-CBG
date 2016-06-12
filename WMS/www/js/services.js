@@ -21,17 +21,17 @@ appService.service( 'ApiService', [ '$q', 'ENV', '$http', '$ionicLoading', '$ion
             var config = {
                 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
             };
-            $http.post( url, requestData, config ).success( function( data, status, headers, config, statusText ) {
+            $http.post( url, requestData, config ).success( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                deferred.resolve( data );
-            } ).error( function( data, status, headers, config, statusText ) {
+                deferred.resolve( result );
+            } ).error( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                deferred.reject( data );
-                console.log( data );
+                deferred.reject( result );
+                console.log( result );
             } );
             return deferred.promise;
         };
@@ -42,17 +42,17 @@ appService.service( 'ApiService', [ '$q', 'ENV', '$http', '$ionicLoading', '$ion
             var deferred = $q.defer();
             var url = ENV.api + requestUrl + "?format=json";
             console.log( url );
-            $http.get( url ).success( function( data, status, headers, config, statusText ) {
+            $http.get( url ).success( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                deferred.resolve( data );
-            } ).error( function( data, status, headers, config, statusText ) {
+                deferred.resolve( result );
+            } ).error( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                deferred.reject( data );
-                console.log( data );
+                deferred.reject( result );
+                console.log( result );
             } );
             return deferred.promise;
         };
@@ -63,21 +63,21 @@ appService.service( 'ApiService', [ '$q', 'ENV', '$http', '$ionicLoading', '$ion
             var deferred = $q.defer();
             var url = ENV.api + requestUrl + "&format=json";
             console.log( url );
-            $http.get( url ).success( function( data, status, headers, config, statusText ) {
+            $http.get( url ).success( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                if(is.equal( data.errors.code, 0) && is.equal( data.meta.code, 200)){
-                    deferred.resolve( data );
+                if(is.equal( result.meta.errors.code, 0) || is.equal( result.meta.errors.code, 200)){
+                    deferred.resolve( result );
                 }else{
-                    deferred.reject( data );
+                    deferred.reject( result );
                 }
-            } ).error( function( data, status, headers, config, statusText ) {
+            } ).error( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                deferred.reject( data );
-                console.log( data );
+                deferred.reject( result );
+                console.log( result );
             } );
             return deferred.promise;
         };
