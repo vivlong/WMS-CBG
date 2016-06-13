@@ -101,6 +101,10 @@ namespace WebApi.ServiceInterface.Wms
 								{
 												if (auth.AuthResult(token, uri))
 												{
+																if (uri.IndexOf("/wms/impm1/putaway/update") > 0)
+																{
+																				ecr.data.results = logic.Update_Impm1_StoreNo(request);
+																}
 																if (uri.IndexOf("/wms/impm1/putaway") > 0)
 																{
 																				ecr.data.results = logic.Get_Impm1_Putaway_List(request);

@@ -11,5 +11,7 @@ namespace WebApi.ServiceModel.Tables
 								public string BatchNo { get; set; }
 								public int BatchLineItemNo { get; set; }
 								public string StoreNo { get; set; }
+								public string TrxType { get; set; }
+								public string GoodsReceiveorIssueNo { get; set; }
     }
 }
