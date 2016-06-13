@@ -54,8 +54,11 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
             } else {
                 var strUri = '/api/wms/impm1/putaway?SerialNo=' + serialno;
                 ApiService.GetParam( strUri, true ).then( function success( result ) {
-                    var impm1 = result.data.results[0];
-                    if(is.not.empty(impm1)){
+                    var impm1 = null;
+                    if(result.data.results.length > 0){
+                        impm1 = result.data.results[0];
+                    }
+                    if(is.not.null(impm1) && is.not.empty(impm1)){
                         hmImpm1.set( impm1.SerialNo.toLowerCase(), impm1 );
                         db_add_Impm1_Putaway( impm1 );
                         $scope.Detail.Impr1 = {
