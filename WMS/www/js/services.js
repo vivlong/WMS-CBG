@@ -1,11 +1,7 @@
 'use strict';
 var appService = angular.module( 'WMSAPP.services', [
     'ionic',
-    'ngCordova.plugins.toast',
-    'ngCordova.plugins.file',
-    'ngCordova.plugins.fileTransfer',
-    'ngCordova.plugins.fileOpener2',
-    'ngCordova.plugins.inAppBrowser',
+    'ngCordova',
     'WMSAPP.config'
 ] );
 
@@ -25,7 +21,16 @@ appService.service( 'ApiService', [ '$q', 'ENV', '$http', '$ionicLoading', '$ion
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                deferred.resolve( result );
+                if(is.equal( result.meta.errors.code, 0) || is.equal( result.meta.errors.code, 200)){
+                    deferred.resolve( result );
+                }else{
+                    deferred.reject( result );
+                    var alertPopup = $ionicPopup.alert( {
+                        title: result.meta.message,
+                        subTitle: result.meta.errors.message,
+                        okType: 'button-assertive'
+                    } );
+                }
             } ).error( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
@@ -46,7 +51,16 @@ appService.service( 'ApiService', [ '$q', 'ENV', '$http', '$ionicLoading', '$ion
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
                 }
-                deferred.resolve( result );
+                if(is.equal( result.meta.errors.code, 0) || is.equal( result.meta.errors.code, 200)){
+                    deferred.resolve( result );
+                }else{
+                    deferred.reject( result );
+                    var alertPopup = $ionicPopup.alert( {
+                        title: result.meta.message,
+                        subTitle: result.meta.errors.message,
+                        okType: 'button-assertive'
+                    } );
+                }
             } ).error( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {
                     $ionicLoading.hide();
@@ -71,6 +85,11 @@ appService.service( 'ApiService', [ '$q', 'ENV', '$http', '$ionicLoading', '$ion
                     deferred.resolve( result );
                 }else{
                     deferred.reject( result );
+                    var alertPopup = $ionicPopup.alert( {
+                        title: result.meta.message,
+                        subTitle: result.meta.errors.message,
+                        okType: 'button-assertive'
+                    } );
                 }
             } ).error( function( result, status, headers, config, statusText ) {
                 if ( blnShowLoad ) {

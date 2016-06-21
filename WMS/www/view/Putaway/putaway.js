@@ -70,8 +70,6 @@ appControllers.controller( 'PutawayDetailCtrl', [ '$scope', '$stateParams', '$st
                     }else{
                         showPopup('Invalid Serial No', 'assertive');
                     }
-                },function error( result ){
-                    showPopup('Invalid Serial No', 'assertive');
                 });
             }
         };
